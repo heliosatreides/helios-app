@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useStockQuote } from '../../hooks/useStockQuote';
+import { useStockSearch } from '../../hooks/useStockSearch';
 import {
   ASSET_CLASSES,
   calculateHolding,
@@ -66,17 +68,99 @@ function AssetPieChart({ allocations }) {
   );
 }
 
+function HoldingRow({ h, onRemove, onPriceUpdate }) {
+  const { fetchQuote, loading: quoteLoading } = useStockQuote();
+  const [lastUpdated, setLastUpdated] = useState(h.lastUpdated || null);
+
+  const handleRefresh = async () => {
+    try {
+      const result = await fetchQuote(h.ticker);
+      onPriceUpdate(h.id, result.price);
+      setLastUpdated(new Date().toISOString());
+    } catch {}
+  };
+
+  const { marketValue, gainLoss, gainLossPercent } = calculateHolding(h);
+  const pos = gainLoss >= 0;
+
+  return (
+    <tr className="border-b border-[#27272a] last:border-0 hover:bg-[#0a0a0b]">
+      <td className="px-4 py-3 font-bold text-[#f59e0b]">{h.ticker}</td>
+      <td className="px-4 py-3 text-[#a1a1aa]">{h.name || '—'}</td>
+      <td className="px-4 py-3 text-[#71717a]">{h.assetClass}</td>
+      <td className="px-4 py-3 text-[#e4e4e7]">{h.shares}</td>
+      <td className="px-4 py-3 text-[#e4e4e7]">${h.costBasis.toFixed(2)}</td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[#e4e4e7] text-sm">${Number(h.currentPrice).toFixed(2)}</span>
+          <button
+            onClick={handleRefresh}
+            disabled={quoteLoading}
+            title="Refresh live price"
+            className="text-[#52525b] hover:text-amber-400 disabled:opacity-40 text-xs transition-colors"
+          >
+            {quoteLoading ? '⏳' : '🔄'}
+          </button>
+        </div>
+        {lastUpdated && (
+          <p className="text-[#3f3f46] text-[10px] mt-0.5">
+            {new Date(lastUpdated).toLocaleTimeString()}
+          </p>
+        )}
+      </td>
+      <td className="px-4 py-3 text-[#e4e4e7] font-medium">${marketValue.toFixed(2)}</td>
+      <td className={`px-4 py-3 font-medium ${pos ? 'text-green-400' : 'text-red-400'}`}>
+        {pos ? '+' : ''}${gainLoss.toFixed(2)}
+      </td>
+      <td className={`px-4 py-3 font-medium ${pos ? 'text-green-400' : 'text-red-400'}`}>
+        {pos ? '+' : ''}{gainLossPercent.toFixed(2)}%
+      </td>
+      <td className="px-4 py-3">
+        <button
+          onClick={() => onRemove(h.id)}
+          className="text-[#52525b] hover:text-red-400 text-xs transition-colors"
+          aria-label={`Remove ${h.ticker}`}
+        >
+          ✕
+        </button>
+      </td>
+    </tr>
+  );
+}
+
 function AddHoldingForm({ onAdd, onCancel }) {
+  const { validate, loading: searchLoading } = useStockSearch();
   const [form, setForm] = useState({
     ticker: '', name: '', shares: '', costBasis: '', currentPrice: '', assetClass: 'Stocks',
   });
+  const [tickerError, setTickerError] = useState('');
+  const [lookingUp, setLookingUp] = useState(false);
 
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  const handleTickerLookup = async () => {
+    if (!form.ticker.trim()) return;
+    setLookingUp(true);
+    setTickerError('');
+    try {
+      const result = await validate(form.ticker.trim());
+      setForm((f) => ({
+        ...f,
+        ticker: f.ticker.toUpperCase(),
+        name: result.name,
+        currentPrice: String(result.price),
+      }));
+    } catch (err) {
+      setTickerError(err.message || 'Could not find ticker');
+    } finally {
+      setLookingUp(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.ticker || !form.shares || !form.costBasis || !form.currentPrice) return;
-    onAdd(createHolding(form));
+    onAdd(createHolding({ ...form, lastUpdated: form.currentPrice ? new Date().toISOString() : null }));
     setForm({ ticker: '', name: '', shares: '', costBasis: '', currentPrice: '', assetClass: 'Stocks' });
   };
 
@@ -86,9 +170,26 @@ function AddHoldingForm({ onAdd, onCancel }) {
     <form onSubmit={handleSubmit} className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-4">
       <h3 className="text-[#e4e4e7] font-semibold">Add Holding</h3>
       <div className="grid grid-cols-2 gap-3">
-        <div>
+        <div className="col-span-2 sm:col-span-1">
           <label className="text-[#71717a] text-xs mb-1 block">Ticker *</label>
-          <input className={inputCls} placeholder="AAPL" value={form.ticker} onChange={set('ticker')} required />
+          <div className="flex gap-2">
+            <input
+              className={inputCls}
+              placeholder="AAPL"
+              value={form.ticker}
+              onChange={(e) => { set('ticker')(e); setTickerError(''); }}
+              required
+            />
+            <button
+              type="button"
+              onClick={handleTickerLookup}
+              disabled={lookingUp || !form.ticker.trim()}
+              className="bg-[#27272a] hover:bg-[#3f3f46] disabled:opacity-40 text-[#e4e4e7] px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0"
+            >
+              {lookingUp ? '⏳' : '🔍 Fetch'}
+            </button>
+          </div>
+          {tickerError && <p className="text-red-400 text-xs mt-1">{tickerError}</p>}
         </div>
         <div>
           <label className="text-[#71717a] text-xs mb-1 block">Name</label>
@@ -138,7 +239,7 @@ export function Portfolio() {
 
   const updatePrice = (id, price) => {
     setHoldings((prev) =>
-      prev.map((h) => (h.id === id ? { ...h, currentPrice: Number(price) } : h))
+      prev.map((h) => (h.id === id ? { ...h, currentPrice: Number(price), lastUpdated: new Date().toISOString() } : h))
     );
   };
 
@@ -208,50 +309,15 @@ export function Portfolio() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#27272a]">
-                  {['Ticker', 'Name', 'Class', 'Shares', 'Cost Basis', 'Curr. Price', 'Mkt Value', 'Gain/Loss', '%', ''].map((h) => (
+                  {['Ticker', 'Name', 'Class', 'Shares', 'Cost Basis', 'Live Price', 'Mkt Value', 'Gain/Loss', '%', ''].map((h) => (
                     <th key={h} className="text-left text-[#71717a] font-medium px-4 py-3 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {holdings.map((h) => {
-                  const { marketValue, gainLoss, gainLossPercent } = calculateHolding(h);
-                  const pos = gainLoss >= 0;
-                  return (
-                    <tr key={h.id} className="border-b border-[#27272a] last:border-0 hover:bg-[#0a0a0b]">
-                      <td className="px-4 py-3 font-bold text-[#f59e0b]">{h.ticker}</td>
-                      <td className="px-4 py-3 text-[#a1a1aa]">{h.name || '—'}</td>
-                      <td className="px-4 py-3 text-[#71717a]">{h.assetClass}</td>
-                      <td className="px-4 py-3 text-[#e4e4e7]">{h.shares}</td>
-                      <td className="px-4 py-3 text-[#e4e4e7]">${h.costBasis.toFixed(2)}</td>
-                      <td className="px-4 py-3">
-                        <input
-                          type="number"
-                          step="any"
-                          className="bg-transparent border border-transparent hover:border-[#27272a] focus:border-[#f59e0b] rounded px-1 py-0.5 w-24 text-[#e4e4e7] focus:outline-none text-sm"
-                          value={h.currentPrice}
-                          onChange={(e) => updatePrice(h.id, e.target.value)}
-                        />
-                      </td>
-                      <td className="px-4 py-3 text-[#e4e4e7] font-medium">${marketValue.toFixed(2)}</td>
-                      <td className={`px-4 py-3 font-medium ${pos ? 'text-green-400' : 'text-red-400'}`}>
-                        {pos ? '+' : ''}${gainLoss.toFixed(2)}
-                      </td>
-                      <td className={`px-4 py-3 font-medium ${pos ? 'text-green-400' : 'text-red-400'}`}>
-                        {pos ? '+' : ''}{gainLossPercent.toFixed(2)}%
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => removeHolding(h.id)}
-                          className="text-[#52525b] hover:text-red-400 text-xs transition-colors"
-                          aria-label={`Remove ${h.ticker}`}
-                        >
-                          ✕
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {holdings.map((h) => (
+                  <HoldingRow key={h.id} h={h} onRemove={removeHolding} onPriceUpdate={updatePrice} />
+                ))}
               </tbody>
             </table>
           </div>
