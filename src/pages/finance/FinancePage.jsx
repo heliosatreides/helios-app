@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useGemini } from '../../hooks/useGemini';
+import { AiSuggestion } from '../../components/AiSuggestion';
 import { AccountList } from './AccountList';
 import { AddAccountModal } from './AddAccountModal';
 import { TransactionList } from './TransactionList';
@@ -28,6 +30,10 @@ export function FinancePage() {
   const [filterCategory, setFilterCategory] = useState('');
 
   const currentMonth = new Date().toISOString().slice(0, 7);
+  const { generate, loading: aiLoading, error: aiError, hasKey } = useGemini();
+  const [aiInsights, setAiInsights] = useState(null);
+  const [aiInsightsLoading, setAiInsightsLoading] = useState(false);
+  const [aiInsightsError, setAiInsightsError] = useState(null);
 
   // Account operations
   function handleSaveAccount(data) {
@@ -92,6 +98,34 @@ export function FinancePage() {
 
   function handleDeleteBudget(category) {
     setBudgets((prev) => prev.filter((b) => b.category !== category));
+  }
+
+  async function handleAiInsights() {
+    setAiInsightsLoading(true);
+    setAiInsights(null);
+    setAiInsightsError(null);
+    try {
+      // Aggregate category totals for current month only (no raw transactions)
+      const monthTx = transactions.filter((t) => t.date?.startsWith(currentMonth));
+      const categoryTotals = {};
+      monthTx.forEach((t) => {
+        const cat = t.category || 'Other';
+        if (t.type === 'expense') {
+          categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
+        }
+      });
+      const totalSpending = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
+      const breakdown = Object.entries(categoryTotals)
+        .map(([cat, amt]) => `${cat}: $${amt.toFixed(2)}`)
+        .join(', ');
+      const prompt = `Here's my spending summary for this month: Total: $${totalSpending.toFixed(2)}. Breakdown: ${breakdown || 'No expenses yet'}. Give me 3 brief, actionable personal finance tips based on this spending pattern. Be specific and concise.`;
+      const text = await generate(prompt);
+      setAiInsights(text);
+    } catch (err) {
+      setAiInsightsError(err.message);
+    } finally {
+      setAiInsightsLoading(false);
+    }
   }
 
   const CATEGORIES = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping', 'Salary', 'Other'];
@@ -179,6 +213,18 @@ export function FinancePage() {
 
       {activeTab === 'Budget' && (
         <div className="space-y-4">
+          {hasKey && (
+            <div>
+              <button
+                onClick={handleAiInsights}
+                disabled={aiInsightsLoading}
+                className="flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 disabled:opacity-40 border border-amber-500/30 rounded-lg px-4 py-2 transition-colors"
+              >
+                {aiInsightsLoading ? '⏳ Analyzing…' : '✨ Monthly insights'}
+              </button>
+              <AiSuggestion loading={aiInsightsLoading} result={aiInsights} error={aiInsightsError} />
+            </div>
+          )}
           {budgets.length > 0 && (
             <div className="flex gap-2 flex-wrap">
               {budgets.map((b) => (

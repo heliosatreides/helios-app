@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { generateDays } from './tripUtils';
+import { useGemini } from '../../hooks/useGemini';
+import { AiSuggestion } from '../../components/AiSuggestion';
 
 const STATUS_OPTIONS = ['Planning', 'Upcoming', 'Ongoing', 'Completed'];
 
@@ -20,6 +22,8 @@ export function TripDetail({ trips, onUpdate }) {
   const [newActivity, setNewActivity] = useState({});
   const [newExpense, setNewExpense] = useState({ description: '', amount: '', category: '' });
   const [notes, setNotes] = useState(trip?.notes || '');
+  const { generate, loading: aiLoading, error: aiError, hasKey } = useGemini();
+  const [aiSuggestions, setAiSuggestions] = useState({});
 
   if (!trip) {
     return (
@@ -98,6 +102,17 @@ export function TripDetail({ trips, onUpdate }) {
 
   const handleNotesBlur = () => {
     onUpdate({ ...trip, notes });
+  };
+
+  const handleAiSuggest = async (date, label) => {
+    setAiSuggestions((prev) => ({ ...prev, [date]: { loading: true, result: null, error: null } }));
+    try {
+      const prompt = `I'm planning a trip to ${trip.destination} on ${label} (${date}). Suggest 3 specific activities or experiences I can do that day. Be concise, one line each, numbered 1-3.`;
+      const text = await generate(prompt);
+      setAiSuggestions((prev) => ({ ...prev, [date]: { loading: false, result: text, error: null } }));
+    } catch (err) {
+      setAiSuggestions((prev) => ({ ...prev, [date]: { loading: false, result: null, error: err.message } }));
+    }
   };
 
   return (
@@ -199,7 +214,26 @@ export function TripDetail({ trips, onUpdate }) {
               return (
                 <div key={date}>
                   {/* Day header */}
-                  <h4 className="text-[#f59e0b] font-semibold text-sm mb-2">{label}</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-[#f59e0b] font-semibold text-sm">{label}</h4>
+                    {hasKey && (
+                      <button
+                        type="button"
+                        onClick={() => handleAiSuggest(date, label)}
+                        disabled={aiSuggestions[date]?.loading}
+                        className="text-xs text-amber-400/70 hover:text-amber-400 disabled:opacity-40 transition-colors"
+                      >
+                        {aiSuggestions[date]?.loading ? '⏳' : '✨ Suggest activities'}
+                      </button>
+                    )}
+                  </div>
+                  {aiSuggestions[date] && (
+                    <AiSuggestion
+                      loading={aiSuggestions[date].loading}
+                      result={aiSuggestions[date].result}
+                      error={aiSuggestions[date].error}
+                    />
+                  )}
 
                   {/* Activities for this day */}
                   {acts.length > 0 && (
