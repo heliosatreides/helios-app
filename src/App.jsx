@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './pages/dashboard/Dashboard';
 import { TripsPage } from './pages/trips/TripsPage';
@@ -10,6 +10,8 @@ import { SettingsPage } from './pages/settings/SettingsPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
+import { LandingPage } from './pages/landing/LandingPage';
+import { useAuth } from './auth/AuthContext';
 import { useIDB } from './hooks/useIDB';
 import './index.css';
 
@@ -58,7 +60,7 @@ function AppShell() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-5xl mx-auto">
             <Routes>
-              <Route path="/" element={<ProtectedRoute><Dashboard trips={trips} accounts={accounts} transactions={transactions} budgets={budgets} portfolio={portfolio} /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard trips={trips} accounts={accounts} transactions={transactions} budgets={budgets} portfolio={portfolio} /></ProtectedRoute>} />
               <Route path="/trips/*" element={<ProtectedRoute><TripsPage /></ProtectedRoute>} />
               <Route path="/finance" element={<ProtectedRoute><FinancePage /></ProtectedRoute>} />
               <Route path="/investments" element={<ProtectedRoute><InvestmentsPage /></ProtectedRoute>} />
@@ -72,12 +74,19 @@ function AppShell() {
   );
 }
 
+function RootRoute() {
+  const { user } = useAuth();
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <LandingPage />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<RootRoute />} />
           <Route path="/*" element={<AppShell />} />
         </Routes>
       </AuthProvider>
