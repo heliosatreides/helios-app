@@ -197,7 +197,11 @@ export function Portfolio() {
 
       {/* Holdings Table */}
       {holdings.length === 0 ? (
-        <div className="text-center py-10 text-[#52525b]">No holdings yet. Add your first holding above.</div>
+        <div className="text-center py-10 text-[#71717a]">
+          <div className="text-4xl mb-3">📈</div>
+          <p className="text-[#e4e4e7] mb-1">Add your first holding to track your portfolio</p>
+          <p className="text-sm">Monitor gains, losses, and asset allocation over time.</p>
+        </div>
       ) : (
         <div className="bg-[#111113] border border-[#27272a] rounded-xl overflow-hidden">
           <div className="overflow-x-auto">

@@ -46,7 +46,7 @@ describe('AccountList', () => {
 
   it('shows empty state when no accounts', () => {
     render(<AccountList accounts={[]} onEdit={() => {}} onDelete={() => {}} />);
-    expect(screen.getByText(/no accounts/i)).toBeInTheDocument();
+    expect(screen.getByText(/add your first account to get started/i)).toBeInTheDocument();
   });
 });
 

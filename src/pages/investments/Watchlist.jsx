@@ -120,7 +120,11 @@ export function Watchlist() {
       )}
 
       {items.length === 0 ? (
-        <div className="text-center py-10 text-[#52525b]">No items on your watchlist yet.</div>
+        <div className="text-center py-10 text-[#71717a]">
+          <div className="text-4xl mb-3">👀</div>
+          <p className="text-[#e4e4e7] mb-1">Your watchlist is empty</p>
+          <p className="text-sm">Add tickers to watch for your next investment opportunity.</p>
+        </div>
       ) : (
         <>
           {watching.length > 0 && (

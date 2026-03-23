@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: '⊞', exact: true },
+  { to: '/', label: 'Dashboard', icon: '⚡', exact: true },
   { to: '/trips', label: 'Trips', icon: '✈️' },
   { to: '/finance', label: 'Finance', icon: '💰' },
   { to: '/investments', label: 'Investments', icon: '📈' },
@@ -21,10 +21,10 @@ export function Sidebar({ onNavClick }) {
             end={exact}
             onClick={onNavClick}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative ${
                 isActive
-                  ? 'bg-amber-500/10 text-[#f59e0b]'
-                  : 'text-[#71717a] hover:text-[#e4e4e7] hover:bg-[#27272a]'
+                  ? 'bg-amber-500/10 text-[#f59e0b] border-l-2 border-amber-500 pl-[10px]'
+                  : 'text-[#71717a] hover:text-[#e4e4e7] hover:bg-[#27272a] border-l-2 border-transparent pl-[10px]'
               }`
             }
           >

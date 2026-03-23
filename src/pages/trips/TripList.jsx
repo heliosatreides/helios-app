@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const STATUS_COLORS = {
   Planning: 'bg-blue-900 text-blue-300',
@@ -34,11 +34,20 @@ function TripCard({ trip }) {
 }
 
 export function TripList({ trips }) {
+  const navigate = useNavigate();
+
   if (!trips || trips.length === 0) {
     return (
       <div className="text-center py-16 text-[#71717a]">
-        <p className="text-lg mb-2">No trips yet</p>
-        <p className="text-sm">Create your first trip to get started</p>
+        <div className="text-5xl mb-4">✈️</div>
+        <p className="text-lg mb-2 text-[#e4e4e7]">No trips yet. Plan your first adventure →</p>
+        <p className="text-sm mb-6">Keep track of your travel plans, budget, and itinerary in one place.</p>
+        <button
+          onClick={() => navigate('/trips/new')}
+          className="bg-[#f59e0b] hover:bg-amber-400 text-black font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors"
+        >
+          + Create Trip
+        </button>
       </div>
     );
   }

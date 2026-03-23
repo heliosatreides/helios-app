@@ -11,8 +11,9 @@ export function AccountList({ accounts, onEdit, onDelete }) {
   if (accounts.length === 0) {
     return (
       <div className="text-center py-12 text-[#71717a]">
-        <p className="text-lg">No accounts yet.</p>
-        <p className="text-sm mt-1">Add an account to get started.</p>
+        <div className="text-5xl mb-4">💰</div>
+        <p className="text-lg text-[#e4e4e7] mb-2">Add your first account to get started</p>
+        <p className="text-sm">Track checking, savings, credit cards, and more.</p>
       </div>
     );
   }

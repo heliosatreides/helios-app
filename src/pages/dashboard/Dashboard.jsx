@@ -35,7 +35,11 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       {/* Welcome card */}
       <div className="bg-gradient-to-br from-amber-900/30 to-[#111113] border border-[#27272a] rounded-xl p-6">
         <h2 className="text-2xl font-bold text-[#e4e4e7] mb-1">Welcome back ☀️</h2>
-        <p className="text-[#71717a]">Here's what's happening with your plans.</p>
+        {trips.length === 0 && accounts.length === 0 && portfolio.length === 0 ? (
+          <p className="text-[#71717a]">Your dashboard is ready. Start by adding a trip, account, or investment to see your summary here.</p>
+        ) : (
+          <p className="text-[#71717a]">Here's what's happening with your plans.</p>
+        )}
       </div>
 
       {/* Trip Stats */}

@@ -1,70 +1,89 @@
-# Getting Started with Create React App
+# Helios ☀️
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A personal life-dashboard app for tracking trips, finances, and investments — all in one clean dark-mode interface.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+### ✈️ Trips
+- Create and manage travel plans with destination, dates, and budget
+- Track itinerary items and trip-specific expenses
+- Trip statuses: Planning, Upcoming, Ongoing, Completed
 
-### `npm start`
+### 💰 Finance
+- **Accounts** — track checking, savings, credit cards, and investment accounts
+- **Transactions** — log income and expenses, filter by account or category
+- **Budget** — set monthly category budgets with visual progress bars and over-budget alerts
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 📈 Investments
+- **Portfolio** — track holdings with cost basis, current price, market value, and gain/loss
+- **Asset Allocation** — visual pie chart of your portfolio by asset class (Stocks, ETF, Crypto, Bonds, etc.)
+- **Watchlist** — monitor tickers you're interested in with target prices and notes
+- **Strategy Notes** — freeform markdown-style notes for your investment thesis
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### ⚡ Dashboard
+- Unified overview of upcoming trips, finance summary, and portfolio performance
+- Live net worth, monthly spend, budget health percentage, and total portfolio gain/loss
 
-### `npm test`
+## Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Layer | Technology |
+|---|---|
+| UI Framework | React 18 |
+| Routing | React Router v6 |
+| Styling | Tailwind CSS v3 |
+| State / Persistence | `localStorage` (via custom `useLocalStorage` hook) |
+| Testing | Vitest + React Testing Library |
+| Build | Create React App (react-scripts) |
 
-### `npm run build`
+No backend required — all data is stored locally in the browser.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Local Development
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+# Install dependencies
+npm install
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Start dev server (opens at http://localhost:3000)
+npm start
+```
 
-### `npm run eject`
+## Running Tests
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+# Run all tests once (62 tests across trips, finance, investments, dashboard)
+npx vitest run
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Watch mode during development
+npx vitest
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Project Structure
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+src/
+├── components/
+│   └── Sidebar.jsx          # Navigation sidebar with icons
+├── hooks/
+│   └── useLocalStorage.js   # Persistent state hook
+├── pages/
+│   ├── dashboard/           # Dashboard overview
+│   ├── trips/               # Trip management (list, create, detail)
+│   ├── finance/             # Accounts, transactions, budgets
+│   └── investments/         # Portfolio, watchlist, strategy notes
+├── App.jsx                  # Root app + layout shell
+└── index.css                # Global styles (Tailwind base)
+```
 
-## Learn More
+## Data Persistence
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+All data is stored in `localStorage` under these keys:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- `helios-trips` — trip records
+- `finance-accounts` — account balances
+- `finance-transactions` — transaction history
+- `finance-budgets` — budget category limits
+- `investments-portfolio` — holdings
+- `investments-watchlist` — watchlist items
+- `investments-strategy` — strategy notes
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Clearing browser storage resets all data.
