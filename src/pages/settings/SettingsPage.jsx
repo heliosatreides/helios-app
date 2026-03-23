@@ -1,13 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../auth/AuthContext';
+import { encrypt, decrypt } from '../../auth/crypto';
 
-const AI_KEY_LS = 'helios-gemini-key';
+const AI_KEY_ENC_LS = 'helios-gemini-key-enc';
 
 export function useGeminiKey() {
-  const get = () => localStorage.getItem(AI_KEY_LS) || '';
-  const set = (key) => {
-    if (key) localStorage.setItem(AI_KEY_LS, key);
-    else localStorage.removeItem(AI_KEY_LS);
+  const { password, user } = useAuth();
+
+  const get = async () => {
+    const ciphertext = localStorage.getItem(AI_KEY_ENC_LS);
+    if (!ciphertext || !password || !user) return '';
+    try {
+      return await decrypt(ciphertext, password, user.username);
+    } catch {
+      return '';
+    }
   };
+
+  const set = async (apiKey) => {
+    if (apiKey && password && user) {
+      const ciphertext = await encrypt(apiKey, password, user.username);
+      localStorage.setItem(AI_KEY_ENC_LS, ciphertext);
+      localStorage.removeItem('helios-gemini-key');
+    } else {
+      localStorage.removeItem(AI_KEY_ENC_LS);
+      localStorage.removeItem('helios-gemini-key');
+    }
+  };
+
   return { getKey: get, setKey: set };
 }
 
@@ -29,18 +49,49 @@ export async function callGemini(apiKey, prompt) {
 }
 
 export function SettingsPage() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem(AI_KEY_LS) || '');
+  const { user, password } = useAuth();
+  const [apiKey, setApiKey] = useState('');
+  const [decryptError, setDecryptError] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null); // null | 'ok' | 'error'
   const [testMsg, setTestMsg] = useState('');
   const [saved, setSaved] = useState(false);
 
-  const handleSave = () => {
-    if (apiKey.trim()) {
-      localStorage.setItem(AI_KEY_LS, apiKey.trim());
+  // Load and decrypt the stored key on mount / when password changes
+  useEffect(() => {
+    async function loadKey() {
+      const ciphertext = localStorage.getItem(AI_KEY_ENC_LS);
+      if (!ciphertext) {
+        setApiKey('');
+        setDecryptError(false);
+        return;
+      }
+      if (!password || !user) {
+        setDecryptError(true);
+        setApiKey('');
+        return;
+      }
+      try {
+        const plaintext = await decrypt(ciphertext, password, user.username);
+        setApiKey(plaintext);
+        setDecryptError(false);
+      } catch {
+        setApiKey('');
+        setDecryptError(true);
+      }
+    }
+    loadKey();
+  }, [password, user]);
+
+  const handleSave = async () => {
+    if (apiKey.trim() && password && user) {
+      const ciphertext = await encrypt(apiKey.trim(), password, user.username);
+      localStorage.setItem(AI_KEY_ENC_LS, ciphertext);
+      localStorage.removeItem('helios-gemini-key');
     } else {
-      localStorage.removeItem(AI_KEY_LS);
+      localStorage.removeItem(AI_KEY_ENC_LS);
+      localStorage.removeItem('helios-gemini-key');
     }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -81,6 +132,12 @@ export function SettingsPage() {
           Add your Gemini API key to unlock AI-powered insights across the app.
           Your key is stored locally and only sent to Google's servers.
         </p>
+
+        {decryptError && (
+          <div className="text-xs px-3 py-2 rounded-lg border text-red-400 bg-red-400/10 border-red-400/20">
+            Could not decrypt key — please re-enter
+          </div>
+        )}
 
         <div>
           <label className="block text-[#71717a] text-xs mb-1.5">Gemini API Key</label>
@@ -128,7 +185,12 @@ export function SettingsPage() {
           </button>
           {apiKey && (
             <button
-              onClick={() => { setApiKey(''); localStorage.removeItem(AI_KEY_LS); setTestResult(null); }}
+              onClick={() => {
+                setApiKey('');
+                localStorage.removeItem(AI_KEY_ENC_LS);
+                localStorage.removeItem('helios-gemini-key');
+                setTestResult(null);
+              }}
               className="border border-[#27272a] text-red-400/70 hover:text-red-400 px-4 py-2 rounded-lg text-sm transition-colors"
             >
               Remove Key
@@ -167,6 +229,10 @@ export function SettingsPage() {
           <div className="flex justify-between">
             <span className="text-[#71717a]">Auth</span>
             <span className="text-[#e4e4e7]">Local-only, bcrypt hashed</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-[#71717a]">API Key Storage</span>
+            <span className="text-[#e4e4e7]">AES-256-GCM encrypted</span>
           </div>
         </div>
       </div>

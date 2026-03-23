@@ -39,41 +39,47 @@ export function AuthProvider({ children }) {
     return users.find((u) => u.username === session.username) || null;
   });
 
-  const register = useCallback(async (username, password) => {
+  // In-memory only — never persisted to storage
+  const [password, setPassword] = useState(null);
+
+  const register = useCallback(async (username, rawPassword) => {
     const users = getUsers();
     if (users.find((u) => u.username === username)) {
       throw new Error('Username already taken');
     }
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(rawPassword, 10);
     const newUser = { username, passwordHash, createdAt: new Date().toISOString() };
     saveUsers([...users, newUser]);
 
     const token = generateToken();
     sessionStorage.setItem(SESSION_KEY, JSON.stringify({ username, token }));
     setUser(newUser);
+    setPassword(rawPassword);
     return newUser;
   }, []);
 
-  const login = useCallback(async (username, password) => {
+  const login = useCallback(async (username, rawPassword) => {
     const users = getUsers();
     const found = users.find((u) => u.username === username);
     if (!found) throw new Error('User not found');
-    const valid = await bcrypt.compare(password, found.passwordHash);
+    const valid = await bcrypt.compare(rawPassword, found.passwordHash);
     if (!valid) throw new Error('Invalid password');
 
     const token = generateToken();
     sessionStorage.setItem(SESSION_KEY, JSON.stringify({ username, token }));
     setUser(found);
+    setPassword(rawPassword);
     return found;
   }, []);
 
   const logout = useCallback(() => {
     sessionStorage.removeItem(SESSION_KEY);
     setUser(null);
+    setPassword(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register }}>
+    <AuthContext.Provider value={{ user, password, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
