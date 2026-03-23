@@ -47,3 +47,23 @@ test('reads existing value from localStorage', () => {
   const { result } = renderHook(() => useLocalStorage('test-key', 'initial'));
   expect(result.current[0]).toBe('existing');
 });
+
+test('returns initial value when stored value is corrupted JSON', () => {
+  localStorage.setItem('test-key', 'not-valid-json{{{');
+  const { result } = renderHook(() => useLocalStorage('test-key', 'fallback'));
+  expect(result.current[0]).toBe('fallback');
+});
+
+test('returns initial array when stored value is corrupted JSON', () => {
+  localStorage.setItem('my-array', '[[invalid');
+  const { result } = renderHook(() => useLocalStorage('my-array', []));
+  expect(result.current[0]).toEqual([]);
+});
+
+test('supports functional updates', () => {
+  const { result } = renderHook(() => useLocalStorage('count', 0));
+  act(() => {
+    result.current[1]((prev) => prev + 1);
+  });
+  expect(result.current[0]).toBe(1);
+});

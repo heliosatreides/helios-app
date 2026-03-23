@@ -10,25 +10,55 @@ export function CreateTrip({ onSubmit }) {
     endDate: '',
     budget: '',
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    // Clear the specific field error on change
+    setErrors((prev) => ({ ...prev, [e.target.name]: '' }));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.name.trim()) errs.name = 'Trip name is required.';
+    if (!form.destination.trim()) errs.destination = 'Destination is required.';
+    if (!form.startDate) errs.startDate = 'Start date is required.';
+    if (!form.endDate) errs.endDate = 'End date is required.';
+    if (form.startDate && form.endDate && form.endDate < form.startDate) {
+      errs.endDate = 'End date must be on or after start date.';
+    }
+    if (form.budget !== '' && (isNaN(parseFloat(form.budget)) || parseFloat(form.budget) <= 0)) {
+      errs.budget = 'Budget must be a positive number.';
+    }
+    return errs;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
     const trip = {
       ...form,
-      budget: parseFloat(form.budget),
+      budget: form.budget !== '' ? parseFloat(form.budget) : 0,
     };
     if (onSubmit) onSubmit(trip);
     navigate('/trips');
   };
 
+  const inputClass = (field) =>
+    `w-full bg-[#111113] border rounded-lg px-4 py-2.5 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none transition-colors ${
+      errors[field]
+        ? 'border-red-500 focus:border-red-400'
+        : 'border-[#27272a] focus:border-[#f59e0b]'
+    }`;
+
   return (
     <div className="max-w-lg mx-auto">
       <h2 className="text-xl font-semibold text-[#e4e4e7] mb-6">New Trip</h2>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-[#a1a1aa] mb-1">
             Trip Name
@@ -37,12 +67,12 @@ export function CreateTrip({ onSubmit }) {
             id="name"
             name="name"
             type="text"
-            required
             value={form.name}
             onChange={handleChange}
             placeholder="Summer in Japan"
-            className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-4 py-2.5 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] transition-colors"
+            className={inputClass('name')}
           />
+          {errors.name && <p className="mt-1 text-xs text-red-400">{errors.name}</p>}
         </div>
 
         <div>
@@ -53,12 +83,12 @@ export function CreateTrip({ onSubmit }) {
             id="destination"
             name="destination"
             type="text"
-            required
             value={form.destination}
             onChange={handleChange}
             placeholder="Tokyo, Japan"
-            className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-4 py-2.5 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] transition-colors"
+            className={inputClass('destination')}
           />
+          {errors.destination && <p className="mt-1 text-xs text-red-400">{errors.destination}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -70,11 +100,11 @@ export function CreateTrip({ onSubmit }) {
               id="startDate"
               name="startDate"
               type="date"
-              required
               value={form.startDate}
               onChange={handleChange}
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-4 py-2.5 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b] transition-colors"
+              className={inputClass('startDate')}
             />
+            {errors.startDate && <p className="mt-1 text-xs text-red-400">{errors.startDate}</p>}
           </div>
           <div>
             <label htmlFor="endDate" className="block text-sm font-medium text-[#a1a1aa] mb-1">
@@ -84,30 +114,30 @@ export function CreateTrip({ onSubmit }) {
               id="endDate"
               name="endDate"
               type="date"
-              required
               value={form.endDate}
               onChange={handleChange}
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-4 py-2.5 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b] transition-colors"
+              className={inputClass('endDate')}
             />
+            {errors.endDate && <p className="mt-1 text-xs text-red-400">{errors.endDate}</p>}
           </div>
         </div>
 
         <div>
           <label htmlFor="budget" className="block text-sm font-medium text-[#a1a1aa] mb-1">
-            Budget ($)
+            Budget ($) <span className="text-[#52525b]">optional</span>
           </label>
           <input
             id="budget"
             name="budget"
             type="number"
-            required
             min="0"
             step="0.01"
             value={form.budget}
             onChange={handleChange}
             placeholder="5000"
-            className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-4 py-2.5 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] transition-colors"
+            className={inputClass('budget')}
           />
+          {errors.budget && <p className="mt-1 text-xs text-red-400">{errors.budget}</p>}
         </div>
 
         <div className="flex gap-3 pt-2">
