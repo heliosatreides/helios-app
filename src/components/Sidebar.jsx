@@ -5,6 +5,7 @@ const navItems = [
   { to: '/trips', label: 'Trips', icon: '✈️' },
   { to: '/finance', label: 'Finance', icon: '💰' },
   { to: '/investments', label: 'Investments', icon: '📈' },
+  { to: '/sports', label: 'Sports', icon: '🏆' },
 ];
 
 export function Sidebar({ onNavClick }) {

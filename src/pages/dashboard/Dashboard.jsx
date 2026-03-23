@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [] }) {
+export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
   const upcomingTrips = trips.filter((t) => t.status === 'Upcoming' || t.status === 'Planning');
   const totalBudget = upcomingTrips.reduce((sum, t) => sum + t.budget, 0);
   const recentTrips = [...trips].slice(0, 5);
@@ -111,6 +111,22 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
           </div>
         </div>
       )}
+
+      {/* Sports card */}
+      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[#e4e4e7] font-semibold">Sports Hub 🏆</h3>
+          <Link to="/sports" className="text-[#f59e0b] text-sm hover:underline">View</Link>
+        </div>
+        {sportsGameCount !== null ? (
+          <div>
+            <p className="text-3xl font-bold text-[#22c55e]">{sportsGameCount}</p>
+            <p className="text-[#71717a] text-xs mt-1">games today</p>
+          </div>
+        ) : (
+          <p className="text-[#71717a] text-sm">Live scores, standings &amp; favorites.</p>
+        )}
+      </div>
 
       {/* Recent trips */}
       <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6">

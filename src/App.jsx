@@ -5,6 +5,7 @@ import { Dashboard } from './pages/dashboard/Dashboard';
 import { TripsPage } from './pages/trips/TripsPage';
 import { FinancePage } from './pages/finance/FinancePage';
 import { InvestmentsPage } from './pages/investments/InvestmentsPage';
+import { SportsPage } from './pages/sports/SportsPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './index.css';
 
@@ -57,6 +58,7 @@ function AppShell() {
               <Route path="/trips/*" element={<TripsPage />} />
               <Route path="/finance" element={<FinancePage />} />
               <Route path="/investments" element={<InvestmentsPage />} />
+              <Route path="/sports" element={<SportsPage />} />
             </Routes>
           </div>
         </main>
