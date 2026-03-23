@@ -20,66 +20,71 @@ function getDB() {
   return dbPromise;
 }
 
+/** @internal — only for tests to reset the cached db promise */
+export function _resetDBPromise() {
+  dbPromise = null;
+}
+
 /**
  * Drop-in replacement for useLocalStorage using IndexedDB.
- * Same API: [value, setValue]
+ * Same API: [value, setValue, ready]
  * Migration: on first use, if localStorage has data for this key, migrates it to IDB.
  */
 export function useIDB(key, initialValue) {
   const [storedValue, setStoredValue] = useState(initialValue);
   const [ready, setReady] = useState(false);
-  const isMounted = useRef(true);
 
   useEffect(() => {
-    isMounted.current = true;
     let cancelled = false;
 
     async function init() {
-      const db = await getDB();
-      // Try to read from IDB first
-      let val = await db.get(STORE, key);
+      try {
+        const db = await getDB();
+        let val = await db.get(STORE, key);
 
-      if (val === undefined) {
-        // Check if localStorage has data to migrate
-        try {
-          const lsRaw = localStorage.getItem(key);
-          if (lsRaw !== null) {
-            val = JSON.parse(lsRaw);
-            // Migrate to IDB
-            await db.put(STORE, val, key);
-            // Remove from localStorage to avoid future confusion
-            localStorage.removeItem(key);
-          } else {
+        if (val === undefined) {
+          // Check if localStorage has data to migrate
+          try {
+            const lsRaw = localStorage.getItem(key);
+            if (lsRaw !== null) {
+              val = JSON.parse(lsRaw);
+              // Migrate to IDB and remove from localStorage
+              await db.put(STORE, val, key);
+              localStorage.removeItem(key);
+            } else {
+              val = initialValue;
+            }
+          } catch {
             val = initialValue;
           }
-        } catch {
-          val = initialValue;
         }
-      }
 
-      if (!cancelled && isMounted.current) {
-        setStoredValue(val);
-        setReady(true);
+        if (!cancelled) {
+          setStoredValue(val);
+          setReady(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setReady(true);
+        }
       }
     }
 
-    init().catch(() => {
-      if (!cancelled && isMounted.current) {
-        setReady(true);
-      }
-    });
+    init();
 
     return () => {
       cancelled = true;
-      isMounted.current = false;
     };
   }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const storedValueRef = useRef(storedValue);
+  storedValueRef.current = storedValue;
 
   const setValue = useCallback(
     async (value) => {
       // Update React state synchronously first (for immediate UI response)
       const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
+        value instanceof Function ? value(storedValueRef.current) : value;
       setStoredValue(valueToStore);
       // Then persist to IDB asynchronously
       try {
@@ -89,14 +94,14 @@ export function useIDB(key, initialValue) {
         console.error('useIDB setValue error:', err);
       }
     },
-    [key, storedValue]
+    [key]
   );
 
   return [storedValue, setValue, ready];
 }
 
 /**
- * Utility: read a value from IDB directly (for migration checks).
+ * Utility: read a value from IDB directly.
  */
 export async function idbGet(key) {
   const db = await getDB();

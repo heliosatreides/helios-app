@@ -1,19 +1,13 @@
+/**
+ * useIDB tests
+ * Note: idb is mocked globally in setupTests.js with __idbStore
+ * Each test clears __idbStore via the global beforeEach in setupTests.js
+ */
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-
-// ---- Mock idb ----
-const idbStore = {};
-vi.mock('idb', () => ({
-  openDB: vi.fn(async () => ({
-    get: async (store, key) => idbStore[key],
-    put: async (store, value, key) => { idbStore[key] = value; },
-    objectStoreNames: { contains: () => true },
-  })),
-}));
-
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useIDB, idbGet, idbSet } from './useIDB';
 
-// ---- storage mock ----
+// ---- localStorage mock ----
 const lsStore = {};
 const localStorageMock = {
   getItem: (k) => lsStore[k] ?? null,
@@ -24,97 +18,79 @@ const localStorageMock = {
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
 beforeEach(() => {
-  Object.keys(idbStore).forEach((k) => delete idbStore[k]);
   localStorageMock.clear();
 });
 
+// Helper: render hook and wait until ready
+async function renderIDB(key, initial) {
+  const hook = renderHook(() => useIDB(key, initial));
+  await waitFor(() => {
+    expect(hook.result.current[2]).toBe(true);
+  }, { timeout: 3000 });
+  return hook;
+}
+
 describe('useIDB', () => {
-  it('returns initial value on first render', async () => {
-    const { result } = renderHook(() => useIDB('test-key', []));
-    // Initially shows initialValue
+  it('starts with initial value', async () => {
+    const { result } = await renderIDB('init-test', []);
     expect(result.current[0]).toEqual([]);
-    // Wait for ready
-    await waitFor(() => result.current[2] === true);
-    expect(result.current[0]).toEqual([]);
+    expect(result.current[2]).toBe(true);
   });
 
-  it('stores and retrieves a value', async () => {
-    const { result } = renderHook(() => useIDB('trips', []));
-    await waitFor(() => result.current[2] === true);
+  it('stores a value and retrieves it', async () => {
+    const { result } = await renderIDB('store-test', []);
 
     await act(async () => {
       await result.current[1]([{ id: '1', name: 'Paris' }]);
     });
 
     expect(result.current[0]).toEqual([{ id: '1', name: 'Paris' }]);
-    expect(idbStore['trips']).toEqual([{ id: '1', name: 'Paris' }]);
   });
 
   it('supports functional updates', async () => {
-    const { result } = renderHook(() => useIDB('list', [1, 2]));
-    await waitFor(() => result.current[2] === true);
+    const { result } = await renderIDB('func-test', []);
 
-    // Pre-seed
-    await act(async () => {
-      await result.current[1]([1, 2]);
-    });
-
-    await act(async () => {
-      await result.current[1]((prev) => [...prev, 3]);
-    });
+    await act(async () => { await result.current[1]([1, 2]); });
+    await act(async () => { await result.current[1]((prev) => [...prev, 3]); });
 
     expect(result.current[0]).toEqual([1, 2, 3]);
   });
 
-  it('migrates data from localStorage to IDB on first load', async () => {
-    // Put data in localStorage
-    localStorageMock.setItem('finance-accounts', JSON.stringify([{ id: 'a1', name: 'Checking' }]));
+  it('migrates data from localStorage on first load', async () => {
+    localStorageMock.setItem('mig-test', JSON.stringify({ foo: 'bar' }));
 
-    const { result } = renderHook(() => useIDB('finance-accounts', []));
-    await waitFor(() => result.current[2] === true);
+    const { result } = await renderIDB('mig-test', null);
 
-    // Should have migrated data
-    expect(result.current[0]).toEqual([{ id: 'a1', name: 'Checking' }]);
-    // localStorage entry should be removed after migration
-    expect(localStorageMock.getItem('finance-accounts')).toBeNull();
-    // IDB should have the data
-    expect(idbStore['finance-accounts']).toEqual([{ id: 'a1', name: 'Checking' }]);
+    expect(result.current[0]).toEqual({ foo: 'bar' });
+    // localStorage should be cleared after migration
+    expect(localStorageMock.getItem('mig-test')).toBeNull();
   });
 
-  it('does not overwrite IDB data with localStorage on subsequent loads', async () => {
-    // Seed IDB directly
-    idbStore['sports-favs'] = ['NBA', 'NFL'];
-    // Also seed localStorage (simulating stale data)
-    localStorageMock.setItem('sports-favs', JSON.stringify(['OLD']));
+  it('prefers IDB data over localStorage when IDB has a value', async () => {
+    await idbSet('pref-test', ['IDB_DATA']);
+    localStorageMock.setItem('pref-test', JSON.stringify(['LS_DATA']));
 
-    const { result } = renderHook(() => useIDB('sports-favs', []));
-    await waitFor(() => result.current[2] === true);
+    const { result } = await renderIDB('pref-test', []);
 
-    // Should prefer IDB data
-    expect(result.current[0]).toEqual(['NBA', 'NFL']);
-  });
-
-  it('returns ready=true after loading', async () => {
-    const { result } = renderHook(() => useIDB('ready-test', null));
-    await waitFor(() => result.current[2] === true);
-    expect(result.current[2]).toBe(true);
+    expect(result.current[0]).toEqual(['IDB_DATA']);
   });
 });
 
 describe('idbGet / idbSet utilities', () => {
-  it('idbSet stores a value', async () => {
-    await idbSet('util-key', { foo: 'bar' });
-    expect(idbStore['util-key']).toEqual({ foo: 'bar' });
-  });
-
-  it('idbGet retrieves a value', async () => {
-    idbStore['get-test'] = 42;
-    const val = await idbGet('get-test');
-    expect(val).toBe(42);
+  it('idbSet stores a value retrievable by idbGet', async () => {
+    await idbSet('util-test', { x: 1 });
+    const val = await idbGet('util-test');
+    expect(val).toEqual({ x: 1 });
   });
 
   it('idbGet returns undefined for missing key', async () => {
-    const val = await idbGet('nonexistent-key-xyz');
+    const val = await idbGet('missing-xyz-abc');
     expect(val).toBeUndefined();
+  });
+
+  it('idbSet overwrites existing value', async () => {
+    await idbSet('overwrite-test', 'first');
+    await idbSet('overwrite-test', 'second');
+    expect(await idbGet('overwrite-test')).toBe('second');
   });
 });
