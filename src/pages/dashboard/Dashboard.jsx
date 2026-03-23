@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom';
 
-export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [] }) {
+export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [] }) {
   const upcomingTrips = trips.filter((t) => t.status === 'Upcoming' || t.status === 'Planning');
   const totalBudget = upcomingTrips.reduce((sum, t) => sum + t.budget, 0);
   const recentTrips = [...trips].slice(0, 5);
 
   // Finance summary
   const netWorth = accounts.reduce((sum, a) => sum + a.balance, 0);
+
+  // Investment summary
+  const portfolioValue = portfolio.reduce((sum, h) => sum + h.shares * h.currentPrice, 0);
+  const portfolioCost = portfolio.reduce((sum, h) => sum + h.shares * h.costBasis, 0);
+  const portfolioGainLoss = portfolioValue - portfolioCost;
 
   const currentMonth = new Date().toISOString().slice(0, 7);
   const monthlyExpenses = transactions.filter(
@@ -74,6 +79,30 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
                   {budgetHealth}%
                 </p>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Investment Summary Card */}
+      {portfolio.length > 0 && (
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[#e4e4e7] font-semibold">Investment Portfolio</h3>
+            <Link to="/investments" className="text-[#f59e0b] text-sm hover:underline">Manage</Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-[#71717a] text-xs mb-1">Total Value</p>
+              <p className="text-xl font-bold text-[#f59e0b]">
+                ${portfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+              </p>
+            </div>
+            <div>
+              <p className="text-[#71717a] text-xs mb-1">Total Gain/Loss</p>
+              <p className={`text-xl font-bold ${portfolioGainLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {portfolioGainLoss >= 0 ? '+' : ''}${portfolioGainLoss.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+              </p>
             </div>
           </div>
         </div>

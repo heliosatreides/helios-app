@@ -64,3 +64,26 @@ test('Dashboard shows recent trips', () => {
   );
   expect(screen.getByText('Tokyo Adventure')).toBeInTheDocument();
 });
+
+test('Dashboard shows investment summary card when portfolio has holdings', () => {
+  const portfolio = [
+    { id: '1', ticker: 'AAPL', shares: 10, costBasis: 150, currentPrice: 200, assetClass: 'Stocks' },
+  ];
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={portfolio} />
+    </MemoryRouter>
+  );
+  expect(screen.getByText(/investment portfolio/i)).toBeInTheDocument();
+  expect(screen.getByText(/total value/i)).toBeInTheDocument();
+  expect(screen.getByText(/total gain\/loss/i)).toBeInTheDocument();
+});
+
+test('Dashboard hides investment card when portfolio is empty', () => {
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByText(/investment portfolio/i)).not.toBeInTheDocument();
+});
