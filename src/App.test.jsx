@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App.jsx';
 
-// Mock localStorage for App tests
-const localStorageMock = (() => {
+// Mock localStorage and sessionStorage for App tests
+const makeStorageMock = () => {
   let store = {};
   return {
     getItem: (key) => store[key] ?? null,
@@ -10,16 +10,14 @@ const localStorageMock = (() => {
     removeItem: (key) => { delete store[key]; },
     clear: () => { store = {}; },
   };
-})();
+};
 
-Object.defineProperty(globalThis, 'localStorage', {
-  value: localStorageMock,
-  writable: true,
-});
+Object.defineProperty(globalThis, 'localStorage', { value: makeStorageMock(), writable: true });
+Object.defineProperty(globalThis, 'sessionStorage', { value: makeStorageMock(), writable: true });
 
-test('App renders without crashing', () => {
+test('App renders without crashing and shows login when not authenticated', () => {
   render(<App />);
-  // Multiple "Helios" elements exist (sidebar + mobile header), use getAllByText
-  const heliosElements = screen.getAllByText(/Helios/i);
-  expect(heliosElements.length).toBeGreaterThan(0);
+  // When not authenticated, shows login page (multiple "Sign in" elements expected)
+  const signIns = screen.getAllByText(/Sign in/i);
+  expect(signIns.length).toBeGreaterThan(0);
 });

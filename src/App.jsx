@@ -6,6 +6,10 @@ import { TripsPage } from './pages/trips/TripsPage';
 import { FinancePage } from './pages/finance/FinancePage';
 import { InvestmentsPage } from './pages/investments/InvestmentsPage';
 import { SportsPage } from './pages/sports/SportsPage';
+import { SettingsPage } from './pages/settings/SettingsPage';
+import { AuthProvider } from './auth/AuthContext';
+import { ProtectedRoute } from './auth/ProtectedRoute';
+import { LoginPage } from './auth/LoginPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './index.css';
 
@@ -27,7 +31,7 @@ function AppShell() {
         />
       )}
 
-      {/* Sidebar — hidden on mobile, fixed on md+ */}
+      {/* Sidebar */}
       <div className={`
         fixed md:relative inset-y-0 left-0 z-30
         transform transition-transform duration-200 ease-in-out
@@ -54,11 +58,12 @@ function AppShell() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-5xl mx-auto">
             <Routes>
-              <Route path="/" element={<Dashboard trips={trips} accounts={accounts} transactions={transactions} budgets={budgets} portfolio={portfolio} />} />
-              <Route path="/trips/*" element={<TripsPage />} />
-              <Route path="/finance" element={<FinancePage />} />
-              <Route path="/investments" element={<InvestmentsPage />} />
-              <Route path="/sports" element={<SportsPage />} />
+              <Route path="/" element={<ProtectedRoute><Dashboard trips={trips} accounts={accounts} transactions={transactions} budgets={budgets} portfolio={portfolio} /></ProtectedRoute>} />
+              <Route path="/trips/*" element={<ProtectedRoute><TripsPage /></ProtectedRoute>} />
+              <Route path="/finance" element={<ProtectedRoute><FinancePage /></ProtectedRoute>} />
+              <Route path="/investments" element={<ProtectedRoute><InvestmentsPage /></ProtectedRoute>} />
+              <Route path="/sports" element={<ProtectedRoute><SportsPage /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             </Routes>
           </div>
         </main>
@@ -70,7 +75,12 @@ function AppShell() {
 function App() {
   return (
     <BrowserRouter>
-      <AppShell />
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/*" element={<AppShell />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
