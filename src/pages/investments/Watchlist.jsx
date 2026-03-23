@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useIDB } from '../../hooks/useIDB';
 import { createWatchlistItem } from './investments.utils';
 
 function AddWatchForm({ onAdd, onCancel }) {
@@ -49,7 +49,7 @@ function AddWatchForm({ onAdd, onCancel }) {
 }
 
 export function Watchlist() {
-  const [items, setItems] = useLocalStorage('investments-watchlist', []);
+  const [items, setItems] = useIDB('investments-watchlist', []);
   const [showAdd, setShowAdd] = useState(false);
 
   const addItem = (item) => {

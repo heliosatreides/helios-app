@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useIDB } from '../../hooks/useIDB';
 import { ScoreCard } from './ScoreCard';
 
 const SPORTS = ['NBA', 'NFL', 'MLB', 'NHL', 'MLS'];
@@ -42,7 +42,7 @@ function filterByFavorites(allGames, favorites) {
 }
 
 export function FavoritesTab({ allGames }) {
-  const [favorites, setFavorites] = useLocalStorage('helios-sports-favorites', []);
+  const [favorites, setFavorites] = useIDB('helios-sports-favorites', []);
   const [showPicker, setShowPicker] = useState(false);
 
   const teams = collectTeams(allGames);

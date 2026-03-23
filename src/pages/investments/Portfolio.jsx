@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useIDB } from '../../hooks/useIDB';
 import { useStockQuote } from '../../hooks/useStockQuote';
 import { useStockSearch } from '../../hooks/useStockSearch';
 import {
@@ -227,7 +227,7 @@ function AddHoldingForm({ onAdd, onCancel }) {
 }
 
 export function Portfolio() {
-  const [holdings, setHoldings] = useLocalStorage('investments-portfolio', []);
+  const [holdings, setHoldings] = useIDB('investments-portfolio', []);
   const [showAdd, setShowAdd] = useState(false);
 
   const addHolding = (h) => {

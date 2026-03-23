@@ -3,7 +3,7 @@ import { Portfolio } from './Portfolio';
 import { Watchlist } from './Watchlist';
 import { StrategyNotes } from './StrategyNotes';
 import { useGemini } from '../../hooks/useGemini';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useIDB } from '../../hooks/useIDB';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { calculateAssetAllocation } from './investments.utils';
 
@@ -16,7 +16,7 @@ const TABS = [
 export function InvestmentsPage() {
   const [activeTab, setActiveTab] = useState('portfolio');
   const { generate, loading: aiLoading, hasKey } = useGemini();
-  const [holdings] = useLocalStorage('investments-portfolio', []);
+  const [holdings] = useIDB('investments-portfolio', []);
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [aiError, setAiError] = useState(null);
   const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);

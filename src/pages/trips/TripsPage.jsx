@@ -2,14 +2,14 @@ import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { TripList } from './TripList';
 import { CreateTrip } from './CreateTrip';
 import { TripDetail } from './TripDetail';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useIDB } from '../../hooks/useIDB';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
 export function TripsPage() {
-  const [trips, setTrips] = useLocalStorage('helios-trips', []);
+  const [trips, setTrips] = useIDB('helios-trips', []);
   const navigate = useNavigate();
 
   const handleCreate = (tripData) => {

@@ -10,16 +10,16 @@ import { SettingsPage } from './pages/settings/SettingsPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { useIDB } from './hooks/useIDB';
 import './index.css';
 
 function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [trips] = useLocalStorage('helios-trips', []);
-  const [accounts] = useLocalStorage('finance-accounts', []);
-  const [transactions] = useLocalStorage('finance-transactions', []);
-  const [budgets] = useLocalStorage('finance-budgets', []);
-  const [portfolio] = useLocalStorage('investments-portfolio', []);
+  const [trips] = useIDB('helios-trips', []);
+  const [accounts] = useIDB('finance-accounts', []);
+  const [transactions] = useIDB('finance-transactions', []);
+  const [budgets] = useIDB('finance-budgets', []);
+  const [portfolio] = useIDB('investments-portfolio', []);
 
   return (
     <div className="flex h-screen bg-[#0a0a0b] overflow-hidden">

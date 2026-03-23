@@ -1,7 +1,7 @@
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useIDB } from '../../hooks/useIDB';
 
 export function StrategyNotes() {
-  const [notes, setNotes] = useLocalStorage('investments-strategy-notes', '');
+  const [notes, setNotes] = useIDB('investments-strategy-notes', '');
 
   return (
     <div className="space-y-4">

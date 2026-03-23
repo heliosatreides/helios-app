@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { AccountList } from './AccountList';
@@ -16,9 +16,9 @@ function generateId() {
 const TABS = ['Accounts', 'Transactions', 'Budget'];
 
 export function FinancePage() {
-  const [accounts, setAccounts] = useLocalStorage('finance-accounts', []);
-  const [transactions, setTransactions] = useLocalStorage('finance-transactions', []);
-  const [budgets, setBudgets] = useLocalStorage('finance-budgets', []);
+  const [accounts, setAccounts] = useIDB('finance-accounts', []);
+  const [transactions, setTransactions] = useIDB('finance-transactions', []);
+  const [budgets, setBudgets] = useIDB('finance-budgets', []);
   const [activeTab, setActiveTab] = useState('Accounts');
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
