@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './pages/dashboard/Dashboard';
 import { TripsPage } from './pages/trips/TripsPage';
-import { FinancePage } from './pages/FinancePage';
+import { FinancePage } from './pages/finance/FinancePage';
 import { InvestmentsPage } from './pages/InvestmentsPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './index.css';
@@ -11,6 +11,9 @@ import './index.css';
 function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [trips] = useLocalStorage('helios-trips', []);
+  const [accounts] = useLocalStorage('finance-accounts', []);
+  const [transactions] = useLocalStorage('finance-transactions', []);
+  const [budgets] = useLocalStorage('finance-budgets', []);
 
   return (
     <div className="flex h-screen bg-[#0a0a0b] overflow-hidden">
@@ -49,7 +52,7 @@ function AppShell() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-5xl mx-auto">
             <Routes>
-              <Route path="/" element={<Dashboard trips={trips} />} />
+              <Route path="/" element={<Dashboard trips={trips} accounts={accounts} transactions={transactions} budgets={budgets} />} />
               <Route path="/trips/*" element={<TripsPage />} />
               <Route path="/finance" element={<FinancePage />} />
               <Route path="/investments" element={<InvestmentsPage />} />
