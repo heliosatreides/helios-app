@@ -1,0 +1,66 @@
+import { useState } from 'react';
+
+const CATEGORIES = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping', 'Other'];
+
+export function BudgetForm({ budget, onSave, onClose }) {
+  const [category, setCategory] = useState(budget?.category || 'Food');
+  const [limit, setLimit] = useState(budget?.limit !== undefined ? String(budget.limit) : '');
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    onSave({ category, limit: parseFloat(limit) || 0 });
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 w-full max-w-sm">
+        <h2 className="text-[#e4e4e7] text-lg font-semibold mb-5">
+          {budget ? 'Edit Budget' : 'Set Budget'}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="budget-category" className="block text-[#71717a] text-sm mb-1">Category</label>
+            <select
+              id="budget-category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            >
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="budget-limit" className="block text-[#71717a] text-sm mb-1">Monthly Limit ($)</label>
+            <input
+              id="budget-limit"
+              type="number"
+              min="0"
+              step="1"
+              value={limit}
+              onChange={(e) => setLimit(e.target.value)}
+              required
+              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-[#27272a] rounded-lg text-[#71717a] hover:text-[#e4e4e7] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-[#f59e0b] text-black rounded-lg font-semibold hover:bg-amber-400 transition-colors"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
