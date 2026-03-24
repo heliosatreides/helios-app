@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { encrypt, decrypt } from '../../auth/crypto';
+import { useIDB } from '../../hooks/useIDB';
+import { exportAllAsJSON, exportAsCSV } from '../../utils/exportData';
 
 const AI_KEY_ENC_LS = 'helios-gemini-key-enc';
 
@@ -50,6 +52,9 @@ export async function callGemini(apiKey, prompt) {
 
 export function SettingsPage() {
   const { user, password } = useAuth();
+  const [activeTab, setActiveTab] = useState('ai');
+
+  // AI Integration state
   const [apiKey, setApiKey] = useState('');
   const [decryptError, setDecryptError] = useState(false);
   const [showKey, setShowKey] = useState(false);
@@ -57,6 +62,19 @@ export function SettingsPage() {
   const [testResult, setTestResult] = useState(null); // null | 'ok' | 'error'
   const [testMsg, setTestMsg] = useState('');
   const [saved, setSaved] = useState(false);
+
+  // Export state
+  const [exportFlash, setExportFlash] = useState(null);
+
+  // IDB data for export
+  const [trips] = useIDB('helios-trips', []);
+  const [accounts] = useIDB('finance-accounts', []);
+  const [transactions] = useIDB('finance-transactions', []);
+  const [budgets] = useIDB('finance-budgets', []);
+  const [portfolio] = useIDB('investments-portfolio', []);
+  const [watchlist] = useIDB('investments-watchlist', []);
+  const [strategyNotes] = useIDB('investments-strategy-notes', '');
+  const [favorites] = useIDB('helios-sports-favorites', []);
 
   // Load and decrypt the stored key on mount / when password changes
   useEffect(() => {
@@ -113,7 +131,70 @@ export function SettingsPage() {
     }
   };
 
+  const showExportFlash = (label) => {
+    setExportFlash(label);
+    setTimeout(() => setExportFlash(null), 2000);
+  };
+
+  const handleExportJSON = () => {
+    const data = {
+      exportedAt: new Date().toISOString(),
+      trips,
+      finance: { accounts, transactions, budgets },
+      investments: { portfolio, watchlist, strategyNotes },
+      sports: { favorites },
+    };
+    exportAllAsJSON(data);
+    showExportFlash('json');
+  };
+
+  const handleExportTransactions = () => {
+    const rows = transactions.map((t) => ({
+      date: t.date ?? '',
+      description: t.description ?? '',
+      amount: t.amount ?? '',
+      type: t.type ?? '',
+      category: t.category ?? '',
+      account: t.account ?? '',
+    }));
+    exportAsCSV(rows, `helios-transactions-${new Date().toISOString().split('T')[0]}.csv`);
+    showExportFlash('transactions');
+  };
+
+  const handleExportPortfolio = () => {
+    const rows = portfolio.map((h) => ({
+      ticker: h.ticker ?? '',
+      name: h.name ?? '',
+      assetClass: h.assetClass ?? '',
+      shares: h.shares ?? '',
+      costBasis: h.costBasis ?? '',
+      currentPrice: h.currentPrice ?? '',
+      marketValue: h.marketValue ?? '',
+      gainLoss: h.gainLoss ?? '',
+    }));
+    exportAsCSV(rows, `helios-portfolio-${new Date().toISOString().split('T')[0]}.csv`);
+    showExportFlash('portfolio');
+  };
+
+  const handleExportTrips = () => {
+    const rows = trips.map((t) => ({
+      name: t.name ?? '',
+      destination: t.destination ?? '',
+      startDate: t.startDate ?? '',
+      endDate: t.endDate ?? '',
+      budget: t.budget ?? '',
+      status: t.status ?? '',
+    }));
+    exportAsCSV(rows, `helios-trips-${new Date().toISOString().split('T')[0]}.csv`);
+    showExportFlash('trips');
+  };
+
   const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+
+  const tabs = [
+    { id: 'ai', label: '✨ AI Integration' },
+    { id: 'export', label: '📦 Export Data' },
+  ];
 
   return (
     <div className="space-y-6">
@@ -122,97 +203,176 @@ export function SettingsPage() {
         <p className="text-[#71717a] text-sm mt-1">Configure your Helios preferences</p>
       </div>
 
-      {/* AI Integration */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg">✨</span>
-          <h2 className="text-[#e4e4e7] font-semibold">AI Integration</h2>
-        </div>
-        <p className="text-[#71717a] text-sm">
-          Add your Gemini API key to unlock AI-powered insights across the app.
-          Your key is stored locally and only sent to Google's servers.
-        </p>
-
-        {decryptError && (
-          <div className="text-xs px-3 py-2 rounded-lg border text-red-400 bg-red-400/10 border-red-400/20">
-            Could not decrypt key — please re-enter
-          </div>
-        )}
-
-        <div>
-          <label className="block text-[#71717a] text-xs mb-1.5">Gemini API Key</label>
-          <div className="relative">
-            <input
-              className={inputCls + ' pr-20'}
-              type={showKey ? 'text' : 'password'}
-              placeholder="AIza..."
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={() => setShowKey((s) => !s)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#71717a] hover:text-[#e4e4e7] text-xs transition-colors"
-            >
-              {showKey ? '🙈 Hide' : '👁 Show'}
-            </button>
-          </div>
-        </div>
-
-        {testResult && (
-          <div className={`text-xs px-3 py-2 rounded-lg border ${
-            testResult === 'ok'
-              ? 'text-green-400 bg-green-400/10 border-green-400/20'
-              : 'text-red-400 bg-red-400/10 border-red-400/20'
-          }`}>
-            {testResult === 'ok' ? '✅ ' : '❌ '}{testMsg}
-          </div>
-        )}
-
-        <div className="flex gap-3">
+      {/* Tab bar */}
+      <div className="flex gap-1 border-b border-[#27272a]">
+        {tabs.map((tab) => (
           <button
-            onClick={handleSave}
-            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+              activeTab === tab.id
+                ? 'text-amber-400 border-b-2 border-amber-400'
+                : 'text-[#71717a] hover:text-[#e4e4e7]'
+            }`}
           >
-            {saved ? '✓ Saved' : 'Save Key'}
+            {tab.label}
           </button>
-          <button
-            onClick={handleTest}
-            disabled={testing || !apiKey.trim()}
-            className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm transition-colors"
-          >
-            {testing ? '⏳ Testing…' : 'Test Connection'}
-          </button>
-          {apiKey && (
-            <button
-              onClick={() => {
-                setApiKey('');
-                localStorage.removeItem(AI_KEY_ENC_LS);
-                localStorage.removeItem('helios-gemini-key');
-                setTestResult(null);
-              }}
-              className="border border-[#27272a] text-red-400/70 hover:text-red-400 px-4 py-2 rounded-lg text-sm transition-colors"
-            >
-              Remove Key
-            </button>
-          )}
-        </div>
-
-        <div className="pt-2 border-t border-[#27272a]">
-          <p className="text-[#52525b] text-xs">
-            Get a free key at{' '}
-            <a
-              href="https://aistudio.google.com/app/apikey"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-amber-400/70 hover:text-amber-400 underline"
-            >
-              aistudio.google.com
-            </a>
-            . Free tier is generous for personal use.
-          </p>
-        </div>
+        ))}
       </div>
+
+      {/* AI Integration Tab */}
+      {activeTab === 'ai' && (
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">✨</span>
+            <h2 className="text-[#e4e4e7] font-semibold">AI Integration</h2>
+          </div>
+          <p className="text-[#71717a] text-sm">
+            Add your Gemini API key to unlock AI-powered insights across the app.
+            Your key is stored locally and only sent to Google's servers.
+          </p>
+
+          {decryptError && (
+            <div className="text-xs px-3 py-2 rounded-lg border text-red-400 bg-red-400/10 border-red-400/20">
+              Could not decrypt key — please re-enter
+            </div>
+          )}
+
+          <div>
+            <label className="block text-[#71717a] text-xs mb-1.5">Gemini API Key</label>
+            <div className="relative">
+              <input
+                className={inputCls + ' pr-20'}
+                type={showKey ? 'text' : 'password'}
+                placeholder="AIza..."
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey((s) => !s)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#71717a] hover:text-[#e4e4e7] text-xs transition-colors"
+              >
+                {showKey ? '🙈 Hide' : '👁 Show'}
+              </button>
+            </div>
+          </div>
+
+          {testResult && (
+            <div className={`text-xs px-3 py-2 rounded-lg border ${
+              testResult === 'ok'
+                ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                : 'text-red-400 bg-red-400/10 border-red-400/20'
+            }`}>
+              {testResult === 'ok' ? '✅ ' : '❌ '}{testMsg}
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <button
+              onClick={handleSave}
+              className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              {saved ? '✓ Saved' : 'Save Key'}
+            </button>
+            <button
+              onClick={handleTest}
+              disabled={testing || !apiKey.trim()}
+              className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              {testing ? '⏳ Testing…' : 'Test Connection'}
+            </button>
+            {apiKey && (
+              <button
+                onClick={() => {
+                  setApiKey('');
+                  localStorage.removeItem(AI_KEY_ENC_LS);
+                  localStorage.removeItem('helios-gemini-key');
+                  setTestResult(null);
+                }}
+                className="border border-[#27272a] text-red-400/70 hover:text-red-400 px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                Remove Key
+              </button>
+            )}
+          </div>
+
+          <div className="pt-2 border-t border-[#27272a]">
+            <p className="text-[#52525b] text-xs">
+              Get a free key at{' '}
+              <a
+                href="https://aistudio.google.com/app/apikey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400/70 hover:text-amber-400 underline"
+              >
+                aistudio.google.com
+              </a>
+              . Free tier is generous for personal use.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Export Data Tab */}
+      {activeTab === 'export' && (
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-6">
+          <div>
+            <h2 className="text-[#e4e4e7] font-semibold text-lg">Export Your Data</h2>
+            <p className="text-[#71717a] text-sm mt-1">
+              Download your Helios data as JSON or CSV. Your data never leaves your device.
+            </p>
+          </div>
+
+          {/* Success flash */}
+          {exportFlash && (
+            <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+              ✅ Exported!
+            </div>
+          )}
+
+          {/* Full JSON export */}
+          <div className="space-y-3">
+            <h3 className="text-[#a1a1aa] text-sm font-medium">Full Export</h3>
+            <button
+              onClick={handleExportJSON}
+              className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              ⬇️ Export All Data (JSON)
+            </button>
+            <p className="text-[#52525b] text-xs">
+              Exports all trips, finance, investments, and sports data in a single structured JSON file.
+            </p>
+          </div>
+
+          <div className="border-t border-[#27272a]" />
+
+          {/* Per-module CSV exports */}
+          <div className="space-y-3">
+            <h3 className="text-[#a1a1aa] text-sm font-medium">Per-Module CSV</h3>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={handleExportTransactions}
+                className="border border-[#27272a] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+              >
+                📋 Export Transactions (CSV)
+              </button>
+              <button
+                onClick={handleExportPortfolio}
+                className="border border-[#27272a] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+              >
+                📋 Export Portfolio (CSV)
+              </button>
+              <button
+                onClick={handleExportTrips}
+                className="border border-[#27272a] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+              >
+                📋 Export Trips (CSV)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* App info */}
       <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6">
