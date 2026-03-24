@@ -1,8 +1,8 @@
-import { render, screen, act, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { ChatPage } from './ChatPage';
-import { generateRoomId } from './usePeer';
+import { generateRoomId, generatePin } from './usePeer';
 
 // Mock trystero/nostr
 const mockLeave = vi.fn();
@@ -41,6 +41,22 @@ describe('generateRoomId', () => {
   });
 });
 
+describe('generatePin', () => {
+  it('generates a 4-digit string', () => {
+    const pin = generatePin();
+    expect(pin).toHaveLength(4);
+    expect(pin).toMatch(/^\d{4}$/);
+  });
+
+  it('generates values between 1000-9999', () => {
+    for (let i = 0; i < 20; i++) {
+      const n = parseInt(generatePin(), 10);
+      expect(n).toBeGreaterThanOrEqual(1000);
+      expect(n).toBeLessThanOrEqual(9999);
+    }
+  });
+});
+
 describe('ChatPage', () => {
   beforeEach(() => {
     mockLeave.mockClear();
@@ -49,32 +65,30 @@ describe('ChatPage', () => {
     mockMakeAction.mockReturnValue([vi.fn(), vi.fn()]);
   });
 
-  it('shows initializing then waiting state for host', async () => {
-    renderChat();
-    // Should eventually show waiting (Trystero joins async)
-    await vi.waitFor(() => {
-      expect(screen.queryByText(/setting up/i) || screen.queryByText(/waiting/i)).toBeTruthy();
-    });
+  it('renders without crashing', () => {
+    const { container } = renderChat();
+    expect(container.firstChild).toBeTruthy();
   });
 
-  it('shows waiting state with share link for host', async () => {
+  it('shows initializing/waiting state for host', async () => {
     renderChat();
-    await vi.waitFor(() => {
-      expect(screen.queryByText(/waiting for someone/i) || screen.queryByText(/joining chat/i)).toBeTruthy();
-    });
-  });
-
-  it('shows joining state for guest', async () => {
-    renderChat('?room=testroom123');
     await vi.waitFor(() => {
       expect(
-        screen.queryByText(/joining chat/i) || screen.queryByText(/waiting/i)
+        screen.queryByText(/setting up/i) ||
+        screen.queryByText(/waiting for someone/i) ||
+        screen.queryByText(/waiting/i)
       ).toBeTruthy();
     });
   });
 
-  it('renders without crashing and shows some UI', async () => {
-    const { container } = renderChat();
-    expect(container.firstChild).toBeTruthy();
+  it('shows joining/waiting state for guest', async () => {
+    renderChat('?room=testroom123');
+    await vi.waitFor(() => {
+      expect(
+        screen.queryByText(/connecting/i) ||
+        screen.queryByText(/waiting/i) ||
+        screen.queryByText(/enter/i)
+      ).toBeTruthy();
+    });
   });
 });

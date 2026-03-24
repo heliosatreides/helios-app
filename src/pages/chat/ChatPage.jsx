@@ -3,78 +3,189 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { usePeer } from './usePeer';
 import { ChatMessage } from './ChatMessage';
 
-function CopyLinkBox({ link }) {
-  const [copied, setCopied] = useState(false);
+// ── helpers ──────────────────────────────────────────────────────────────────
 
+function CopyButton({ text, label = 'Copy' }) {
+  const [copied, setCopied] = useState(false);
   const copy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(link);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback: select the text
+    try { await navigator.clipboard.writeText(text); } catch { /* ignore */ }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [text]);
+  return (
+    <button
+      onClick={copy}
+      className="px-3 py-1.5 rounded-lg bg-amber-500 text-[#0a0a0b] text-xs font-semibold hover:bg-amber-400 active:scale-95 transition-all"
+    >
+      {copied ? '✓ Copied' : label}
+    </button>
+  );
+}
+
+function Spinner({ size = 8 }) {
+  return (
+    <div
+      className={`w-${size} h-${size} border-2 border-amber-500 border-t-transparent rounded-full animate-spin`}
+    />
+  );
+}
+
+// ── PIN entry (guest) ─────────────────────────────────────────────────────────
+
+function PinEntry({ onSubmit, rejected }) {
+  const [digits, setDigits] = useState(['', '', '', '']);
+  const refs = [useRef(), useRef(), useRef(), useRef()];
+
+  const handleChange = (i, val) => {
+    const d = val.replace(/\D/, '').slice(-1);
+    const next = [...digits];
+    next[i] = d;
+    setDigits(next);
+    if (d && i < 3) refs[i + 1].current?.focus();
+  };
+
+  const handleKeyDown = (i, e) => {
+    if (e.key === 'Backspace' && !digits[i] && i > 0) {
+      refs[i - 1].current?.focus();
     }
-  }, [link]);
+  };
+
+  const handlePaste = (e) => {
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+    if (pasted.length === 4) {
+      setDigits(pasted.split(''));
+      refs[3].current?.focus();
+    }
+  };
+
+  const submit = () => {
+    const pin = digits.join('');
+    if (pin.length === 4) onSubmit(pin);
+  };
+
+  const full = digits.every(Boolean);
 
   return (
-    <div className="w-full max-w-lg mx-auto mt-6">
-      <p className="text-zinc-400 text-sm mb-2 text-center">Share this link to invite someone:</p>
-      <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3">
-        <span className="flex-1 text-zinc-200 text-sm font-mono break-all select-all">{link}</span>
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
+      <div className="w-full max-w-sm">
+        {/* Icon */}
+        <div className="flex justify-center mb-6">
+          <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-3xl">
+            🔐
+          </div>
+        </div>
+
+        <h1 className="text-xl font-semibold text-zinc-100 text-center mb-1">Enter Access Code</h1>
+        <p className="text-zinc-500 text-sm text-center mb-8">
+          Ask the person who shared this link for their 4-digit code
+        </p>
+
+        {/* 4 digit boxes */}
+        <div className="flex gap-3 justify-center mb-4" onPaste={handlePaste}>
+          {digits.map((d, i) => (
+            <input
+              key={i}
+              ref={refs[i]}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={d}
+              autoFocus={i === 0}
+              onChange={e => handleChange(i, e.target.value)}
+              onKeyDown={e => handleKeyDown(i, e)}
+              className={`w-14 h-16 text-center text-2xl font-bold rounded-xl border bg-zinc-900 text-zinc-100 focus:outline-none transition-colors
+                ${rejected
+                  ? 'border-red-500 text-red-400'
+                  : d
+                    ? 'border-amber-500 text-amber-400'
+                    : 'border-zinc-700 focus:border-amber-500/70'
+                }`}
+            />
+          ))}
+        </div>
+
+        {rejected && (
+          <p className="text-red-400 text-sm text-center mb-4 animate-pulse">
+            Incorrect code — try again
+          </p>
+        )}
+
         <button
-          onClick={copy}
-          className="shrink-0 px-3 py-1.5 rounded-lg bg-amber-500 text-[#0a0a0b] text-xs font-semibold hover:bg-amber-400 transition-colors"
+          onClick={submit}
+          disabled={!full}
+          className="w-full py-3 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold text-sm hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all mt-2"
         >
-          {copied ? '✓ Copied' : 'Copy'}
+          Join Chat
         </button>
       </div>
     </div>
   );
 }
 
-function RelayPanel({ relayStatus, collapsed = false }) {
-  const [open, setOpen] = useState(!collapsed);
-  if (!relayStatus?.length) return null;
-  const connectedCount = relayStatus.filter(r => r.connected).length;
+// ── waiting screen (host) ─────────────────────────────────────────────────────
+
+function WaitingHost({ chatLink, pin, relayStatus }) {
+  const connectedRelays = relayStatus.filter(r => r.connected).length;
 
   return (
-    <div className="w-full max-w-lg mx-auto mt-4">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between text-xs text-zinc-500 hover:text-zinc-400 transition-colors px-1"
-      >
-        <span className="flex items-center gap-1.5">
-          <span className={`w-1.5 h-1.5 rounded-full ${connectedCount > 0 ? 'bg-emerald-400' : 'bg-red-500'}`} />
-          {connectedCount}/{relayStatus.length} relays connected
-        </span>
-        <span>{open ? '▲' : '▼'}</span>
-      </button>
-      {open && (
-        <div className="mt-2 bg-zinc-900/60 border border-zinc-800 rounded-xl p-3 space-y-1.5">
-          {relayStatus.map(r => (
-            <div key={r.url} className="flex items-center gap-2 text-xs">
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${r.connected ? 'bg-emerald-400' : r.state === 0 ? 'bg-amber-400 animate-pulse' : 'bg-zinc-600'}`} />
-              <span className={`font-mono truncate ${r.connected ? 'text-zinc-300' : 'text-zinc-600'}`}>
-                {r.url.replace('wss://', '')}
-              </span>
-              <span className={`ml-auto shrink-0 ${r.connected ? 'text-emerald-400' : r.state === 0 ? 'text-amber-400' : 'text-zinc-600'}`}>
-                {r.connected ? 'connected' : r.state === 0 ? 'connecting…' : 'offline'}
-              </span>
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
+      <div className="w-full max-w-sm space-y-4">
+        {/* Pulse ring */}
+        <div className="flex justify-center mb-2">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full bg-amber-500" />
             </div>
-          ))}
+            <div className="absolute inset-0 rounded-full border border-amber-500/20 animate-ping" />
+          </div>
         </div>
-      )}
+
+        <div className="text-center">
+          <h2 className="text-lg font-semibold text-zinc-100 mb-1">Waiting for someone to join</h2>
+          <p className="text-zinc-500 text-sm">Share the link and code below</p>
+        </div>
+
+        {/* PIN card */}
+        <div className="bg-zinc-900 border border-amber-500/30 rounded-2xl p-5">
+          <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Your Access Code</p>
+          <p className="text-5xl font-bold tracking-[0.2em] text-amber-400 mb-3">{pin}</p>
+          <p className="text-zinc-600 text-xs">Share this verbally or in a separate message — not in this chat</p>
+        </div>
+
+        {/* Link */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
+          <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Invite Link</p>
+          <div className="flex items-center gap-2">
+            <span className="flex-1 text-zinc-300 text-xs font-mono break-all truncate">{chatLink}</span>
+            <CopyButton text={chatLink} />
+          </div>
+        </div>
+
+        {/* Relay status pill */}
+        <div className="flex justify-center">
+          <div className="flex items-center gap-1.5 text-xs text-zinc-600 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1.5">
+            <span className={`w-1.5 h-1.5 rounded-full ${connectedRelays > 0 ? 'bg-emerald-400' : 'bg-zinc-600'}`} />
+            {connectedRelays}/{relayStatus.length} relays connected
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function Spinner() {
+// ── waiting screen (guest) ────────────────────────────────────────────────────
+
+function WaitingGuest() {
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
+      <Spinner size={8} />
+      <p className="mt-5 text-zinc-200 font-semibold">Connecting…</p>
+      <p className="mt-1 text-zinc-600 text-sm">Waiting for the host to be present</p>
     </div>
   );
 }
+
+// ── chat input ────────────────────────────────────────────────────────────────
 
 function ChatInput({ onSend }) {
   const [text, setText] = useState('');
@@ -95,27 +206,33 @@ function ChatInput({ onSend }) {
   }, [handleSend]);
 
   return (
-    <div className="border-t border-zinc-800 p-3 flex gap-2 items-end bg-[#0a0a0b]">
+    <div className="border-t border-zinc-800/80 px-3 py-3 flex gap-2 items-end bg-[#0c0c0e]">
       <textarea
         ref={textareaRef}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={e => setText(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Type a message… (Enter to send)"
+        placeholder="Message…"
         rows={1}
-        className="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-amber-500/50 transition-colors"
+        autoFocus
+        className="flex-1 bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-600 transition-colors"
         style={{ minHeight: '44px', maxHeight: '120px' }}
       />
       <button
         onClick={handleSend}
         disabled={!text.trim()}
-        className="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] text-sm font-semibold hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="shrink-0 w-10 h-10 rounded-xl bg-amber-500 text-[#0a0a0b] flex items-center justify-center hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 transition-all"
+        aria-label="Send"
       >
-        Send
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
       </button>
     </div>
   );
 }
+
+// ── main ChatPage ─────────────────────────────────────────────────────────────
 
 export function ChatPage() {
   const [searchParams] = useSearchParams();
@@ -123,59 +240,53 @@ export function ChatPage() {
   const roomId = searchParams.get('room');
   const isGuest = Boolean(roomId);
 
-  const { peerId, messages, sendMessage, status, peerCount, relayStatus } = usePeer({ isGuest, roomId });
+  const {
+    peerId,
+    pin,
+    messages,
+    sendMessage,
+    submitPin,
+    pinStatus,
+    status,
+    reconnecting,
+    peerCount,
+    relayStatus,
+    leave,
+  } = usePeer({ isGuest, roomId });
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
-    if (typeof messagesEndRef.current?.scrollIntoView === 'function') {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const chatLink = peerId ? `${window.location.origin}/chat?room=${peerId}` : null;
 
-  const handleNewChat = useCallback(() => {
+  const handleLeave = useCallback(() => {
+    leave();
     navigate('/chat');
-  }, [navigate]);
+  }, [leave, navigate]);
 
-  // ---- render states ----
+  // ── states ────────────────────────────────────────────────────────────────
 
   if (status === 'initializing') {
     return (
-      <FullScreenDark>
-        <Spinner />
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b]">
+        <Spinner size={8} />
         <p className="mt-4 text-zinc-400 text-sm">Setting up secure connection…</p>
-        <p className="mt-2 text-zinc-600 text-xs">This usually takes 2-3 seconds</p>
-      </FullScreenDark>
-    );
-  }
-
-  if (status === 'error' && isGuest) {
-    return (
-      <FullScreenDark>
-        <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 max-w-sm w-full text-center">
-          <p className="text-red-400 text-lg font-semibold mb-2">Room is full or host has left</p>
-          <p className="text-zinc-500 text-sm mb-6">The chat room you tried to join is unavailable.</p>
-          <button
-            onClick={handleNewChat}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold hover:bg-amber-400 transition-colors"
-          >
-            Start New Chat
-          </button>
-        </div>
-      </FullScreenDark>
+      </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <FullScreenDark>
-        <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 max-w-sm w-full text-center">
-          <p className="text-red-400 text-lg font-semibold mb-2">Could not connect</p>
-          <p className="text-zinc-400 text-sm mb-6">
-            {isGuest
-              ? 'The room is unavailable or the host has left.'
-              : 'Could not reach the signaling server. Check your connection and try again.'}
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 max-w-sm w-full text-center">
+          <p className="text-2xl mb-3">⚠️</p>
+          <p className="text-zinc-100 font-semibold mb-2">
+            {isGuest ? 'Room unavailable' : 'Could not connect'}
+          </p>
+          <p className="text-zinc-500 text-sm mb-6">
+            {isGuest ? 'The host may have left or the link is invalid.' : 'Check your connection and try again.'}
           </p>
           <button
             onClick={() => window.location.reload()}
@@ -184,87 +295,92 @@ export function ChatPage() {
             Try Again
           </button>
         </div>
-      </FullScreenDark>
+      </div>
     );
   }
 
-  // If waiting but we already have messages, show the chat UI with a reconnecting banner
-  // This handles the case where one side refreshes — room stays open, banner shows until they rejoin
-  if (status === 'waiting' && messages.length === 0) {
-    return (
-      <FullScreenDark>
-        <Spinner />
-        {isGuest ? (
-          <>
-            <p className="mt-4 text-zinc-300 text-lg font-semibold">Joining chat room…</p>
-            <p className="mt-2 text-zinc-500 text-sm">Waiting for the host to be present</p>
-          </>
-        ) : (
-          <>
-            <p className="mt-4 text-zinc-300 text-lg font-semibold">Waiting for someone to join…</p>
-            {chatLink && <CopyLinkBox link={chatLink} />}
-            <RelayPanel relayStatus={relayStatus} />
-          </>
-        )}
-      </FullScreenDark>
-    );
+  // Guest: waiting for host to appear
+  if (isGuest && status === 'waiting' && pinStatus === 'pending' && peerCount === 0) {
+    return <WaitingGuest />;
   }
 
-  // connected, or waiting-with-history (reconnecting) — show chat UI
+  // Guest: host is present but PIN not yet verified
+  if (isGuest && pinStatus === 'pending') {
+    return <PinEntry onSubmit={submitPin} rejected={pinStatus === 'rejected'} />;
+  }
+
+  // Guest: PIN was rejected — show PIN entry with error
+  if (isGuest && pinStatus === 'rejected') {
+    return <PinEntry onSubmit={submitPin} rejected={true} />;
+  }
+
+  // Host: waiting for guest, no messages yet
+  if (!isGuest && status === 'waiting' && messages.length === 0) {
+    return <WaitingHost chatLink={chatLink} pin={pin} relayStatus={relayStatus} />;
+  }
+
+  // ── chat UI (connected or reconnecting) ────────────────────────────────────
+
+  const connectedRelays = relayStatus.filter(r => r.connected).length;
+
   return (
-    <div className="fixed inset-0 flex flex-col bg-[#0a0a0b] z-50">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-[#111113] shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" aria-label="Connected" />
-          <span className="text-zinc-200 text-sm font-semibold">P2P Chat</span>
-          {relayStatus.length > 0 && (
-            <span className="text-xs text-zinc-500 ml-1">
-              {relayStatus.filter(r => r.connected).length}/{relayStatus.length} relays
-            </span>
-          )}
+    <div className="fixed inset-0 flex flex-col bg-[#0a0a0b]">
+      {/* Reconnecting banner */}
+      {reconnecting && (
+        <div className="absolute top-[53px] inset-x-0 z-20 flex items-center justify-center gap-2 px-4 py-2 bg-amber-950/80 border-b border-amber-800/50 backdrop-blur-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <span className="text-amber-300 text-xs">Waiting for them to reconnect…</span>
         </div>
-        <button
-          onClick={handleNewChat}
-          className="text-zinc-500 hover:text-red-400 text-xs transition-colors"
-        >
-          Leave
-        </button>
+      )}
+
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800/80 bg-[#0c0c0e] shrink-0 z-10">
+        <div className="flex items-center gap-2.5">
+          <div className="relative">
+            <span className={`block w-2.5 h-2.5 rounded-full ${peerCount > 0 ? 'bg-emerald-400' : 'bg-zinc-600'}`} />
+            {peerCount > 0 && (
+              <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-40" />
+            )}
+          </div>
+          <div>
+            <span className="text-zinc-100 text-sm font-semibold">P2P Chat</span>
+            <span className="text-zinc-600 text-xs ml-2">
+              {peerCount > 0 ? '🔒 End-to-end encrypted' : 'waiting…'}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-zinc-700 text-xs">{connectedRelays}/{relayStatus.length} relays</span>
+          <button
+            onClick={handleLeave}
+            className="text-zinc-500 hover:text-red-400 text-xs font-medium transition-colors px-2 py-1 rounded-lg hover:bg-red-950/30"
+          >
+            Leave
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-0.5">
         {messages.length === 0 && (
           <div className="flex items-center justify-center h-full">
-            <p className="text-zinc-600 text-sm">Send the first message!</p>
+            <p className="text-zinc-700 text-sm">Connected — say hi!</p>
           </div>
         )}
         {messages.map((msg, i) => (
-          <ChatMessage key={i} message={msg} />
+          <ChatMessage
+            key={i}
+            message={msg}
+            prevMessage={i > 0 ? messages[i - 1] : null}
+          />
         ))}
         <div ref={messagesEndRef} />
       </div>
-
-      {/* Reconnecting banner — non-blocking, preserves message history */}
-      {status === 'waiting' && messages.length > 0 && (
-        <div className="absolute top-[53px] inset-x-0 z-10 flex items-center justify-center px-4 py-2 bg-zinc-900/95 border-b border-zinc-800">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse mr-2 shrink-0" />
-          <span className="text-zinc-400 text-xs">Other person disconnected — waiting for them to rejoin…</span>
-        </div>
-      )}
 
       {/* Input */}
       <div className="shrink-0">
         <ChatInput onSend={sendMessage} />
       </div>
-    </div>
-  );
-}
-
-function FullScreenDark({ children }) {
-  return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6 z-50">
-      {children}
     </div>
   );
 }

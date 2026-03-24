@@ -8,6 +8,11 @@ export function generateRoomId() {
     .join('');
 }
 
+// Generate a 4-digit PIN (in memory only, never persisted)
+export function generatePin() {
+  return String(Math.floor(1000 + Math.random() * 9000));
+}
+
 const RELAY_URLS = [
   'wss://relay.damus.io',
   'wss://nos.lol',
@@ -16,8 +21,6 @@ const RELAY_URLS = [
   'wss://nostr.data.haus',
 ];
 
-// Fetch TURN credentials from our Vercel serverless proxy (/api/turn)
-// The proxy holds the Cloudflare TURN key server-side — key never exposed to browser
 async function getIceServers() {
   try {
     const res = await fetch('/api/turn');
@@ -26,8 +29,6 @@ async function getIceServers() {
       if (data.iceServers?.length) return data.iceServers;
     }
   } catch { /* fallback */ }
-
-  // Fallback: STUN only (works for same-network connections)
   return [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
@@ -37,15 +38,23 @@ async function getIceServers() {
 
 export function usePeer({ isGuest = false, roomId = null } = {}) {
   const [peerId] = useState(() => isGuest ? null : roomId || generateRoomId());
+  // Host: generate PIN once. Guest: null until verified.
+  const [pin] = useState(() => isGuest ? null : generatePin());
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState('initializing');
+  // pinStatus: 'pending' | 'verified' | 'rejected'
+  const [pinStatus, setPinStatus] = useState(isGuest ? 'pending' : 'verified');
+  const [reconnecting, setReconnecting] = useState(false);
   const [peerCount, setPeerCount] = useState(0);
   const [relayStatus, setRelayStatus] = useState([]);
 
   const roomRef = useRef(null);
   const sendRef = useRef(null);
+  const sendPinVerifyRef = useRef(null);
+  const sendPinResultRef = useRef(null);
   const hasGuestRef = useRef(false);
   const intervalRef = useRef(null);
+  const pinRef = useRef(pin); // stable ref to pin for callbacks
 
   const actualRoomId = isGuest ? roomId : peerId;
 
@@ -56,6 +65,21 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     setMessages(prev => [...prev, { text: text.trim(), from: 'you', timestamp: msg.timestamp }]);
   }, []);
 
+  // Guest calls this to submit their PIN attempt
+  const submitPin = useCallback((attempt) => {
+    if (!sendPinVerifyRef.current) return;
+    sendPinVerifyRef.current({ pin: attempt });
+  }, []);
+
+  // Explicit leave — tears down room cleanly
+  const leave = useCallback(() => {
+    clearInterval(intervalRef.current);
+    if (roomRef.current) {
+      roomRef.current.leave();
+      roomRef.current = null;
+    }
+  }, []);
+
   useEffect(() => {
     if (!actualRoomId) { setStatus('error'); return; }
 
@@ -63,7 +87,6 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
     async function setup() {
       try {
-        // Fetch TURN credentials before joining
         const iceServers = await getIceServers();
         if (cancelled) return;
 
@@ -72,7 +95,6 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
         const room = joinRoom({
           appId: 'helios-p2p-chat-v1',
-          // Pass ICE servers as rtcConfig so WebRTC uses our TURN servers
           rtcConfig: { iceServers },
           relayRedundancy: 5,
           relayUrls: RELAY_URLS,
@@ -80,29 +102,61 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
         roomRef.current = room;
 
+        // Chat messages
         const [sendMsg, onMsg] = room.makeAction('msg');
         sendRef.current = sendMsg;
+
+        // PIN verification actions
+        const [sendPinVerify, onPinVerify] = room.makeAction('pin-verify');
+        const [sendPinResult, onPinResult] = room.makeAction('pin-result');
+        sendPinVerifyRef.current = sendPinVerify;
+        sendPinResultRef.current = sendPinResult;
 
         onMsg((data) => {
           setMessages(prev => [...prev, {
             text: data.text,
             from: 'them',
-            timestamp: data.timestamp ?? Date.now()
+            timestamp: data.timestamp ?? Date.now(),
           }]);
         });
 
+        // Host handles PIN verification from guest
+        if (!isGuest) {
+          onPinVerify((data) => {
+            const correct = data.pin === pinRef.current;
+            sendPinResult({ ok: correct });
+            // Host side is always verified; just track guest auth
+          });
+        }
+
+        // Guest receives PIN result from host
+        if (isGuest) {
+          onPinResult((data) => {
+            if (data.ok) {
+              setPinStatus('verified');
+              setStatus('connected');
+            } else {
+              setPinStatus('rejected');
+            }
+          });
+        }
+
         room.onPeerJoin(() => {
-          if (!isGuest && hasGuestRef.current) return; // ignore 2nd guest
+          if (!isGuest && hasGuestRef.current) return;
           hasGuestRef.current = true;
-          setStatus('connected');
+          setReconnecting(false);
+          if (!isGuest) {
+            // Host: mark connected once peer joins
+            setStatus('connected');
+          }
+          // Guest: stays at pinStatus 'pending' until PIN verified
           setPeerCount(c => c + 1);
         });
 
         room.onPeerLeave(() => {
           hasGuestRef.current = false;
           setPeerCount(c => Math.max(0, c - 1));
-          // Go back to waiting — don't destroy the room. If the other
-          // person refreshes they'll rejoin the same room via the URL.
+          setReconnecting(true);
           setStatus('waiting');
         });
 
@@ -139,5 +193,17 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     };
   }, [actualRoomId, isGuest]);
 
-  return { peerId: actualRoomId, messages, sendMessage, status, peerCount, relayStatus };
+  return {
+    peerId: actualRoomId,
+    pin,           // host only — display to user
+    messages,
+    sendMessage,
+    submitPin,     // guest only — call with PIN attempt
+    pinStatus,     // 'pending' | 'verified' | 'rejected'
+    status,
+    reconnecting,
+    peerCount,
+    relayStatus,
+    leave,
+  };
 }
