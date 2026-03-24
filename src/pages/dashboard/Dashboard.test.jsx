@@ -39,13 +39,13 @@ const mockTrips = [
   },
 ];
 
-test('Dashboard renders welcome card', () => {
+test('Dashboard renders page header', () => {
   render(
     <MemoryRouter>
       <Dashboard trips={mockTrips} />
     </MemoryRouter>
   );
-  expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+  expect(screen.getByText('Dashboard')).toBeInTheDocument();
 });
 
 test('Dashboard shows upcoming trips stat', () => {
@@ -57,13 +57,14 @@ test('Dashboard shows upcoming trips stat', () => {
   expect(screen.getByText(/upcoming trips/i)).toBeInTheDocument();
 });
 
-test('Dashboard shows total budget', () => {
+test('Dashboard shows budget info in stat card', () => {
   render(
     <MemoryRouter>
       <Dashboard trips={mockTrips} />
     </MemoryRouter>
   );
-  expect(screen.getByText(/total budget/i)).toBeInTheDocument();
+  // Budget appears as sub-text under Upcoming Trips
+  expect(screen.getByText(/\$5,800 budget/i)).toBeInTheDocument();
 });
 
 test('Dashboard shows recent trips', () => {
@@ -75,7 +76,7 @@ test('Dashboard shows recent trips', () => {
   expect(screen.getByText('Tokyo Adventure')).toBeInTheDocument();
 });
 
-test('Dashboard shows investment summary card when portfolio has holdings', () => {
+test('Dashboard shows portfolio stat when portfolio has holdings', () => {
   const portfolio = [
     { id: '1', ticker: 'AAPL', shares: 10, costBasis: 150, currentPrice: 200, assetClass: 'Stocks' },
   ];
@@ -84,16 +85,14 @@ test('Dashboard shows investment summary card when portfolio has holdings', () =
       <Dashboard trips={[]} portfolio={portfolio} />
     </MemoryRouter>
   );
-  expect(screen.getByText(/investment portfolio/i)).toBeInTheDocument();
-  expect(screen.getByText(/total value/i)).toBeInTheDocument();
-  expect(screen.getByText(/total gain\/loss/i)).toBeInTheDocument();
+  expect(screen.getByText(/portfolio/i)).toBeInTheDocument();
 });
 
-test('Dashboard hides investment card when portfolio is empty', () => {
+test('Dashboard shows empty state when no data', () => {
   render(
     <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} />
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
     </MemoryRouter>
   );
-  expect(screen.queryByText(/investment portfolio/i)).not.toBeInTheDocument();
+  expect(screen.getByText(/Welcome to Helios/i)).toBeInTheDocument();
 });

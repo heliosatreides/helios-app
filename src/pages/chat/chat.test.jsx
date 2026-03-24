@@ -47,18 +47,14 @@ describe('ChatPage', () => {
     expect(container.firstChild).toBeTruthy();
   });
 
-  it('shows initializing/waiting state for host', async () => {
+  it('shows lobby screen with create/join options when no room param', () => {
     renderChat();
-    await vi.waitFor(() => {
-      expect(
-        screen.queryByText(/setting up/i) ||
-        screen.queryByText(/waiting for someone/i) ||
-        screen.queryByText(/waiting/i)
-      ).toBeTruthy();
-    });
+    expect(screen.getByText(/P2P Ephemeral Chat/i)).toBeInTheDocument();
+    expect(screen.getByText(/Create New Room/i)).toBeInTheDocument();
+    expect(screen.getByText(/Join Room/i)).toBeInTheDocument();
   });
 
-  it('shows connecting/waiting state for guest', async () => {
+  it('shows connecting state for guest with room param', async () => {
     renderChat('?room=testroom123');
     await vi.waitFor(() => {
       expect(

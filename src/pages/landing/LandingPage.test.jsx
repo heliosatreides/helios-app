@@ -17,8 +17,8 @@ describe('LandingPage', () => {
 
   it('shows the hero headline', () => {
     renderLanding();
-    expect(screen.getByText(/Your life, organized/i)).toBeInTheDocument();
-    expect(screen.getByText(/No cloud required/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your entire life/i)).toBeInTheDocument();
+    expect(screen.getByText(/one private dashboard/i)).toBeInTheDocument();
   });
 
   it('CTA "Get Started" links to /login', () => {
@@ -44,7 +44,7 @@ describe('LandingPage', () => {
     expect(screen.getByText(/100% local. Zero servers. Zero tracking./i)).toBeInTheDocument();
   });
 
-  it('shows all four feature cards', () => {
+  it('shows feature cards for default category', () => {
     renderLanding();
     expect(screen.getByText('Trip Planning')).toBeInTheDocument();
     expect(screen.getByText('Personal Finance')).toBeInTheDocument();
@@ -52,11 +52,11 @@ describe('LandingPage', () => {
     expect(screen.getByText('Sports Hub')).toBeInTheDocument();
   });
 
-  it('shows privacy deep-dive section', () => {
+  it('shows privacy section', () => {
     renderLanding();
-    expect(screen.getByText(/Stored in your browser/i)).toBeInTheDocument();
-    expect(screen.getByText(/Encrypted at rest/i)).toBeInTheDocument();
-    expect(screen.getByText(/No accounts, no tracking/i)).toBeInTheDocument();
+    expect(screen.getByText(/Browser-native storage/i)).toBeInTheDocument();
+    expect(screen.getByText(/Encrypted secrets/i)).toBeInTheDocument();
+    expect(screen.getByText(/Zero data collection/i)).toBeInTheDocument();
   });
 
   it('shows AI section headline', () => {
