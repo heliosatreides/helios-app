@@ -71,7 +71,7 @@ export function AddAccountModal({ account, onSave, onClose }) {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#f59e0b] text-black rounded-lg font-semibold hover:bg-amber-400 transition-colors"
+              className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all shadow-sm shadow-amber-500/10"
             >
               Save
             </button>

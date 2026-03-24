@@ -89,7 +89,7 @@ function AddContactModal({ onSave, onClose }) {
             />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 bg-[#f59e0b] text-black font-semibold py-2 rounded-lg text-sm hover:bg-amber-400 transition-colors">
+            <button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold py-2 rounded-xl text-sm transition-colors">
               Add Contact
             </button>
             <button type="button" onClick={onClose} className="flex-1 bg-[#27272a] text-[#e4e4e7] font-semibold py-2 rounded-lg text-sm hover:bg-[#3f3f46] transition-colors">
@@ -139,7 +139,7 @@ function LogInteractionModal({ contact, onSave, onClose }) {
             />
           </div>
           <div className="flex gap-3">
-            <button type="submit" className="flex-1 bg-[#f59e0b] text-black font-semibold py-2 rounded-lg text-sm hover:bg-amber-400 transition-colors">
+            <button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold py-2 rounded-xl text-sm transition-colors">
               Log
             </button>
             <button type="button" onClick={onClose} className="flex-1 bg-[#27272a] text-[#e4e4e7] font-semibold py-2 rounded-lg text-sm hover:bg-[#3f3f46] transition-colors">
@@ -407,7 +407,7 @@ export function NetworkingTab() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="px-4 py-2 bg-[#f59e0b] text-black rounded-lg font-semibold hover:bg-amber-400 transition-colors text-sm"
+          className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           data-testid="add-contact-btn"
         >
           + Add Contact
@@ -457,7 +457,7 @@ export function NetworkingTab() {
           <button
             type="button"
             onClick={() => setShowAdd(true)}
-            className="px-4 py-2 bg-[#f59e0b] text-black rounded-lg font-semibold hover:bg-amber-400 transition-colors text-sm"
+            className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           >
             + Add Contact
           </button>

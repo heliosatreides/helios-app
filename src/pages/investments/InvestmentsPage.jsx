@@ -47,15 +47,15 @@ export function InvestmentsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-1">
+      <div className="flex gap-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? 'bg-[#f59e0b] text-black'
-                : 'text-[#71717a] hover:text-[#e4e4e7]'
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                : 'text-[#52525b] hover:text-[#a1a1aa] border border-transparent'
             }`}
           >
             {tab.label}
