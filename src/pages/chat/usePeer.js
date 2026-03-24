@@ -12,6 +12,12 @@ export function generateRoomId() {
 // Prefix room IDs so PeerJS IDs don't collide with other apps
 const PEER_PREFIX = 'helios-chat-';
 
+// Timing constants — tuned for sub-3s connection on happy path
+const SIGNAL_OPEN_TIMEOUT_MS = 4000;    // If signaling 'open' doesn't fire, destroy + retry
+const ICE_TIMEOUT_MS = 6000;            // If DataConnection 'open' doesn't fire, retry ICE
+const PEER_UNAVAILABLE_RETRY_MS = 2000; // Guest retry when host not yet registered
+const CONN_FAILURE_RETRY_MS = 1500;     // Retry after connection close/failure
+
 // Fetch TURN + STUN servers from our Vercel proxy
 async function getIceServers() {
   try {
@@ -40,6 +46,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const hasGuestRef = useRef(false);
   const retryTimerRef = useRef(null);
   const openTimeoutRef = useRef(null);
+  const signalingTimeoutRef = useRef(null);
 
   const actualRoomId = isGuest ? roomId : (peerId ?? roomId);
 
@@ -86,6 +93,9 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         const peerConfig = {
           config: {
             iceServers,
+            // Pre-gather ICE candidates while signaling handshake is in-flight —
+            // shaves ~100-300ms off the first connection attempt.
+            iceCandidatePoolSize: 1,
             ...(hasTurn ? { iceTransportPolicy: 'relay' } : {}),
           },
           debug: 1,
@@ -128,14 +138,14 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
             });
           }
 
-          // ICE timeout: if 'open' hasn't fired in 10s the negotiation stalled —
+          // ICE timeout: if 'open' hasn't fired in ICE_TIMEOUT_MS the negotiation stalled —
           // close the connection so the retry loop can start a fresh exchange.
           openTimeoutRef.current = setTimeout(() => {
             if (connRef.current === conn && !conn.open) {
               addDebug('ICE negotiation timed out — closing to trigger retry');
               conn.close();
             }
-          }, 10000);
+          }, ICE_TIMEOUT_MS);
 
           conn.on('open', () => {
             clearTimeout(openTimeoutRef.current);
@@ -180,16 +190,12 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         }
 
         if (isGuest) {
-          // Guest: create anonymous peer, then connect to host with persistent retry
-          addDebug('Creating guest peer...');
-          const peer = new Peer(peerConfig);
-          peerRef.current = peer;
-
+          // Guest: create anonymous peer, then connect to host with persistent retry.
+          // attemptConnect is defined first so createGuestPeer can close over it.
           function attemptConnect() {
-            if (cancelled || !peerRef.current || peerRef.current.destroyed) return;
+            const currentPeer = peerRef.current;
+            if (cancelled || !currentPeer || currentPeer.destroyed) return;
             // Cancel any retry that was already scheduled — we're starting a fresh attempt now.
-            // Without this, the stale-conn close handler (which now correctly skips its own
-            // onConnectionClosed) could still race with a timer that was set before the guard.
             clearTimeout(retryTimerRef.current);
             addDebug(`Connecting to host: ${PEER_PREFIX}${actualRoomId}`);
 
@@ -205,40 +211,70 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
             // serialization:'json' skips PeerJS's binary encoding overhead for faster
             // DataChannel open — we send plain objects so JSON is a natural fit.
-            const conn = peer.connect(PEER_PREFIX + actualRoomId, { reliable: true, serialization: 'json' });
+            const conn = currentPeer.connect(PEER_PREFIX + actualRoomId, { reliable: true, serialization: 'json' });
             setupConn(conn, () => {
               // Auto-retry when connection closes (ICE timeout, remote close, etc.)
               if (!cancelled) {
-                addDebug('Connection lost, retrying in 2s...');
+                addDebug(`Connection lost, retrying in ${CONN_FAILURE_RETRY_MS}ms...`);
                 clearTimeout(retryTimerRef.current);
-                retryTimerRef.current = setTimeout(attemptConnect, 2000);
+                retryTimerRef.current = setTimeout(attemptConnect, CONN_FAILURE_RETRY_MS);
               }
             });
             setStatus('waiting');
           }
 
-          peer.on('open', (id) => {
-            addDebug(`Guest peer open: ${id}`);
+          function createGuestPeer() {
             if (cancelled) return;
-            attemptConnect();
-          });
+            addDebug('Creating guest peer...');
+            const peer = new Peer(peerConfig);
+            peerRef.current = peer;
 
-          peer.on('error', (err) => {
-            addDebug(`Peer error: ${err.type} — ${err.message}`);
-            if (err.type === 'peer-unavailable') {
-              // Host not online yet — keep retrying every 3s
-              addDebug('Host not available, retrying in 3s...');
-              clearTimeout(retryTimerRef.current);
-              retryTimerRef.current = setTimeout(attemptConnect, 3000);
-            } else if (!cancelled) {
-              setStatus('error');
-            }
-          });
+            // Signaling open timeout: if the server doesn't acknowledge us in time,
+            // destroy and recreate — handles slow or transiently unreachable signaling.
+            clearTimeout(signalingTimeoutRef.current);
+            signalingTimeoutRef.current = setTimeout(() => {
+              if (cancelled || peer !== peerRef.current || peer.open) return;
+              addDebug('Signaling open timed out — recreating peer...');
+              peerRef.current = null;
+              peer.destroy();
+              setTimeout(() => { if (!cancelled) createGuestPeer(); }, 300);
+            }, SIGNAL_OPEN_TIMEOUT_MS);
 
-          peer.on('disconnected', () => {
-            addDebug('Peer disconnected from signaling server');
-            if (!cancelled && peerRef.current) peerRef.current.reconnect();
-          });
+            peer.on('open', (id) => {
+              clearTimeout(signalingTimeoutRef.current);
+              addDebug(`Guest peer open: ${id}`);
+              if (cancelled) return;
+              attemptConnect();
+            });
+
+            peer.on('error', (err) => {
+              addDebug(`Peer error: ${err.type} — ${err.message}`);
+              if (err.type === 'peer-unavailable') {
+                // Host not online yet — keep retrying
+                addDebug(`Host not available, retrying in ${PEER_UNAVAILABLE_RETRY_MS}ms...`);
+                clearTimeout(retryTimerRef.current);
+                retryTimerRef.current = setTimeout(attemptConnect, PEER_UNAVAILABLE_RETRY_MS);
+              } else if (err.type === 'network' || err.type === 'server-error') {
+                // Signaling server trouble — recreate the peer entirely
+                addDebug('Signaling server error — recreating peer in 1s...');
+                clearTimeout(signalingTimeoutRef.current);
+                if (peerRef.current === peer) {
+                  peerRef.current = null;
+                  peer.destroy();
+                  setTimeout(() => { if (!cancelled) createGuestPeer(); }, 1000);
+                }
+              } else if (!cancelled) {
+                setStatus('error');
+              }
+            });
+
+            peer.on('disconnected', () => {
+              addDebug('Peer disconnected from signaling server');
+              if (!cancelled && peerRef.current === peer) peerRef.current.reconnect();
+            });
+          }
+
+          createGuestPeer();
 
         } else {
           // Host: create peer with known ID (retry with suffix if ID is taken)
@@ -248,7 +284,18 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
             const peer = new Peer(hostPeerId, peerConfig);
             peerRef.current = peer;
 
+            // Signaling open timeout: recreate if registration stalls
+            clearTimeout(signalingTimeoutRef.current);
+            signalingTimeoutRef.current = setTimeout(() => {
+              if (cancelled || peer !== peerRef.current || peer.open) return;
+              addDebug('Host signaling timed out — recreating peer...');
+              peerRef.current = null;
+              peer.destroy();
+              setTimeout(() => { if (!cancelled) createHostPeer(suffix); }, 300);
+            }, SIGNAL_OPEN_TIMEOUT_MS);
+
             peer.on('open', (id) => {
+              clearTimeout(signalingTimeoutRef.current);
               addDebug(`Host peer open: ${id}`);
               if (cancelled) return;
               // Strip prefix so callers see just the room code
@@ -271,11 +318,20 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
               addDebug(`Peer error: ${err.type} — ${err.message}`);
               if (err.type === 'unavailable-id') {
                 // ID collision (e.g. stale registration) — retry with random suffix
+                clearTimeout(signalingTimeoutRef.current);
                 addDebug('Peer ID taken, retrying with suffix...');
                 peer.destroy();
                 if (!cancelled) {
                   const newSuffix = suffix + '-' + Math.random().toString(36).slice(2, 5);
                   createHostPeer(newSuffix);
+                }
+              } else if (err.type === 'network' || err.type === 'server-error') {
+                addDebug('Host signaling server error — retrying in 1s...');
+                clearTimeout(signalingTimeoutRef.current);
+                if (peerRef.current === peer) {
+                  peerRef.current = null;
+                  peer.destroy();
+                  setTimeout(() => { if (!cancelled) createHostPeer(suffix); }, 1000);
                 }
               }
             });
@@ -283,7 +339,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
             peer.on('disconnected', () => {
               addDebug('Peer disconnected from signaling server');
               // reconnect() re-registers the same peer ID so guests can reach us again
-              if (!cancelled && peerRef.current) peerRef.current.reconnect();
+              if (!cancelled && peerRef.current === peer) peerRef.current.reconnect();
             });
           }
 
@@ -304,6 +360,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
       clearTimeout(tid);
       clearTimeout(retryTimerRef.current);
       clearTimeout(openTimeoutRef.current);
+      clearTimeout(signalingTimeoutRef.current);
       if (connRef.current) { connRef.current.close(); connRef.current = null; }
       if (peerRef.current) { peerRef.current.destroy(); peerRef.current = null; }
     };
