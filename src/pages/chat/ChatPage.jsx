@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { usePeer } from './usePeer';
 import { ChatMessage } from './ChatMessage';
 import { useAIControl } from './useAIControl';
+import { useAuth } from '../../auth/AuthContext';
 
 function CopyButton({ text, label = 'Copy' }) {
   const [copied, setCopied] = useState(false);
@@ -35,6 +36,71 @@ function DebugPanel({ log }) {
       {log.map((line, i) => (
         <p key={i} className="text-zinc-500 text-[11px] font-mono leading-snug">{line}</p>
       ))}
+    </div>
+  );
+}
+
+function LoginModal({ onSuccess, onCancel }) {
+  const { login } = useAuth();
+  const [username, setUsername] = useState('');
+  const [pw, setPw] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await login(username, pw);
+      onSuccess();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [login, username, pw, onSuccess]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+      <div className="w-full max-w-sm bg-[#0a0a0b] border border-zinc-800 rounded-2xl p-6 shadow-2xl">
+        <h2 className="text-zinc-100 font-semibold text-base mb-1">Log in to use AI Control</h2>
+        <p className="text-zinc-500 text-sm mb-5">Enter your credentials to enable AI-powered commands.</p>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            autoFocus
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={pw}
+            onChange={e => setPw(e.target.value)}
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
+          />
+          {error && <p className="text-red-400 text-xs">{error}</p>}
+          <div className="flex gap-2 pt-1">
+            <button
+              type="button"
+              onClick={onCancel}
+              className="flex-1 py-2.5 rounded-xl border border-zinc-700 text-zinc-400 text-sm hover:text-zinc-200 hover:border-zinc-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading || !username || !pw}
+              className="flex-1 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] text-sm font-semibold hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? 'Logging in…' : 'Log in'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
@@ -127,17 +193,17 @@ function ChatInput({ onSend }) {
   );
 }
 
-function AIControlToggle({ enabled, onToggle, processing, hasKey }) {
+function AIControlToggle({ enabled, onToggle, processing, hasKey, onLoginRequired }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const blocked = hasKey !== true;
-  const tooltipMsg = hasKey === 'login-required'
-    ? 'Log in to use AI Control'
-    : hasKey === false
-      ? 'Set Gemini key in Settings'
-      : null;
+  const tooltipMsg = hasKey === false ? 'Set Gemini key in Settings' : null;
 
   const handleClick = () => {
+    if (hasKey === 'login-required') {
+      onLoginRequired?.();
+      return;
+    }
     if (blocked) {
       setShowTooltip(true);
       setTimeout(() => setShowTooltip(false), 3000);
@@ -158,7 +224,7 @@ function AIControlToggle({ enabled, onToggle, processing, hasKey }) {
             ? 'bg-violet-600/30 border border-violet-500/50 text-violet-300'
             : 'bg-zinc-800 border border-zinc-700 text-zinc-500 hover:text-zinc-300'
         }`}
-        title={blocked ? tooltipMsg : 'Toggle AI Control Mode'}
+        title={tooltipMsg ?? 'Toggle AI Control Mode'}
       >
         <span>🤖</span>
         <span>{enabled ? 'AI On' : 'AI'}</span>
@@ -189,6 +255,8 @@ export function ChatPage() {
     sendMessage,
     enabled: false,
   });
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
@@ -276,6 +344,7 @@ export function ChatPage() {
               onToggle={setAiEnabled}
               processing={aiProcessing}
               hasKey={hasKey}
+              onLoginRequired={() => setShowLoginModal(true)}
             />
           )}
           <button
@@ -304,6 +373,16 @@ export function ChatPage() {
       <div className="shrink-0">
         <ChatInput onSend={sendMessage} />
       </div>
+
+      {showLoginModal && (
+        <LoginModal
+          onSuccess={() => {
+            setShowLoginModal(false);
+            setAiEnabled(true);
+          }}
+          onCancel={() => setShowLoginModal(false)}
+        />
+      )}
     </div>
   );
 }
