@@ -244,9 +244,34 @@ export function SettingsPage() {
 
   const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
+  // Developer settings
+  const [githubUsername, setGithubUsername] = useState(() => localStorage.getItem('settings-github-username') || '');
+  const [ghSaved, setGhSaved] = useState(false);
+
+  const handleSaveGithub = () => {
+    localStorage.setItem('settings-github-username', githubUsername.trim());
+    setGhSaved(true);
+    setTimeout(() => setGhSaved(false), 2000);
+  };
+
+  // Health settings
+  const [waterGoal, setWaterGoal] = useState(() => localStorage.getItem('settings-water-goal') || '8');
+  const [waterSaved, setWaterSaved] = useState(false);
+
+  const handleSaveWater = () => {
+    const val = parseInt(waterGoal, 10);
+    if (!isNaN(val) && val > 0) {
+      localStorage.setItem('settings-water-goal', String(val));
+      setWaterSaved(true);
+      setTimeout(() => setWaterSaved(false), 2000);
+    }
+  };
+
   const tabs = [
     { id: 'ai', label: '✨ AI Integration' },
     { id: 'export', label: '📦 Export Data' },
+    { id: 'developer', label: '🛠️ Developer' },
+    { id: 'health', label: '💚 Health' },
   ];
 
   return (
@@ -449,6 +474,65 @@ export function SettingsPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Developer Tab */}
+      {activeTab === 'developer' && (
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">🛠️</span>
+            <h2 className="text-[#e4e4e7] font-semibold">Developer Settings</h2>
+          </div>
+          <p className="text-[#71717a] text-sm">Settings used by the Dev Tools widget on the dashboard.</p>
+          <div>
+            <label className="block text-[#71717a] text-xs mb-1.5">GitHub Username</label>
+            <input
+              className={inputCls}
+              type="text"
+              placeholder="your-github-username"
+              value={githubUsername}
+              onChange={(e) => setGithubUsername(e.target.value)}
+              data-testid="settings-github-username"
+            />
+            <p className="text-[#52525b] text-xs mt-1">Used to display your GitHub contribution graph on the Dev Tools tab.</p>
+          </div>
+          <button
+            onClick={handleSaveGithub}
+            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+          >
+            {ghSaved ? '✓ Saved' : 'Save'}
+          </button>
+        </div>
+      )}
+
+      {/* Health Tab */}
+      {activeTab === 'health' && (
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">💚</span>
+            <h2 className="text-[#e4e4e7] font-semibold">Health Settings</h2>
+          </div>
+          <p className="text-[#71717a] text-sm">Configure your health & wellness goals.</p>
+          <div>
+            <label className="block text-[#71717a] text-xs mb-1.5">Daily Water Goal (glasses)</label>
+            <input
+              className={inputCls}
+              type="number"
+              min="1"
+              max="20"
+              value={waterGoal}
+              onChange={(e) => setWaterGoal(e.target.value)}
+              data-testid="settings-water-goal"
+            />
+            <p className="text-[#52525b] text-xs mt-1">Default is 8 glasses per day.</p>
+          </div>
+          <button
+            onClick={handleSaveWater}
+            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+          >
+            {waterSaved ? '✓ Saved' : 'Save'}
+          </button>
         </div>
       )}
 

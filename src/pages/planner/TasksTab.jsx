@@ -231,12 +231,6 @@ export function TasksTab() {
               {aiLoading ? '⏳' : '✨ Prioritize for Me'}
             </button>
           )}
-          <button
-            onClick={() => setShowAddForm((v) => !v)}
-            className="text-sm px-3 py-1.5 rounded-lg bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] transition-colors"
-          >
-            + Add Task
-          </button>
         </div>
       </div>
 
@@ -311,7 +305,7 @@ export function TasksTab() {
 
       {/* Task groups */}
       {tasks.length === 0 ? (
-        <p className="text-[#52525b] text-sm text-center py-8">No tasks yet. Add one to get started.</p>
+        <p className="text-[#52525b] text-sm text-center py-8">No tasks yet. Tap + to add one.</p>
       ) : (
         <div className="space-y-6">
           <TaskGroup title="🔴 Overdue" tasks={grouped.overdue} accent="text-red-400" {...commonProps} />
@@ -331,6 +325,18 @@ export function TasksTab() {
             </details>
           )}
         </div>
+      )}
+
+      {/* FAB — floating add button */}
+      {!showAddForm && (
+        <button
+          onClick={() => setShowAddForm(true)}
+          data-testid="tasks-fab"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#f59e0b] hover:bg-[#d97706] text-black text-2xl font-bold shadow-lg shadow-amber-500/30 transition-colors flex items-center justify-center"
+          aria-label="Add Task"
+        >
+          +
+        </button>
       )}
     </div>
   );

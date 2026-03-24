@@ -147,7 +147,7 @@ export function CalendarTab() {
                 isSelected
                   ? 'bg-[#f59e0b] text-black font-bold'
                   : isToday
-                  ? 'bg-amber-500/20 text-amber-400 font-semibold'
+                  ? 'bg-amber-500/20 text-amber-400 font-semibold ring-2 ring-amber-400 ring-offset-1 ring-offset-[#09090b]'
                   : 'text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#e4e4e7]'
               }`}
             >

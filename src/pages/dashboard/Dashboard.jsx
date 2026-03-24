@@ -5,6 +5,8 @@ import { useTodaySchedule } from '../../hooks/useTodaySchedule';
 import { useGemini } from '../../hooks/useGemini';
 import { DevToolsTab } from './DevToolsTab';
 import { FocusTab } from './FocusTab';
+import { HealthTab } from './HealthTab';
+import { KnowledgeTab } from './KnowledgeTab';
 
 function TodayFocusCard() {
   const today = getTodayStr();
@@ -286,6 +288,8 @@ const DASHBOARD_TABS = [
   { id: 'overview', label: 'Overview' },
   { id: 'devtools', label: '⚙️ Dev Tools' },
   { id: 'focus', label: '🍅 Focus' },
+  { id: 'health', label: '💚 Health' },
+  { id: 'knowledge', label: '📚 Knowledge' },
 ];
 
 export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
@@ -323,6 +327,8 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       )}
       {activeTab === 'devtools' && <DevToolsTab />}
       {activeTab === 'focus' && <FocusTab />}
+      {activeTab === 'health' && <HealthTab />}
+      {activeTab === 'knowledge' && <KnowledgeTab />}
     </div>
   );
 }

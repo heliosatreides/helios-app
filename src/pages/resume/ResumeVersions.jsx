@@ -1,5 +1,15 @@
 import { useState } from 'react';
 
+function downloadJSON(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
   const [saving, setSaving] = useState(false);
   const [versionName, setVersionName] = useState('');
@@ -90,6 +100,13 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
                   className="px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-xs hover:bg-amber-500/20 transition-colors"
                 >
                   Load
+                </button>
+                <button
+                  onClick={() => downloadJSON(v, `resume-${v.name.replace(/\s+/g, '-').toLowerCase()}.json`)}
+                  className="px-3 py-1.5 text-[#71717a] hover:text-amber-400 text-xs transition-colors border border-[#27272a] hover:border-amber-400/30 rounded-lg"
+                  title="Download as JSON"
+                >
+                  ⬇️ JSON
                 </button>
                 <button
                   onClick={() => onDelete(v.id)}
