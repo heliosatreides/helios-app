@@ -171,13 +171,13 @@ export function ChatPage() {
     );
   }
 
-  // Guest waiting for host
-  if (isGuest && status === 'waiting' && peerCount === 0) {
+  // Guest waiting for host — only if we've NEVER connected (no messages, not reconnecting)
+  if (isGuest && status === 'waiting' && peerCount === 0 && !reconnecting && messages.length === 0) {
     return <WaitingGuest />;
   }
 
-  // Host waiting for guest
-  if (!isGuest && status === 'waiting' && messages.length === 0) {
+  // Host waiting for guest — only if we've never had a peer yet
+  if (!isGuest && status === 'waiting' && messages.length === 0 && !reconnecting) {
     return <WaitingHost chatLink={chatLink} relayStatus={relayStatus} />;
   }
 
