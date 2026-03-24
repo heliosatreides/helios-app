@@ -23,8 +23,8 @@ describe('LandingPage', () => {
 
   it('CTA "Get Started" links to /login', () => {
     renderLanding();
-    const getStarted = screen.getByRole('link', { name: /Get Started/i });
-    expect(getStarted).toHaveAttribute('href', '/login');
+    const getStarted = screen.getAllByRole('link', { name: /Get Started/i });
+    expect(getStarted[0]).toHaveAttribute('href', '/login');
   });
 
   it('CTA "Open Helios" links to /login', () => {
