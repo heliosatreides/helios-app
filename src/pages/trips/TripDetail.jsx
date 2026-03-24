@@ -228,12 +228,27 @@ export function TripDetail({ trips, onUpdate }) {
             </div>
           </div>
           {/* Progress bar */}
-          <div className="w-full bg-[#27272a] rounded-full h-2">
-            <div
-              className={`h-2 rounded-full transition-all ${totalSpent / trip.budget > 0.9 ? 'bg-red-500' : 'bg-amber-500'}`}
-              style={{ width: `${Math.min((totalSpent / trip.budget) * 100, 100)}%` }}
-            />
-          </div>
+          {(() => {
+            const pct = trip.budget > 0 ? (totalSpent / trip.budget) * 100 : 0;
+            const barColor = pct >= 90 ? 'bg-red-500' : pct >= 70 ? 'bg-amber-500' : 'bg-green-500';
+            const pctLabel = trip.budget > 0 ? `${Math.round(pct)}% used` : '';
+            return (
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[#52525b] text-xs">Budget used</span>
+                  <span className={`text-xs font-semibold ${pct >= 90 ? 'text-red-400' : pct >= 70 ? 'text-amber-400' : 'text-green-400'}`}>
+                    {pctLabel}
+                  </span>
+                </div>
+                <div className="w-full bg-[#27272a] rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full transition-all ${barColor}`}
+                    style={{ width: `${Math.min(pct, 100)}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Add expense */}
           <form onSubmit={handleAddExpense} className="mt-4 flex gap-2">

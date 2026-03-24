@@ -16,8 +16,39 @@ function StatusBadge({ status }) {
   );
 }
 
+/**
+ * Returns a progress indicator string for a trip:
+ * - "Upcoming" / "Planning": "In X days"
+ * - "Ongoing": "Day X of Y"
+ * - "Completed": "X days ago"
+ */
+function getTripProgress(trip) {
+  if (!trip.startDate || !trip.endDate) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(trip.startDate + 'T00:00:00');
+  const end = new Date(trip.endDate + 'T00:00:00');
+
+  const daysUntilStart = Math.round((start - today) / (1000 * 60 * 60 * 24));
+  const totalDays = getDuration(trip.startDate, trip.endDate);
+
+  if (today < start) {
+    if (daysUntilStart === 0) return 'Starts today!';
+    if (daysUntilStart === 1) return 'Tomorrow';
+    return `In ${daysUntilStart} days`;
+  } else if (today <= end) {
+    const dayNum = Math.round((today - start) / (1000 * 60 * 60 * 24)) + 1;
+    return `Day ${dayNum} of ${totalDays}`;
+  } else {
+    const daysAgo = Math.round((today - end) / (1000 * 60 * 60 * 24));
+    return daysAgo === 0 ? 'Ended today' : `${daysAgo} days ago`;
+  }
+}
+
 function TripCard({ trip }) {
   const duration = getDuration(trip.startDate, trip.endDate);
+  const progress = getTripProgress(trip);
+
   return (
     <Link to={`/trips/${trip.id}`} className="block">
       <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 hover:border-amber-500/50 transition-colors cursor-pointer">
@@ -37,6 +68,12 @@ function TripCard({ trip }) {
             <span className="text-[#f59e0b] font-medium">${trip.budget.toLocaleString()}</span>
           )}
         </div>
+        {progress && (
+          <div className="mt-2 flex items-center gap-1.5">
+            <span className="text-[#3f3f46] text-xs">🕐</span>
+            <span className="text-[#52525b] text-xs font-medium">{progress}</span>
+          </div>
+        )}
       </div>
     </Link>
   );

@@ -71,7 +71,7 @@ function AssetPieChart({ allocations }) {
   );
 }
 
-function HoldingRow({ h, onRemove, onPriceUpdate }) {
+function HoldingRow({ h, onRemove, onPriceUpdate, totalValue }) {
   const { fetchQuote, loading: quoteLoading } = useStockQuote();
   const [lastUpdated, setLastUpdated] = useState(h.lastUpdated || null);
 
@@ -85,6 +85,7 @@ function HoldingRow({ h, onRemove, onPriceUpdate }) {
 
   const { marketValue, gainLoss, gainLossPercent } = calculateHolding(h);
   const pos = gainLoss >= 0;
+  const weightPct = totalValue > 0 ? (marketValue / totalValue) * 100 : 0;
 
   return (
     <tr className="border-b border-[#27272a] last:border-0 hover:bg-[#0a0a0b]">
@@ -112,6 +113,7 @@ function HoldingRow({ h, onRemove, onPriceUpdate }) {
         )}
       </td>
       <td className="px-4 py-3 text-[#e4e4e7] font-medium">${marketValue.toFixed(2)}</td>
+      <td className="px-4 py-3 text-[#a1a1aa] tabular-nums">{weightPct.toFixed(1)}%</td>
       <td className={`px-4 py-3 font-medium ${pos ? 'text-green-400' : 'text-red-400'}`}>
         {pos ? '+' : ''}${gainLoss.toFixed(2)}
       </td>
@@ -411,14 +413,14 @@ export function Portfolio() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#27272a]">
-                  {['Ticker', 'Name', 'Class', 'Shares', 'Cost Basis', 'Live Price', 'Mkt Value', 'Gain/Loss', '%', ''].map((h) => (
+                  {['Ticker', 'Name', 'Class', 'Shares', 'Cost Basis', 'Live Price', 'Mkt Value', 'Weight %', 'Gain/Loss', '%', ''].map((h) => (
                     <th key={h} className="text-left text-[#71717a] font-medium px-4 py-3 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {holdings.map((h) => (
-                  <HoldingRow key={h.id} h={h} onRemove={removeHolding} onPriceUpdate={updatePrice} />
+                  <HoldingRow key={h.id} h={h} onRemove={removeHolding} onPriceUpdate={updatePrice} totalValue={totals.totalValue} />
                 ))}
               </tbody>
             </table>

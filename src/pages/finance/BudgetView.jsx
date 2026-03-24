@@ -39,6 +39,21 @@ export function BudgetView({ budgets, transactions, month }) {
     }
   };
 
+  // Sort categories: over-budget first (by overage descending), then by % used descending
+  const sortedBudgets = [...budgets].sort((a, b) => {
+    const spentA = monthlyExpenses.filter((t) => t.category === a.category).reduce((s, t) => s + t.amount, 0);
+    const spentB = monthlyExpenses.filter((t) => t.category === b.category).reduce((s, t) => s + t.amount, 0);
+    const overA = spentA - a.limit;
+    const overB = spentB - b.limit;
+    // Over-budget items first
+    if (overA > 0 && overB <= 0) return -1;
+    if (overB > 0 && overA <= 0) return 1;
+    // Both over or both under: sort by % used descending
+    const pctA = a.limit > 0 ? spentA / a.limit : 0;
+    const pctB = b.limit > 0 ? spentB / b.limit : 0;
+    return pctB - pctA;
+  });
+
   return (
     <div className="space-y-3">
       {hasKey && (
@@ -75,7 +90,7 @@ export function BudgetView({ budgets, transactions, month }) {
         </div>
       )}
 
-      {budgets.map((budget) => {
+      {sortedBudgets.map((budget) => {
         const spent = monthlyExpenses
           .filter((t) => t.category === budget.category)
           .reduce((sum, t) => sum + t.amount, 0);

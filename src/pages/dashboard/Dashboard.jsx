@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
 import { useTodaySchedule } from '../../hooks/useTodaySchedule';
 import { useGemini } from '../../hooks/useGemini';
+import { DevToolsTab } from './DevToolsTab';
+import { FocusTab } from './FocusTab';
 
 function TodayFocusCard() {
   const today = getTodayStr();
@@ -15,9 +17,16 @@ function TodayFocusCard() {
   if (todayTasks.length === 0 && firstBlocks.length === 0) return null;
 
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 h-full">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[#e4e4e7] font-semibold">Today's Focus 🗓️</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-[#e4e4e7] font-semibold">Today's Focus 🗓️</h3>
+          {todayTasks.length > 0 && (
+            <span className="bg-amber-500/20 text-amber-400 text-xs font-bold px-2 py-0.5 rounded-full">
+              {todayTasks.length}
+            </span>
+          )}
+        </div>
         <Link to="/planner" className="text-[#f59e0b] text-sm hover:underline">Open Planner</Link>
       </div>
       {firstBlocks.length > 0 && (
@@ -49,7 +58,7 @@ function TodayFocusCard() {
   );
 }
 
-export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
+function OverviewTab({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
   const { generate, loading: aiLoading, hasKey } = useGemini();
   const [digest, setDigest] = useState(null);
   const [digestError, setDigestError] = useState(null);
@@ -161,13 +170,13 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       {/* Today's Focus */}
       <TodayFocusCard />
 
-      {/* Trip Stats */}
+      {/* Stats cards — consistent height */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 flex flex-col justify-between min-h-[100px]">
           <p className="text-[#71717a] text-sm mb-1">Upcoming Trips</p>
           <p className="text-3xl font-bold text-[#f59e0b]">{upcomingTrips.length}</p>
         </div>
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 flex flex-col justify-between min-h-[100px]">
           <p className="text-[#71717a] text-sm mb-1">Total Budget</p>
           <p className="text-3xl font-bold text-[#e4e4e7]">${totalBudget.toLocaleString()}</p>
         </div>
@@ -269,6 +278,51 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+const DASHBOARD_TABS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'devtools', label: '⚙️ Dev Tools' },
+  { id: 'focus', label: '🍅 Focus' },
+];
+
+export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
+  const [activeTab, setActiveTab] = useState('overview');
+
+  return (
+    <div className="space-y-4">
+      {/* Tab bar */}
+      <div className="flex gap-1 border-b border-[#27272a]">
+        {DASHBOARD_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            data-testid={`dashboard-tab-${tab.id}`}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+              activeTab === tab.id
+                ? 'text-amber-400 border-b-2 border-amber-400'
+                : 'text-[#71717a] hover:text-[#e4e4e7]'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'overview' && (
+        <OverviewTab
+          trips={trips}
+          accounts={accounts}
+          transactions={transactions}
+          budgets={budgets}
+          portfolio={portfolio}
+          sportsGameCount={sportsGameCount}
+        />
+      )}
+      {activeTab === 'devtools' && <DevToolsTab />}
+      {activeTab === 'focus' && <FocusTab />}
     </div>
   );
 }
