@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { decrypt } from '../../auth/crypto';
 import { useAuth } from '../../auth/AuthContext';
@@ -240,13 +240,18 @@ export function useAIControl({ messages, sendMessage, enabled = false }) {
   const { user, password } = useAuthSafe();
   const processedRef = useRef(new Set());
 
-  const hasKey = (() => {
+  // Returns: true (key available), 'login-required' (encrypted key but no credentials), false (no key)
+  const hasKey = useMemo(() => {
     try {
-      return Boolean(localStorage.getItem(AI_KEY_ENC_LS) || localStorage.getItem(AI_KEY_LS));
+      const hasEnc = Boolean(localStorage.getItem(AI_KEY_ENC_LS));
+      const hasPlain = Boolean(localStorage.getItem(AI_KEY_LS));
+      if (hasPlain) return true;
+      if (hasEnc) return (user && password) ? true : 'login-required';
+      return false;
     } catch {
       return false;
     }
-  })();
+  }, [user, password]);
 
   const getKey = useCallback(async () => {
     let ciphertext = '';

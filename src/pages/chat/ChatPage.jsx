@@ -130,8 +130,15 @@ function ChatInput({ onSend }) {
 function AIControlToggle({ enabled, onToggle, processing, hasKey }) {
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const blocked = hasKey !== true;
+  const tooltipMsg = hasKey === 'login-required'
+    ? 'Log in to use AI Control'
+    : hasKey === false
+      ? 'Set Gemini key in Settings'
+      : null;
+
   const handleClick = () => {
-    if (!hasKey) {
+    if (blocked) {
       setShowTooltip(true);
       setTimeout(() => setShowTooltip(false), 3000);
       return;
@@ -151,7 +158,7 @@ function AIControlToggle({ enabled, onToggle, processing, hasKey }) {
             ? 'bg-violet-600/30 border border-violet-500/50 text-violet-300'
             : 'bg-zinc-800 border border-zinc-700 text-zinc-500 hover:text-zinc-300'
         }`}
-        title={hasKey ? 'Toggle AI Control Mode' : 'Set your Gemini key in Settings first'}
+        title={blocked ? tooltipMsg : 'Toggle AI Control Mode'}
       >
         <span>🤖</span>
         <span>{enabled ? 'AI On' : 'AI'}</span>
@@ -159,9 +166,9 @@ function AIControlToggle({ enabled, onToggle, processing, hasKey }) {
           <span className={`absolute top-0.5 w-2 h-2 rounded-full bg-white transition-all ${enabled ? 'left-3.5' : 'left-0.5'}`} />
         </span>
       </button>
-      {showTooltip && (
+      {showTooltip && tooltipMsg && (
         <div className="absolute right-0 top-full mt-1.5 w-48 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-zinc-300 shadow-xl z-50 pointer-events-none">
-          Set your Gemini key in Settings first
+          {tooltipMsg}
         </div>
       )}
     </div>
