@@ -8,13 +8,11 @@ export function generateRoomId() {
     .join('');
 }
 
-const RELAY_URLS = [
-  'wss://relay.damus.io',
-  'wss://nos.lol',
-  'wss://relay.nostr.place',
-  'wss://purplerelay.com',
-  'wss://nostr.data.haus',
-];
+// Don't override relayUrls — let trystero pick deterministically from its
+// full pool based on appId (deriveFromAppId=true), so host and guest always
+// land on the same relays regardless of when they join.
+// relayRedundancy=10 gives wider overlap margin.
+const RELAY_REDUNDANCY = 10;
 
 // Returns { turnConfig, rtcConfig } for joinRoom
 // turnConfig = TURN-only servers (trystero merges with its defaults)
@@ -81,8 +79,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
         const roomConfig = {
           appId: 'helios-p2p-chat-v1',
-          relayRedundancy: 5,
-          relayUrls: RELAY_URLS,
+          relayRedundancy: RELAY_REDUNDANCY,
         };
         if (turnConfig) roomConfig.turnConfig = turnConfig;
 
@@ -116,18 +113,17 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           setStatus('waiting');
         });
 
+        // Track relay count for UI indicator
         const updateRelays = () => {
           try {
             const sockets = getRelaySockets();
-            setRelayStatus(RELAY_URLS.map(url => ({
-              url,
-              connected: sockets[url]?.readyState === 1,
-              state: sockets[url]?.readyState ?? -1,
-            })));
+            const entries = Object.entries(sockets);
+            const connected = entries.filter(([, s]) => s?.readyState === 1).length;
+            setRelayStatus([{ connected, total: entries.length }]);
           } catch { /* ignore */ }
         };
         updateRelays();
-        intervalRef.current = setInterval(updateRelays, 2000);
+        intervalRef.current = setInterval(updateRelays, 3000);
 
         setStatus('waiting');
 
