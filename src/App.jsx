@@ -51,7 +51,7 @@ function AppShell() {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}

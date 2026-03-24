@@ -257,7 +257,7 @@ export function SettingsPage() {
     showExportFlash('trips');
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-2.5 text-[#e4e4e7] text-sm placeholder-[#3f3f46] focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all w-full';
 
   // Developer settings
   const [githubUsername, setGithubUsername] = useState(() => localStorage.getItem('settings-github-username') || '');
@@ -297,15 +297,15 @@ export function SettingsPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 border-b border-[#27272a]">
+      <div className="flex gap-1 border-b border-[#1c1c20]">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+            className={`px-4 py-2.5 text-sm font-medium rounded-t-xl transition-all ${
               activeTab === tab.id
-                ? 'text-amber-400 border-b-2 border-amber-400'
-                : 'text-[#71717a] hover:text-[#e4e4e7]'
+                ? 'text-amber-400 border-b-2 border-amber-400 -mb-px'
+                : 'text-[#52525b] hover:text-[#a1a1aa]'
             }`}
           >
             {tab.label}
@@ -315,7 +315,7 @@ export function SettingsPage() {
 
       {/* AI Integration Tab */}
       {activeTab === 'ai' && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-4">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">✨</span>
             <h2 className="text-[#e4e4e7] font-semibold">AI Integration</h2>
@@ -332,7 +332,7 @@ export function SettingsPage() {
               </p>
               <div className="flex gap-2">
                 <input
-                  className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] flex-1"
+                  className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] flex-1"
                   type="password"
                   placeholder="Password"
                   value={reAuthPwd}
@@ -398,7 +398,7 @@ export function SettingsPage() {
             <button
               onClick={handleTest}
               disabled={testing || !apiKey.trim()}
-              className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm transition-colors"
+              className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm transition-colors"
             >
               {testing ? '⏳ Testing…' : 'Test Connection'}
             </button>
@@ -410,14 +410,14 @@ export function SettingsPage() {
                   localStorage.removeItem('helios-gemini-key');
                   setTestResult(null);
                 }}
-                className="border border-[#27272a] text-red-400/70 hover:text-red-400 px-4 py-2 rounded-lg text-sm transition-colors"
+                className="border border-[#1c1c20] text-red-400/70 hover:text-red-400 px-4 py-2 rounded-lg text-sm transition-colors"
               >
                 Remove Key
               </button>
             )}
           </div>
 
-          <div className="pt-2 border-t border-[#27272a]">
+          <div className="pt-2 border-t border-[#1c1c20]">
             <p className="text-[#52525b] text-xs">
               Get a free key at{' '}
               <a
@@ -436,7 +436,7 @@ export function SettingsPage() {
 
       {/* Export Data Tab */}
       {activeTab === 'export' && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-6">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-6">
           <div>
             <h2 className="text-[#e4e4e7] font-semibold text-lg">Export Your Data</h2>
             <p className="text-[#71717a] text-sm mt-1">
@@ -472,7 +472,7 @@ export function SettingsPage() {
             </p>
           </div>
 
-          <div className="border-t border-[#27272a]" />
+          <div className="border-t border-[#1c1c20]" />
 
           {/* Full JSON import */}
           <div className="space-y-3">
@@ -490,7 +490,7 @@ export function SettingsPage() {
             </p>
           </div>
 
-          <div className="border-t border-[#27272a]" />
+          <div className="border-t border-[#1c1c20]" />
 
           {/* Per-module CSV exports */}
           <div className="space-y-3">
@@ -498,19 +498,19 @@ export function SettingsPage() {
             <div className="flex flex-col gap-2">
               <button
                 onClick={handleExportTransactions}
-                className="border border-[#27272a] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+                className="border border-[#1c1c20] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
               >
                 📋 Export Transactions (CSV)
               </button>
               <button
                 onClick={handleExportPortfolio}
-                className="border border-[#27272a] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+                className="border border-[#1c1c20] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
               >
                 📋 Export Portfolio (CSV)
               </button>
               <button
                 onClick={handleExportTrips}
-                className="border border-[#27272a] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+                className="border border-[#1c1c20] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
               >
                 📋 Export Trips (CSV)
               </button>
@@ -521,7 +521,7 @@ export function SettingsPage() {
 
       {/* Developer Tab */}
       {activeTab === 'developer' && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-4">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">🛠️</span>
             <h2 className="text-[#e4e4e7] font-semibold">Developer Settings</h2>
@@ -550,7 +550,7 @@ export function SettingsPage() {
 
       {/* Health Tab */}
       {activeTab === 'health' && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 space-y-4">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">💚</span>
             <h2 className="text-[#e4e4e7] font-semibold">Health Settings</h2>
@@ -579,7 +579,7 @@ export function SettingsPage() {
       )}
 
       {/* App info */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6">
         <h2 className="text-[#e4e4e7] font-semibold mb-3">About</h2>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
