@@ -16,41 +16,22 @@ const RELAY_URLS = [
   'wss://nostr.data.haus',
 ];
 
-// Fetch short-lived Cloudflare TURN credentials (free, no account needed)
+// Fetch TURN credentials from our Vercel serverless proxy (/api/turn)
+// The proxy holds the Cloudflare TURN key server-side — key never exposed to browser
 async function getIceServers() {
-  const base = [
+  try {
+    const res = await fetch('/api/turn');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.iceServers?.length) return data.iceServers;
+    }
+  } catch { /* fallback */ }
+
+  // Fallback: STUN only (works for same-network connections)
+  return [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun.cloudflare.com:3478' },
-  ];
-
-  try {
-    const res = await fetch('https://rtc.live.cloudflare.com/v1/turn/keys/free/credentials/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ttl: 86400 }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.iceServers?.length) {
-        return [...base, ...data.iceServers];
-      }
-    }
-  } catch { /* fallback to STUN only */ }
-
-  // Fallback TURN if Cloudflare fails
-  return [
-    ...base,
-    {
-      urls: 'turn:openrelay.metered.ca:80',
-      username: 'openrelayproject',
-      credential: 'openrelayproject',
-    },
-    {
-      urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-      username: 'openrelayproject',
-      credential: 'openrelayproject',
-    },
   ];
 }
 
