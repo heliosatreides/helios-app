@@ -3,8 +3,17 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  const keyId = process.env.CLOUDFLARE_TURN_KEY_ID || 'CLOUDFLARE_TURN_KEY_ID_REDACTED';
-  const apiToken = process.env.CLOUDFLARE_TURN_API_TOKEN || 'CLOUDFLARE_TURN_API_TOKEN_REDACTED';
+  const keyId = process.env.CLOUDFLARE_TURN_KEY_ID;
+  const apiToken = process.env.CLOUDFLARE_TURN_API_TOKEN;
+
+  if (!keyId || !apiToken) {
+    return res.status(200).json({
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun.cloudflare.com:3478' },
+      ]
+    });
+  }
 
   try {
     const cfRes = await fetch(
