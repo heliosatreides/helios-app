@@ -16,19 +16,24 @@ const RELAY_URLS = [
   'wss://nostr.data.haus',
 ];
 
-async function getIceServers() {
+// Returns { turnConfig, rtcConfig } for joinRoom
+// turnConfig = TURN-only servers (trystero merges with its defaults)
+// rtcConfig = full override if needed
+async function getTurnConfig() {
   try {
     const res = await fetch('/api/turn');
     if (res.ok) {
       const data = await res.json();
-      if (data.iceServers?.length) return data.iceServers;
+      if (data.iceServers?.length) {
+        // Split STUN vs TURN — trystero's turnConfig is for TURN/credential servers
+        const turnServers = data.iceServers.filter(s =>
+          [].concat(s.urls).some(u => u.startsWith('turn:') || u.startsWith('turns:'))
+        );
+        return turnServers.length ? turnServers : null;
+      }
     }
   } catch { /* fallback */ }
-  return [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun.cloudflare.com:3478' },
-  ];
+  return null;
 }
 
 export function usePeer({ isGuest = false, roomId = null } = {}) {
@@ -68,18 +73,20 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
     async function setup() {
       try {
-        const iceServers = await getIceServers();
+        const turnConfig = await getTurnConfig();
         if (cancelled) return;
 
         const { joinRoom, getRelaySockets } = await import('trystero/nostr');
         if (cancelled) return;
 
-        const room = joinRoom({
+        const roomConfig = {
           appId: 'helios-p2p-chat-v1',
-          rtcConfig: { iceServers },
           relayRedundancy: 5,
           relayUrls: RELAY_URLS,
-        }, actualRoomId);
+        };
+        if (turnConfig) roomConfig.turnConfig = turnConfig;
+
+        const room = joinRoom(roomConfig, actualRoomId);
 
         roomRef.current = room;
 
