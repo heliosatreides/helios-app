@@ -1,4 +1,51 @@
 import { Link } from 'react-router-dom';
+import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
+import { useTodaySchedule } from '../../hooks/useTodaySchedule';
+
+function TodayFocusCard() {
+  const today = getTodayStr();
+  const { tasks } = useTasks();
+  const { schedule } = useTodaySchedule(today);
+  const grouped = groupTasks(tasks, today);
+  const todayTasks = [...grouped.overdue, ...grouped.today];
+  const firstBlocks = schedule.slice(0, 2);
+
+  if (todayTasks.length === 0 && firstBlocks.length === 0) return null;
+
+  return (
+    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-[#e4e4e7] font-semibold">Today's Focus 🗓️</h3>
+        <Link to="/planner" className="text-[#f59e0b] text-sm hover:underline">Open Planner</Link>
+      </div>
+      {firstBlocks.length > 0 && (
+        <div className="mb-3 space-y-1">
+          <p className="text-[#52525b] text-xs uppercase tracking-wider mb-1">Schedule</p>
+          {firstBlocks.map((b) => (
+            <div key={b.id} className="flex gap-2 text-sm">
+              <span className="text-[#52525b] w-12 shrink-0">{b.slotTime}</span>
+              <span className="text-[#a1a1aa]">{b.title}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {todayTasks.length > 0 && (
+        <div className="space-y-1">
+          <p className="text-[#52525b] text-xs uppercase tracking-wider mb-1">Tasks Due</p>
+          {todayTasks.slice(0, 5).map((t) => (
+            <div key={t.id} className="flex items-center gap-2 text-sm">
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.priority === 'High' ? 'bg-red-400' : t.priority === 'Medium' ? 'bg-amber-400' : 'bg-zinc-400'}`} />
+              <span className="text-[#a1a1aa]">{t.title}</span>
+            </div>
+          ))}
+          {todayTasks.length > 5 && (
+            <p className="text-[#52525b] text-xs">+{todayTasks.length - 5} more</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
   const upcomingTrips = trips.filter((t) => t.status === 'Upcoming' || t.status === 'Planning');
@@ -41,6 +88,9 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
           <p className="text-[#71717a]">Here's what's happening with your plans.</p>
         )}
       </div>
+
+      {/* Today's Focus */}
+      <TodayFocusCard />
 
       {/* Trip Stats */}
       <div className="grid grid-cols-2 gap-4">

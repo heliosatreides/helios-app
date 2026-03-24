@@ -8,6 +8,7 @@ import { InvestmentsPage } from './pages/investments/InvestmentsPage';
 import { SportsPage } from './pages/sports/SportsPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { ResumePage } from './pages/resume/ResumePage';
+import { PlannerPage } from './pages/planner/PlannerPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
@@ -67,6 +68,7 @@ function AppShell() {
               <Route path="/investments" element={<ProtectedRoute><InvestmentsPage /></ProtectedRoute>} />
               <Route path="/sports" element={<ProtectedRoute><SportsPage /></ProtectedRoute>} />
               <Route path="/resume" element={<ProtectedRoute><ResumePage /></ProtectedRoute>} />
+              <Route path="/planner" element={<ProtectedRoute><PlannerPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             </Routes>
           </div>
