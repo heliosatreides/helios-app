@@ -3,12 +3,6 @@ import { Link } from 'react-router-dom';
 import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
 import { useTodaySchedule } from '../../hooks/useTodaySchedule';
 import { useGemini } from '../../hooks/useGemini';
-import { DevToolsTab } from './DevToolsTab';
-import { FocusTab } from './FocusTab';
-import { HealthTab } from './HealthTab';
-import { KnowledgeTab } from './KnowledgeTab';
-import { GoalsTab } from './GoalsTab';
-import { NetworkingTab } from './NetworkingTab';
 
 function TodayFocusCard() {
   const today = getTodayStr();
@@ -286,57 +280,15 @@ function OverviewTab({ trips = [], accounts = [], transactions = [], budgets = [
   );
 }
 
-const DASHBOARD_TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'devtools', label: '⚙️ Dev Tools' },
-  { id: 'focus', label: '🍅 Focus' },
-  { id: 'health', label: '💚 Health' },
-  { id: 'knowledge', label: '📚 Knowledge' },
-  { id: 'goals', label: '🎯 Goals' },
-  { id: 'networking', label: '🤝 Network' },
-];
-
 export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
-  const [activeTab, setActiveTab] = useState('overview');
-
   return (
-    <div className="space-y-4">
-      {/* Tab bar — sticky */}
-      <div className="sticky top-0 z-10 bg-[#0a0a0b] pb-px">
-        <div className="flex gap-1 border-b border-[#27272a] overflow-x-auto">
-          {DASHBOARD_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              data-testid={`dashboard-tab-${tab.id}`}
-              className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'text-amber-400 border-b-[3px] border-amber-400'
-                  : 'text-[#71717a] hover:text-[#e4e4e7]'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {activeTab === 'overview' && (
-        <OverviewTab
-          trips={trips}
-          accounts={accounts}
-          transactions={transactions}
-          budgets={budgets}
-          portfolio={portfolio}
-          sportsGameCount={sportsGameCount}
-        />
-      )}
-      {activeTab === 'devtools' && <DevToolsTab />}
-      {activeTab === 'focus' && <FocusTab />}
-      {activeTab === 'health' && <HealthTab />}
-      {activeTab === 'knowledge' && <KnowledgeTab />}
-      {activeTab === 'goals' && <GoalsTab trips={trips} budgets={budgets} />}
-      {activeTab === 'networking' && <NetworkingTab />}
-    </div>
+    <OverviewTab
+      trips={trips}
+      accounts={accounts}
+      transactions={transactions}
+      budgets={budgets}
+      portfolio={portfolio}
+      sportsGameCount={sportsGameCount}
+    />
   );
 }

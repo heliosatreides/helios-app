@@ -5,22 +5,33 @@ const navGroups = [
   {
     label: 'Main',
     items: [
-      { to: '/', label: 'Dashboard', icon: '⚡', exact: true },
+      { to: '/dashboard', label: 'Dashboard', icon: '⚡' },
+      { to: '/planner', label: 'Planner', icon: '🗓️' },
+      { to: '/goals', label: 'Goals', icon: '🎯' },
+      { to: '/resume', label: 'Resume', icon: '📄' },
+    ],
+  },
+  {
+    label: 'Personal',
+    items: [
+      { to: '/trips', label: 'Trips', icon: '✈️' },
+      { to: '/finance', label: 'Finance', icon: '💰' },
+      { to: '/investments', label: 'Investments', icon: '📈' },
+      { to: '/sports', label: 'Sports', icon: '🏆' },
     ],
   },
   {
     label: 'Tools',
     items: [
-      { to: '/planner', label: 'Planner', icon: '🗓️' },
-      { to: '/trips', label: 'Trips', icon: '✈️' },
-      { to: '/finance', label: 'Finance', icon: '💰' },
-      { to: '/investments', label: 'Investments', icon: '📈' },
-      { to: '/sports', label: 'Sports', icon: '🏆' },
-      { to: '/resume', label: 'Resume', icon: '📄' },
+      { to: '/devtools', label: 'Dev Tools', icon: '💻' },
+      { to: '/focus', label: 'Focus', icon: '🔥' },
+      { to: '/health', label: 'Health', icon: '🏥' },
+      { to: '/knowledge', label: 'Knowledge', icon: '📚' },
+      { to: '/networking', label: 'Networking', icon: '🤝' },
     ],
   },
   {
-    label: 'Settings',
+    label: 'Account',
     items: [
       { to: '/settings', label: 'Settings', icon: '⚙️' },
     ],
@@ -43,11 +54,10 @@ export function Sidebar({ onNavClick }) {
               {group.label}
             </p>
             <div className="space-y-0.5">
-              {group.items.map(({ to, label, icon, exact }) => (
+              {group.items.map(({ to, label, icon }) => (
                 <NavLink
                   key={to}
                   to={to}
-                  end={exact}
                   onClick={onNavClick}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative ${

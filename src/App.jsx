@@ -9,6 +9,12 @@ import { SportsPage } from './pages/sports/SportsPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { ResumePage } from './pages/resume/ResumePage';
 import { PlannerPage } from './pages/planner/PlannerPage';
+import { GoalsPage } from './pages/goals/GoalsPage';
+import { NetworkingPage } from './pages/networking/NetworkingPage';
+import { HealthPage } from './pages/health/HealthPage';
+import { KnowledgePage } from './pages/knowledge/KnowledgePage';
+import { DevToolsPage } from './pages/devtools/DevToolsPage';
+import { FocusPage } from './pages/focus/FocusPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
@@ -70,6 +76,12 @@ function AppShell() {
               <Route path="/resume" element={<ProtectedRoute><ResumePage /></ProtectedRoute>} />
               <Route path="/planner" element={<ProtectedRoute><PlannerPage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="/goals" element={<ProtectedRoute><GoalsPage /></ProtectedRoute>} />
+              <Route path="/networking" element={<ProtectedRoute><NetworkingPage /></ProtectedRoute>} />
+              <Route path="/health" element={<ProtectedRoute><HealthPage /></ProtectedRoute>} />
+              <Route path="/knowledge" element={<ProtectedRoute><KnowledgePage /></ProtectedRoute>} />
+              <Route path="/devtools" element={<ProtectedRoute><DevToolsPage /></ProtectedRoute>} />
+              <Route path="/focus" element={<ProtectedRoute><FocusPage /></ProtectedRoute>} />
             </Routes>
           </div>
         </main>
