@@ -33,12 +33,14 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const [status, setStatus] = useState('initializing');
   const [reconnecting, setReconnecting] = useState(false);
   const [peerCount, setPeerCount] = useState(0);
+  const [effectiveRoomId, setEffectiveRoomId] = useState(null);
 
   const peerRef = useRef(null);
   const connRef = useRef(null);
   const hasGuestRef = useRef(false);
+  const retryTimerRef = useRef(null);
 
-  const actualRoomId = isGuest ? roomId : peerId;
+  const actualRoomId = isGuest ? roomId : (peerId ?? roomId);
 
   const [debugLog, setDebugLog] = useState([]);
   const addDebug = useCallback((msg) => {
@@ -114,31 +116,32 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         }
 
         if (isGuest) {
-          // Guest: create anonymous peer, then connect to host
+          // Guest: create anonymous peer, then connect to host with persistent retry
           addDebug('Creating guest peer...');
           const peer = new Peer(peerConfig);
           peerRef.current = peer;
 
-          peer.on('open', (id) => {
-            addDebug(`Guest peer open: ${id}`);
-            if (cancelled) return;
+          function attemptConnect() {
+            if (cancelled || !peerRef.current) return;
             addDebug(`Connecting to host: ${PEER_PREFIX}${actualRoomId}`);
             const conn = peer.connect(PEER_PREFIX + actualRoomId, { reliable: true });
             setupConn(conn);
             setStatus('waiting');
+          }
+
+          peer.on('open', (id) => {
+            addDebug(`Guest peer open: ${id}`);
+            if (cancelled) return;
+            attemptConnect();
           });
 
           peer.on('error', (err) => {
             addDebug(`Peer error: ${err.type} — ${err.message}`);
             if (err.type === 'peer-unavailable') {
-              // Host not online yet — retry after delay
+              // Host not online yet — keep retrying every 3s
               addDebug('Host not available, retrying in 3s...');
-              setTimeout(() => {
-                if (cancelled || !peerRef.current) return;
-                addDebug(`Retrying connection to host...`);
-                const conn = peerRef.current.connect(PEER_PREFIX + actualRoomId, { reliable: true });
-                setupConn(conn);
-              }, 3000);
+              clearTimeout(retryTimerRef.current);
+              retryTimerRef.current = setTimeout(attemptConnect, 3000);
             } else if (!cancelled) {
               setStatus('error');
             }
@@ -150,39 +153,51 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           });
 
         } else {
-          // Host: create peer with known ID, wait for guest to connect
-          addDebug(`Creating host peer: ${PEER_PREFIX}${actualRoomId}`);
-          const peer = new Peer(PEER_PREFIX + actualRoomId, peerConfig);
-          peerRef.current = peer;
+          // Host: create peer with known ID (retry with suffix if ID is taken)
+          function createHostPeer(suffix = '') {
+            const hostPeerId = PEER_PREFIX + actualRoomId + suffix;
+            addDebug(`Creating host peer: ${hostPeerId}`);
+            const peer = new Peer(hostPeerId, peerConfig);
+            peerRef.current = peer;
 
-          peer.on('open', (id) => {
-            addDebug(`Host peer open: ${id}`);
-            if (cancelled) return;
-            setStatus('waiting');
-          });
+            peer.on('open', (id) => {
+              addDebug(`Host peer open: ${id}`);
+              if (cancelled) return;
+              // Strip prefix so callers see just the room code
+              setEffectiveRoomId(actualRoomId + suffix);
+              setStatus('waiting');
+            });
 
-          peer.on('connection', (conn) => {
-            addDebug(`Incoming connection from ${conn.peer}`);
-            if (hasGuestRef.current) {
-              addDebug('Already have a guest, rejecting');
-              conn.close();
-              return;
-            }
-            setupConn(conn);
-          });
+            peer.on('connection', (conn) => {
+              addDebug(`Incoming connection from ${conn.peer}`);
+              if (hasGuestRef.current) {
+                addDebug('Already have a guest, rejecting');
+                conn.close();
+                return;
+              }
+              setupConn(conn);
+            });
 
-          peer.on('error', (err) => {
-            addDebug(`Peer error: ${err.type} — ${err.message}`);
-            if (err.type === 'unavailable-id') {
-              addDebug('Room ID already taken — someone else is hosting');
-              if (!cancelled) setStatus('error');
-            }
-          });
+            peer.on('error', (err) => {
+              addDebug(`Peer error: ${err.type} — ${err.message}`);
+              if (err.type === 'unavailable-id') {
+                // ID collision (e.g. stale registration) — retry with random suffix
+                addDebug('Peer ID taken, retrying with suffix...');
+                peer.destroy();
+                if (!cancelled) {
+                  const newSuffix = suffix + '-' + Math.random().toString(36).slice(2, 5);
+                  createHostPeer(newSuffix);
+                }
+              }
+            });
 
-          peer.on('disconnected', () => {
-            addDebug('Peer disconnected from signaling server');
-            if (!cancelled && peerRef.current) peerRef.current.reconnect();
-          });
+            peer.on('disconnected', () => {
+              addDebug('Peer disconnected from signaling server');
+              if (!cancelled && peerRef.current) peerRef.current.reconnect();
+            });
+          }
+
+          createHostPeer();
         }
 
       } catch (err) {
@@ -197,10 +212,11 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     return () => {
       cancelled = true;
       clearTimeout(tid);
+      clearTimeout(retryTimerRef.current);
       if (connRef.current) { connRef.current.close(); connRef.current = null; }
       if (peerRef.current) { peerRef.current.destroy(); peerRef.current = null; }
     };
   }, [actualRoomId, isGuest]);
 
-  return { peerId: actualRoomId, messages, sendMessage, status, reconnecting, peerCount, leave, debugLog };
+  return { peerId: effectiveRoomId ?? actualRoomId, messages, sendMessage, status, reconnecting, peerCount, leave, debugLog };
 }
