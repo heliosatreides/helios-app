@@ -1,44 +1,12 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { decrypt } from '../../auth/crypto';
 import { useAuth } from '../../auth/AuthContext';
-import { idbGet } from '../../hooks/useIDB';
+import { idbGet, idbSet } from '../../hooks/useIDB';
 
 const AI_KEY_ENC_LS = 'helios-gemini-key-enc';
 const AI_KEY_LS = 'helios-gemini-key';
 
-const AVAILABLE_ROUTES = [
-  '/dashboard',
-  '/trips',
-  '/finance',
-  '/investments',
-  '/sports',
-  '/resume',
-  '/planner',
-  '/settings',
-  '/goals',
-  '/networking',
-  '/health',
-  '/knowledge',
-  '/devtools',
-  '/focus',
-  '/news',
-  '/converter',
-  '/worldclock',
-  '/flashcards',
-  '/splitter',
-  '/meals',
-  '/subscriptions',
-  '/apiplayground',
-  '/colors',
-  '/wiki',
-  '/music',
-  '/packing',
-  '/regex',
-  '/calculator',
-];
-
-// Map of query store names to IDB keys
+// Map of store names to IDB keys
 const STORE_IDB_KEYS = {
   trips: 'helios-trips',
   accounts: 'finance-accounts',
@@ -52,6 +20,17 @@ const STORE_IDB_KEYS = {
   wiki: 'wiki-pages',
   subscriptions: 'subscriptions',
   meals: 'meal-plan',
+};
+
+const SCHEMAS = {
+  trips: `{ id, name, destination, startDate (YYYY-MM-DD), endDate (YYYY-MM-DD), budget (number), status ("Planning"|"Upcoming"|"Ongoing"|"Completed"), notes, itinerary: [], expenses: [] }`,
+  accounts: `{ id, name, type ("Checking"|"Savings"|"Credit Card"|"Investment"), balance (number), currency ("USD") }`,
+  transactions: `{ id, amount (number), description, category ("Food"|"Transport"|"Housing"|"Entertainment"|"Health"|"Shopping"|"Salary"|"Other"), date (YYYY-MM-DD), accountId, type ("expense"|"income") }`,
+  budgets: `{ category ("Food"|"Transport"|"Housing"|"Entertainment"|"Health"|"Shopping"|"Other"), limit (number) }`,
+  portfolio: `{ id, ticker (UPPERCASE), name, shares (number), costBasis (number), currentPrice (number), assetClass ("Stocks"|"ETF"|"Crypto"|"Bonds"|"Real Estate"|"Cash"), addedAt (ISO datetime) }`,
+  tasks: `{ id, title, priority ("High"|"Medium"|"Low"), dueDate (YYYY-MM-DD or null), notes, completed (false), recurring ("None"|"Daily"|"Weekly"), createdAt (ISO datetime) }`,
+  goals: `{ id, title, description, progress (0-100), status ("active"|"completed"|"paused"), targetDate (YYYY-MM-DD) }`,
+  subscriptions: `{ id, name, amount (number), period ("monthly"|"yearly"|"weekly"), category, nextBilling (YYYY-MM-DD) }`,
 };
 
 function formatStoreData(store, data) {
@@ -84,7 +63,7 @@ function formatStoreData(store, data) {
       const items = Array.isArray(data) ? data : [];
       if (!items.length) return 'No budgets found.';
       return items.map(b =>
-        `• ${b.category || b.name}: $${Number(b.allocated ?? b.amount ?? 0).toLocaleString()} budget${b.spent !== undefined ? `, $${Number(b.spent).toLocaleString()} spent` : ''}`
+        `• ${b.category || b.name}: $${Number(b.allocated ?? b.amount ?? b.limit ?? 0).toLocaleString()} budget${b.spent !== undefined ? `, $${Number(b.spent).toLocaleString()} spent` : ''}`
       ).join('\n');
     }
     case 'portfolio': {
@@ -162,63 +141,119 @@ async function readStoreData(store) {
   }
 }
 
+function generateId() {
+  try { return crypto.randomUUID(); } catch { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+}
+
+async function writeStoreData(store, data) {
+  const key = STORE_IDB_KEYS[store];
+  if (!key) throw new Error(`Unknown store: ${store}`);
+  const current = (await idbGet(key)) ?? [];
+  const newItem = { ...data, id: data.id || generateId() };
+  const updated = Array.isArray(current) ? [...current, newItem] : [newItem];
+  await idbSet(key, updated);
+  return newItem;
+}
+
+async function updateStoreData(store, match, updates) {
+  const key = STORE_IDB_KEYS[store];
+  if (!key) throw new Error(`Unknown store: ${store}`);
+  const current = (await idbGet(key)) ?? [];
+  if (!Array.isArray(current)) throw new Error(`${store} is not an array store`);
+  const matchEntries = Object.entries(match);
+  let found = false;
+  const updated = current.map(item => {
+    const isMatch = matchEntries.every(([k, v]) =>
+      String(item[k] ?? '').toLowerCase().includes(String(v).toLowerCase())
+    );
+    if (isMatch) { found = true; return { ...item, ...updates }; }
+    return item;
+  });
+  if (!found) throw new Error(`No matching ${store} item found`);
+  await idbSet(key, updated);
+}
+
+async function deleteStoreData(store, match) {
+  const key = STORE_IDB_KEYS[store];
+  if (!key) throw new Error(`Unknown store: ${store}`);
+  const current = (await idbGet(key)) ?? [];
+  if (!Array.isArray(current)) throw new Error(`${store} is not an array store`);
+  const matchEntries = Object.entries(match);
+  const updated = current.filter(item =>
+    !matchEntries.every(([k, v]) =>
+      String(item[k] ?? '').toLowerCase().includes(String(v).toLowerCase())
+    )
+  );
+  await idbSet(key, updated);
+}
+
 function buildPrompt(userMessage) {
-  const routeLines = AVAILABLE_ROUTES
-    .map(r => `- navigate:${r} - Go to ${r.slice(1)}`)
-    .join('\n');
+  const storeLines = Object.keys(STORE_IDB_KEYS).map(s => `- ${s}`).join('\n');
+  const schemaLines = Object.entries(SCHEMAS).map(([s, schema]) => `${s}: ${schema}`).join('\n');
+  const now = new Date().toISOString();
 
-  const queryLines = Object.keys(STORE_IDB_KEYS)
-    .map(s => `- query:${s} - Read ${s} data from the app`)
-    .join('\n');
+  return `You are an AI assistant embedded in the Helios app. The user sends commands via P2P chat. Execute them in-place — NEVER navigate away from the chat. All actions happen via data reads/writes.
 
-  return `You are an AI assistant controlling the Helios app. The user sent a command via P2P chat. Interpret it and respond with an action, optional query, and a response.
+Current date/time: ${now}
 
 Available actions:
-${routeLines}
-- respond - Just reply, no navigation
+- read:<store> — read and summarize data from a store
+- write:<store> — create a new item in a store (include DATA field with full object)
+- update:<store> — modify an existing item (include MATCH and DATA fields)
+- delete:<store> — remove an item (include MATCH field)
+- respond — just reply in chat, no data operation
 
-Available queries (to read live app data):
-${queryLines}
+Available stores:
+${storeLines}
 
-Format your response as:
+Data schemas (use these field names exactly when writing):
+${schemaLines}
+
+Response format (use exactly these labels, one per line):
 ACTION: <action>
-QUERY: <store> (optional — include only when user asks about their data)
-RESPONSE: <friendly message>
-
-You can combine navigate and query:
-ACTION: navigate:/trips
-QUERY: trips
-RESPONSE: Opening your trips!
+DATA: <JSON object> (for write/update — valid JSON only, no trailing commas)
+MATCH: <JSON object> (for update/delete — fields to find the item)
+RESPONSE: <friendly confirmation message>
 
 Examples:
-User: show me my trips
-ACTION: navigate:/trips
-QUERY: trips
-RESPONSE: Opening trips and fetching your itinerary!
 
-User: what trips do I have?
-ACTION: respond
-QUERY: trips
+User: add a trip to Tokyo from April 1-10 2026
+ACTION: write:trips
+DATA: {"name": "Tokyo Trip", "destination": "Tokyo, Japan", "startDate": "2026-04-01", "endDate": "2026-04-10", "status": "Planning", "budget": 0, "notes": "", "itinerary": [], "expenses": []}
+RESPONSE: Added your Tokyo trip (Apr 1–10, 2026)!
+
+User: show my trips
+ACTION: read:trips
 RESPONSE: Here are your trips!
 
+User: add a task to buy groceries by Friday
+ACTION: write:tasks
+DATA: {"title": "Buy groceries", "priority": "Medium", "dueDate": "2026-03-27", "notes": "", "completed": false, "recurring": "None", "createdAt": "${now}"}
+RESPONSE: Added 'Buy groceries' to your task list!
+
+User: mark the Tokyo trip as completed
+ACTION: update:trips
+MATCH: {"name": "Tokyo"}
+DATA: {"status": "Completed"}
+RESPONSE: Marked the Tokyo trip as Completed!
+
+User: delete the Tokyo trip
+ACTION: delete:trips
+MATCH: {"name": "Tokyo"}
+RESPONSE: Deleted the Tokyo trip!
+
+User: add a transaction for $45 at the grocery store
+ACTION: write:transactions
+DATA: {"amount": -45, "description": "Grocery Store", "category": "Food", "date": "2026-03-24", "type": "expense", "accountId": ""}
+RESPONSE: Recorded a $45 grocery expense!
+
 User: what's my account balance?
-ACTION: respond
-QUERY: accounts
+ACTION: read:accounts
 RESPONSE: Here are your accounts!
 
-User: show me my portfolio
-ACTION: navigate:/investments
-QUERY: portfolio
-RESPONSE: Heading to investments!
-
-User: what tasks are due?
+User: hey what's up
 ACTION: respond
-QUERY: tasks
-RESPONSE: Here are your current tasks!
-
-User: hey whats up
-ACTION: respond
-RESPONSE: Hey! I can help you navigate the app or look up your data. Try asking about trips, finances, tasks, or goals!
+RESPONSE: Hey! I can help you manage your data — try asking me to add a trip, task, or transaction, or ask to show your current data!
 
 User: ${userMessage}`;
 }
@@ -236,7 +271,6 @@ export function useAIControl({ messages, sendMessage, enabled = false }) {
   const [aiEnabled, setAiEnabled] = useState(enabled);
   const [aiProcessing, setAiProcessing] = useState(false);
   const [lastAction, setLastAction] = useState(null);
-  const navigate = useNavigate();
   const { user, password } = useAuthSafe();
   const processedRef = useRef(new Set());
 
@@ -311,23 +345,50 @@ export function useAIControl({ messages, sendMessage, enabled = false }) {
         const text = data.candidates[0].content.parts[0].text;
 
         const actionMatch = text.match(/^ACTION:\s*(.+)$/m);
-        const queryMatch = text.match(/^QUERY:\s*(.+)$/m);
+        const dataMatch = text.match(/^DATA:\s*(.+)$/m);
+        const matchMatch = text.match(/^MATCH:\s*(.+)$/m);
         const responseMatch = text.match(/^RESPONSE:\s*(.+)$/m);
+
         const action = actionMatch?.[1]?.trim() || 'respond';
-        const queryStore = queryMatch?.[1]?.trim() || null;
+        const dataStr = dataMatch?.[1]?.trim() || null;
+        const matchStr = matchMatch?.[1]?.trim() || null;
         const response = responseMatch?.[1]?.trim() || text.trim();
 
         setLastAction(action);
 
-        if (action.startsWith('navigate:')) {
-          const path = action.replace('navigate:', '');
-          navigate(path);
-        }
-
-        if (queryStore) {
-          const summary = await readStoreData(queryStore);
+        if (action.startsWith('read:')) {
+          const store = action.replace('read:', '');
+          const summary = await readStoreData(store);
           sendMessage(`🤖 ${response}\n\n${summary}`);
+
+        } else if (action.startsWith('write:')) {
+          const store = action.replace('write:', '');
+          if (!dataStr) throw new Error('write action missing DATA field');
+          let parsed;
+          try { parsed = JSON.parse(dataStr); } catch { throw new Error(`Invalid JSON in DATA: ${dataStr}`); }
+          await writeStoreData(store, parsed);
+          sendMessage(`🤖 ${response}`);
+
+        } else if (action.startsWith('update:')) {
+          const store = action.replace('update:', '');
+          if (!matchStr) throw new Error('update action missing MATCH field');
+          if (!dataStr) throw new Error('update action missing DATA field');
+          let matchObj, updateObj;
+          try { matchObj = JSON.parse(matchStr); } catch { throw new Error(`Invalid JSON in MATCH: ${matchStr}`); }
+          try { updateObj = JSON.parse(dataStr); } catch { throw new Error(`Invalid JSON in DATA: ${dataStr}`); }
+          await updateStoreData(store, matchObj, updateObj);
+          sendMessage(`🤖 ${response}`);
+
+        } else if (action.startsWith('delete:')) {
+          const store = action.replace('delete:', '');
+          if (!matchStr) throw new Error('delete action missing MATCH field');
+          let matchObj;
+          try { matchObj = JSON.parse(matchStr); } catch { throw new Error(`Invalid JSON in MATCH: ${matchStr}`); }
+          await deleteStoreData(store, matchObj);
+          sendMessage(`🤖 ${response}`);
+
         } else {
+          // respond or unknown — just send the message
           sendMessage(`🤖 ${response}`);
         }
       } catch (err) {
@@ -339,7 +400,7 @@ export function useAIControl({ messages, sendMessage, enabled = false }) {
     }
 
     process();
-  }, [messages, aiEnabled, getKey, navigate, sendMessage]);
+  }, [messages, aiEnabled, getKey, sendMessage]);
 
   return { aiEnabled, setAiEnabled, aiProcessing, lastAction, hasKey };
 }
