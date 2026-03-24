@@ -26,10 +26,21 @@ function Spinner({ size = 8 }) {
   );
 }
 
-function WaitingHost({ chatLink, relayStatus }) {
-  const connectedRelays = relayStatus.filter(r => r.connected).length;
+function DebugPanel({ log }) {
+  if (!log?.length) return null;
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
+    <div className="w-full max-w-sm mx-auto mt-4 bg-zinc-950 border border-zinc-800 rounded-xl p-3 max-h-48 overflow-y-auto">
+      <p className="text-zinc-600 text-[10px] uppercase tracking-wider mb-1">Debug Log</p>
+      {log.map((line, i) => (
+        <p key={i} className="text-zinc-500 text-[11px] font-mono leading-snug">{line}</p>
+      ))}
+    </div>
+  );
+}
+
+function WaitingHost({ chatLink, relayStatus, debugLog }) {
+  return (
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6 overflow-y-auto py-8">
       <div className="w-full max-w-sm space-y-4">
         <div className="flex justify-center mb-2">
           <div className="relative">
@@ -59,17 +70,20 @@ function WaitingHost({ chatLink, relayStatus }) {
             {relayStatus[0]?.connected ?? 0}/{relayStatus[0]?.total ?? 0} relays
           </div>
         </div>
+
+        <DebugPanel log={debugLog} />
       </div>
     </div>
   );
 }
 
-function WaitingGuest() {
+function WaitingGuest({ debugLog }) {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
       <Spinner size={8} />
       <p className="mt-5 text-zinc-200 font-semibold">Connecting…</p>
       <p className="mt-1 text-zinc-600 text-sm">Waiting for the host to be present</p>
+      <DebugPanel log={debugLog} />
     </div>
   );
 }
@@ -125,7 +139,7 @@ export function ChatPage() {
   const roomId = searchParams.get('room');
   const isGuest = Boolean(roomId);
 
-  const { peerId, messages, sendMessage, status, reconnecting, peerCount, relayStatus, leave } =
+  const { peerId, messages, sendMessage, status, reconnecting, peerCount, relayStatus, leave, debugLog } =
     usePeer({ isGuest, roomId });
 
   const messagesEndRef = useRef(null);
@@ -173,12 +187,12 @@ export function ChatPage() {
 
   // Guest waiting for host — only if we've NEVER connected (no messages, not reconnecting)
   if (isGuest && status === 'waiting' && peerCount === 0 && !reconnecting && messages.length === 0) {
-    return <WaitingGuest />;
+    return <WaitingGuest debugLog={debugLog} />;
   }
 
   // Host waiting for guest — only if we've never had a peer yet
   if (!isGuest && status === 'waiting' && messages.length === 0 && !reconnecting) {
-    return <WaitingHost chatLink={chatLink} relayStatus={relayStatus} />;
+    return <WaitingHost chatLink={chatLink} relayStatus={relayStatus} debugLog={debugLog} />;
   }
 
   const connectedRelays = relayStatus[0]?.connected ?? 0;

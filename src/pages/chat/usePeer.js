@@ -64,6 +64,12 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     }
   }, []);
 
+  const [debugLog, setDebugLog] = useState([]);
+  const addDebug = useCallback((msg) => {
+    console.log('[P2P]', msg);
+    setDebugLog(prev => [...prev.slice(-20), `${new Date().toLocaleTimeString()}: ${msg}`]);
+  }, []);
+
   useEffect(() => {
     if (!actualRoomId) { setStatus('error'); return; }
 
@@ -71,10 +77,14 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
     async function setup() {
       try {
+        addDebug('Fetching TURN config...');
         const turnConfig = await getTurnConfig();
+        addDebug(`TURN: ${turnConfig ? turnConfig.length + ' servers' : 'none (STUN only)'}`);
         if (cancelled) return;
 
+        addDebug('Loading trystero/nostr...');
         const { joinRoom, getRelaySockets } = await import('trystero/nostr');
+        addDebug('Trystero loaded');
         if (cancelled) return;
 
         const roomConfig = {
@@ -83,7 +93,9 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         };
         if (turnConfig) roomConfig.turnConfig = turnConfig;
 
+        addDebug(`Joining room "${actualRoomId}" with redundancy=${RELAY_REDUNDANCY}...`);
         const room = joinRoom(roomConfig, actualRoomId);
+        addDebug('Room joined (waiting for relays)');
 
         roomRef.current = room;
 
@@ -98,7 +110,8 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           }]);
         });
 
-        room.onPeerJoin(() => {
+        room.onPeerJoin((peerId) => {
+          addDebug(`onPeerJoin: ${peerId}`);
           if (!isGuest && hasGuestRef.current) return;
           hasGuestRef.current = true;
           setReconnecting(false);
@@ -106,7 +119,8 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           setPeerCount(c => c + 1);
         });
 
-        room.onPeerLeave(() => {
+        room.onPeerLeave((peerId) => {
+          addDebug(`onPeerLeave: ${peerId}`);
           hasGuestRef.current = false;
           setPeerCount(c => Math.max(0, c - 1));
           setReconnecting(true);
@@ -119,16 +133,23 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
             const sockets = getRelaySockets();
             const entries = Object.entries(sockets);
             const connected = entries.filter(([, s]) => s?.readyState === 1).length;
-            setRelayStatus([{ connected, total: entries.length }]);
-          } catch { /* ignore */ }
+            const total = entries.length;
+            setRelayStatus([{ connected, total }]);
+            // Log relay changes
+            if (total > 0) {
+              addDebug(`Relays: ${connected}/${total} connected`);
+            }
+          } catch (e) { addDebug(`Relay check error: ${e.message}`); }
         };
-        updateRelays();
+        // Delay first check to let relays connect
+        setTimeout(updateRelays, 2000);
         intervalRef.current = setInterval(updateRelays, 3000);
 
         setStatus('waiting');
 
       } catch (err) {
         if (!cancelled) {
+          addDebug(`Setup error: ${err.message}`);
           console.error('Chat setup error:', err);
           setStatus('error');
         }
@@ -144,5 +165,5 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     };
   }, [actualRoomId, isGuest]);
 
-  return { peerId: actualRoomId, messages, sendMessage, status, reconnecting, peerCount, relayStatus, leave };
+  return { peerId: actualRoomId, messages, sendMessage, status, reconnecting, peerCount, relayStatus, leave, debugLog };
 }
