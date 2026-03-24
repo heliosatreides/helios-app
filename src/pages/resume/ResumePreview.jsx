@@ -28,7 +28,7 @@ export function ResumePreview({ resumeData }) {
   return (
     <div className="flex gap-6">
       {/* Resume content */}
-      <div id="resume-preview" className="flex-1 bg-white text-gray-900 p-8 rounded-lg shadow-lg font-serif max-w-3xl">
+      <div id="resume-preview" className="flex-1 bg-white text-gray-900 p-8 shadow-lg font-serif max-w-3xl">
         {/* Header */}
         <div className="text-center mb-4">
           {h.fullName && (
@@ -185,7 +185,7 @@ export function ResumePreview({ resumeData }) {
         <div className="mt-6 flex gap-3 no-print">
           <button
             onClick={() => window.print()}
-            className="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-gray-800 text-white text-sm hover:bg-gray-700 transition-colors"
             aria-label="Print or save as PDF"
           >
             🖨️ Print / Save as PDF
@@ -194,7 +194,7 @@ export function ResumePreview({ resumeData }) {
             <button
               onClick={handleScore}
               disabled={scoring || loading}
-              className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm hover:bg-violet-500 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-violet-600 text-white text-sm hover:bg-violet-500 transition-colors disabled:opacity-50"
             >
               {scoring ? '⏳ Scoring...' : '✨ Score My Resume'}
             </button>
@@ -204,17 +204,17 @@ export function ResumePreview({ resumeData }) {
 
       {/* Score panel */}
       {scoreResult && (
-        <div className="w-64 shrink-0 bg-[#1c1c1f] border border-[#1c1c20] rounded-lg p-4 h-fit">
-          <h3 className="text-[#e4e4e7] font-semibold mb-3">Resume Score</h3>
+        <div className="w-64 shrink-0 bg-[#1c1c1f] border border-border p-4 h-fit">
+          <h3 className="text-foreground font-semibold mb-3">Resume Score</h3>
           <div className="text-4xl font-bold text-amber-400 mb-1">
-            {scoreResult.score}<span className="text-lg text-[#71717a]">/10</span>
+            {scoreResult.score}<span className="text-lg text-muted-foreground">/10</span>
           </div>
           {scoreResult.suggestions.length > 0 && (
             <>
-              <p className="text-[#71717a] text-xs mt-3 mb-2 uppercase tracking-wider font-medium">Suggestions</p>
+              <p className="text-muted-foreground text-xs mt-3 mb-2 uppercase tracking-wider font-medium">Suggestions</p>
               <ul className="space-y-2">
                 {scoreResult.suggestions.map((s, i) => (
-                  <li key={i} className="text-sm text-[#a1a1aa] flex gap-2">
+                  <li key={i} className="text-sm text-muted-foreground flex gap-2">
                     <span className="text-amber-400 shrink-0">{i + 1}.</span>
                     <span>{s}</span>
                   </li>
@@ -224,7 +224,7 @@ export function ResumePreview({ resumeData }) {
           )}
           <button
             onClick={() => setScoreResult(null)}
-            className="mt-4 text-xs text-[#52525b] hover:text-[#71717a]"
+            className="mt-4 text-xs text-muted-foreground/80 hover:text-muted-foreground"
           >
             ✕ Close
           </button>

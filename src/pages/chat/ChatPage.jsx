@@ -15,7 +15,7 @@ function CopyButton({ text, label = 'Copy' }) {
   return (
     <button
       onClick={copy}
-      className="px-3 py-1.5 rounded-lg bg-amber-500 text-[#0a0a0b] text-xs font-semibold hover:bg-amber-400 active:scale-95 transition-all"
+      className="px-3 py-1.5 bg-foreground text-background text-xs font-semibold hover:bg-foreground/90 active:scale-95 transition-all"
     >
       {copied ? '✓ Copied' : label}
     </button>
@@ -24,17 +24,17 @@ function CopyButton({ text, label = 'Copy' }) {
 
 function Spinner({ size = 8 }) {
   return (
-    <div className={`w-${size} h-${size} border-2 border-amber-500 border-t-transparent rounded-full animate-spin`} />
+    <div className={`w-${size} h-${size} border-2 border-foreground border-t-transparent rounded-full animate-spin`} />
   );
 }
 
 function DebugPanel({ log }) {
   if (!log?.length) return null;
   return (
-    <div className="w-full max-w-sm mx-auto mt-4 bg-zinc-950 border border-zinc-800 rounded-xl p-3 max-h-48 overflow-y-auto">
-      <p className="text-zinc-600 text-[10px] uppercase tracking-wider mb-1">Debug Log</p>
+    <div className="w-full max-w-sm mx-auto mt-4 bg-background border border-border p-3 max-h-48 overflow-y-auto">
+      <p className="text-muted-foreground/60 text-[10px] uppercase tracking-wider mb-1">Debug Log</p>
       {log.map((line, i) => (
-        <p key={i} className="text-zinc-500 text-[11px] font-mono leading-snug">{line}</p>
+        <p key={i} className="text-muted-foreground text-[11px] font-mono leading-snug">{line}</p>
       ))}
     </div>
   );
@@ -63,9 +63,9 @@ function LoginModal({ onSuccess, onCancel }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="w-full max-w-sm bg-[#0a0a0b] border border-zinc-800 rounded-2xl p-6 shadow-2xl">
-        <h2 className="text-zinc-100 font-semibold text-base mb-1">Log in to use AI Control</h2>
-        <p className="text-zinc-500 text-sm mb-5">Enter your credentials to enable AI-powered commands.</p>
+      <div className="w-full max-w-sm bg-background border border-border p-6 shadow-2xl">
+        <h2 className="text-foreground font-semibold text-base mb-1">Log in to use AI Control</h2>
+        <p className="text-muted-foreground text-sm mb-5">Enter your credentials to enable AI-powered commands.</p>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
             type="text"
@@ -73,28 +73,28 @@ function LoginModal({ onSuccess, onCancel }) {
             value={username}
             onChange={e => setUsername(e.target.value)}
             autoFocus
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
+            className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
           />
           <input
             type="password"
             placeholder="Password"
             value={pw}
             onChange={e => setPw(e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
+            className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
           />
           {error && <p className="text-red-400 text-xs">{error}</p>}
           <div className="flex gap-2 pt-1">
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 py-2.5 rounded-xl border border-zinc-700 text-zinc-400 text-sm hover:text-zinc-200 hover:border-zinc-600 transition-colors"
+              className="flex-1 py-2.5 border border-border text-muted-foreground text-sm hover:text-foreground hover:border-border transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !username || !pw}
-              className="flex-1 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] text-sm font-semibold hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 py-2.5 bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? 'Logging in…' : 'Log in'}
             </button>
@@ -127,72 +127,40 @@ function ChatLobby({ onCreateRoom, onJoinRoom }) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#0a0a0b] px-6">
-      <div className="w-full max-w-md space-y-8">
-        {/* Header */}
+    <div className="fixed inset-0 flex items-center justify-center bg-background px-6">
+      <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/20 mb-5">
-            <span className="text-3xl">💬</span>
-          </div>
-          <h1 className="text-2xl font-bold text-zinc-100 mb-2">P2P Ephemeral Chat</h1>
-          <p className="text-zinc-500 text-sm max-w-sm mx-auto">
-            End-to-end encrypted. No servers. Messages disappear when you leave.
-          </p>
+          <h1 className="text-lg font-semibold text-foreground mb-1">P2P Ephemeral Chat</h1>
+          <p className="text-muted-foreground text-sm">End-to-end encrypted. No servers. Messages disappear when you leave.</p>
         </div>
 
-        {/* Create Room */}
-        <div className="space-y-3">
-          <button
-            onClick={onCreateRoom}
-            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-amber-500 text-[#0a0a0b] font-semibold text-base hover:bg-amber-400 active:scale-[0.98] transition-all shadow-lg shadow-amber-500/10"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-            Create New Room
-          </button>
-          <p className="text-zinc-600 text-xs text-center">Start a room and share the link with someone</p>
-        </div>
+        <button onClick={onCreateRoom}
+          className="w-full px-6 py-3 bg-foreground text-background font-medium text-sm hover:bg-foreground/90 transition-colors">
+          Create New Room
+        </button>
 
-        {/* Divider */}
         <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-zinc-800" />
-          <span className="text-zinc-600 text-xs font-medium uppercase tracking-wider">or join existing</span>
-          <div className="flex-1 h-px bg-zinc-800" />
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-muted-foreground/60 text-xs uppercase tracking-wider">or join</span>
+          <div className="flex-1 h-px bg-border" />
         </div>
 
-        {/* Join Room */}
         <form onSubmit={handleJoin} className="space-y-3">
-          <div className="relative">
-            <input
-              type="text"
-              value={roomCode}
-              onChange={(e) => { setRoomCode(e.target.value); setJoinError(''); }}
-              placeholder="Enter room code or paste invite link"
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-2xl px-5 py-4 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all"
-              autoFocus
-            />
-          </div>
-          {joinError && <p className="text-red-400 text-xs pl-1">{joinError}</p>}
-          <button
-            type="submit"
-            disabled={!roomCode.trim()}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-zinc-700 text-zinc-200 font-medium hover:border-amber-500/40 hover:text-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>
-            </svg>
+          <input type="text" value={roomCode}
+            onChange={(e) => { setRoomCode(e.target.value); setJoinError(''); }}
+            placeholder="Room code or invite link"
+            className="w-full bg-background border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
+            autoFocus />
+          {joinError && <p className="text-red-400 text-xs">{joinError}</p>}
+          <button type="submit" disabled={!roomCode.trim()}
+            className="w-full px-6 py-3 border border-border text-muted-foreground font-medium text-sm hover:text-foreground hover:bg-secondary/50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
             Join Room
           </button>
         </form>
 
-        {/* Info */}
-        <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50">
-          <span className="text-zinc-600 mt-0.5">🔒</span>
-          <p className="text-zinc-600 text-xs leading-relaxed">
-            Messages are sent directly between browsers using WebRTC. Nothing is stored on any server. The chat room is destroyed when both parties leave.
-          </p>
-        </div>
+        <p className="text-muted-foreground/40 text-xs text-center leading-relaxed">
+          Messages are sent directly between browsers via WebRTC. Nothing is stored on any server.
+        </p>
       </div>
     </div>
   );
@@ -202,35 +170,35 @@ function ChatLobby({ onCreateRoom, onJoinRoom }) {
 
 function WaitingHost({ chatLink, debugLog, onBack }) {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6 overflow-y-auto py-8">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6 overflow-y-auto py-8">
       <div className="w-full max-w-sm space-y-4">
         <div className="flex justify-center mb-2">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-              <div className="w-3 h-3 rounded-full bg-amber-500" />
+            <div className="w-16 h-16 rounded-full bg-foreground/10 border border-foreground/30 flex items-center justify-center">
+              <div className="w-3 h-3 rounded-full bg-foreground" />
             </div>
-            <div className="absolute inset-0 rounded-full border border-amber-500/20 animate-ping" />
+            <div className="absolute inset-0 rounded-full border border-foreground/20 animate-ping" />
           </div>
         </div>
 
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-zinc-100 mb-1">Waiting for someone to join</h2>
-          <p className="text-zinc-500 text-sm">Share the link or room code below</p>
+          <h2 className="text-lg font-semibold text-foreground mb-1">Waiting for someone to join</h2>
+          <p className="text-muted-foreground text-sm">Share the link or room code below</p>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-3">
+        <div className="bg-background border border-border p-4 space-y-3">
           <div>
-            <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Invite Link</p>
+            <p className="text-muted-foreground text-xs mb-2 uppercase tracking-widest">Invite Link</p>
             <div className="flex items-center gap-2">
-              <span className="flex-1 text-zinc-300 text-xs font-mono break-all truncate">{chatLink}</span>
+              <span className="flex-1 text-muted-foreground text-xs font-mono break-all truncate">{chatLink}</span>
               <CopyButton text={chatLink} />
             </div>
           </div>
           {chatLink && (
             <div>
-              <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Room Code</p>
+              <p className="text-muted-foreground text-xs mb-2 uppercase tracking-widest">Room Code</p>
               <div className="flex items-center gap-2">
-                <span className="text-zinc-200 text-sm font-mono tracking-wider">
+                <span className="text-foreground text-sm font-mono tracking-wider">
                   {new URL(chatLink).searchParams.get('room') || ''}
                 </span>
                 <CopyButton
@@ -244,7 +212,7 @@ function WaitingHost({ chatLink, debugLog, onBack }) {
 
         <button
           onClick={onBack}
-          className="w-full py-2.5 rounded-xl border border-zinc-800 text-zinc-500 text-sm hover:text-zinc-300 hover:border-zinc-700 transition-colors"
+          className="w-full py-2.5 border border-border text-muted-foreground text-sm hover:text-muted-foreground hover:border-border transition-colors"
         >
           ← Back to Lobby
         </button>
@@ -257,13 +225,13 @@ function WaitingHost({ chatLink, debugLog, onBack }) {
 
 function WaitingGuest({ debugLog, onBack }) {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6">
       <Spinner size={8} />
-      <p className="mt-5 text-zinc-200 font-semibold">Connecting…</p>
-      <p className="mt-1 text-zinc-600 text-sm">Waiting for the host to be present</p>
+      <p className="mt-5 text-foreground font-semibold">Connecting…</p>
+      <p className="mt-1 text-muted-foreground/60 text-sm">Waiting for the host to be present</p>
       <button
         onClick={onBack}
-        className="mt-6 py-2 px-4 rounded-xl border border-zinc-800 text-zinc-500 text-sm hover:text-zinc-300 hover:border-zinc-700 transition-colors"
+        className="mt-6 py-2 px-4 border border-border text-muted-foreground text-sm hover:text-muted-foreground hover:border-border transition-colors"
       >
         ← Back
       </button>
@@ -293,7 +261,7 @@ function ChatInput({ onSend }) {
   }, [handleSend]);
 
   return (
-    <div className="border-t border-zinc-800/80 px-3 py-3 flex gap-2 items-end bg-[#0c0c0e]">
+    <div className="border-t border-border/80 px-3 py-3 flex gap-2 items-end bg-background">
       <textarea
         ref={textareaRef}
         value={text}
@@ -302,13 +270,13 @@ function ChatInput({ onSend }) {
         placeholder="Type a message…"
         rows={1}
         autoFocus
-        className="flex-1 bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-600 transition-colors"
+        className="flex-1 bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 resize-none focus:outline-none focus:border-border transition-colors"
         style={{ minHeight: '44px', maxHeight: '120px' }}
       />
       <button
         onClick={handleSend}
         disabled={!text.trim()}
-        className="shrink-0 w-10 h-10 rounded-xl bg-amber-500 text-[#0a0a0b] flex items-center justify-center hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 transition-all"
+        className="shrink-0 w-10 h-10 bg-foreground text-background flex items-center justify-center hover:bg-foreground/90 disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 transition-all"
         aria-label="Send"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -350,7 +318,7 @@ function AIControlToggle({ enabled, onToggle, processing, hasKey, onLoginRequire
         className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
           enabled
             ? 'bg-violet-600/30 border border-violet-500/50 text-violet-300'
-            : 'bg-zinc-800 border border-zinc-700 text-zinc-500 hover:text-zinc-300'
+            : 'bg-secondary border border-border text-muted-foreground hover:text-muted-foreground'
         }`}
         title={tooltipMsg ?? 'Toggle AI Control Mode'}
       >
@@ -361,7 +329,7 @@ function AIControlToggle({ enabled, onToggle, processing, hasKey, onLoginRequire
         </span>
       </button>
       {showTooltip && tooltipMsg && (
-        <div className="absolute right-0 top-full mt-1.5 w-48 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-zinc-300 shadow-xl z-50 pointer-events-none">
+        <div className="absolute right-0 top-full mt-1.5 w-48 bg-secondary border border-border px-3 py-2 text-xs text-muted-foreground shadow-xl z-50 pointer-events-none">
           {tooltipMsg}
         </div>
       )}
@@ -441,34 +409,34 @@ export function ChatPage() {
 
   if (status === 'initializing') {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b]">
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-background">
         <Spinner size={8} />
-        <p className="mt-4 text-zinc-400 text-sm">Setting up secure connection…</p>
+        <p className="mt-4 text-muted-foreground text-sm">Setting up secure connection…</p>
       </div>
     );
   }
 
   if (status === 'error') {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 max-w-sm w-full text-center">
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6">
+        <div className="bg-background border border-border p-8 max-w-sm w-full text-center">
           <p className="text-2xl mb-3">⚠️</p>
-          <p className="text-zinc-100 font-semibold mb-2">
+          <p className="text-foreground font-semibold mb-2">
             {isGuest ? 'Room unavailable' : 'Could not connect'}
           </p>
-          <p className="text-zinc-500 text-sm mb-6">
+          <p className="text-muted-foreground text-sm mb-6">
             {isGuest ? 'The host may have left or the link is invalid.' : 'Check your connection and try again.'}
           </p>
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => window.location.reload()}
-              className="px-5 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold hover:bg-amber-400 transition-colors"
+              className="px-5 py-2.5 bg-foreground text-background font-semibold hover:bg-foreground/90 transition-colors"
             >
               Try Again
             </button>
             <button
               onClick={handleBack}
-              className="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="px-5 py-2.5 border border-border text-muted-foreground hover:text-foreground transition-colors"
             >
               Back
             </button>
@@ -489,17 +457,17 @@ export function ChatPage() {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-[#0a0a0b]">
+    <div className="fixed inset-0 flex flex-col bg-background">
       {/* Reconnecting banner */}
       {reconnecting && (
-        <div className="absolute top-[53px] inset-x-0 z-20 flex items-center justify-center gap-2 px-4 py-2 bg-amber-950/80 border-b border-amber-800/50 backdrop-blur-sm">
+        <div className="absolute top-[53px] inset-x-0 z-20 flex items-center justify-center gap-2 px-4 py-2 bg-secondary/80 border-b border-border/50 backdrop-blur-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-          <span className="text-amber-300 text-xs">Waiting for them to reconnect…</span>
+          <span className="text-foreground text-xs">Waiting for them to reconnect…</span>
         </div>
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800/80 bg-[#0c0c0e] shrink-0 z-10">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/80 bg-background shrink-0 z-10">
         <div className="flex items-center gap-2.5">
           <div className="relative">
             <span className={`block w-2.5 h-2.5 rounded-full ${peerCount > 0 ? 'bg-emerald-400' : 'bg-zinc-600'}`} />
@@ -508,8 +476,8 @@ export function ChatPage() {
             )}
           </div>
           <div>
-            <span className="text-zinc-100 text-sm font-semibold">P2P Chat</span>
-            <span className="text-zinc-600 text-xs ml-2">
+            <span className="text-foreground text-sm font-semibold">P2P Chat</span>
+            <span className="text-muted-foreground/60 text-xs ml-2">
               {peerCount > 0 ? (aiEnabled ? '🤖 AI Control On' : '🔒 End-to-end encrypted') : 'waiting…'}
             </span>
           </div>
@@ -526,7 +494,7 @@ export function ChatPage() {
           )}
           <button
             onClick={handleLeave}
-            className="text-zinc-500 hover:text-red-400 text-xs font-medium transition-colors px-2 py-1 rounded-lg hover:bg-red-950/30"
+            className="text-muted-foreground hover:text-red-400 text-xs font-medium transition-colors px-2 py-1 hover:bg-red-950/30"
           >
             Leave
           </button>
@@ -537,7 +505,7 @@ export function ChatPage() {
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {messages.length === 0 && (
           <div className="flex items-center justify-center h-full">
-            <p className="text-zinc-700 text-sm">Connected — say hi!</p>
+            <p className="text-muted-foreground/40 text-sm">Connected — say hi!</p>
           </div>
         )}
         {messages.map((msg, i) => (

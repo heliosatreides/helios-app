@@ -52,8 +52,8 @@ function AddContactModal({ onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-contact-modal">
-      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold text-[#e4e4e7] mb-4">Add Contact</h2>
+      <div className="bg-background border border-border p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-bold text-foreground mb-4">Add Contact</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           {[
             { field: 'name', label: 'Name *', placeholder: 'Jane Smith', testId: 'contact-name-input' },
@@ -65,34 +65,34 @@ function AddContactModal({ onSave, onClose }) {
             { field: 'tags', label: 'Tags (comma-separated)', placeholder: 'recruiter, mentor' },
           ].map(({ field, label, placeholder, type, testId }) => (
             <div key={field}>
-              <label className="block text-[#71717a] text-sm mb-1">{label}</label>
+              <label className="block text-muted-foreground text-sm mb-1">{label}</label>
               <input
                 type={type || 'text'}
                 value={form[field]}
                 onChange={set(field)}
                 placeholder={placeholder}
-                className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
                 data-testid={testId}
               />
             </div>
           ))}
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Follow-up reminder (days, 0 = none)</label>
+            <label className="block text-muted-foreground text-sm mb-1">Follow-up reminder (days, 0 = none)</label>
             <input
               type="number"
               value={form.followUpDays}
               onChange={set('followUpDays')}
               placeholder="14"
               min="0"
-              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="contact-followup-input"
             />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold py-2 rounded-xl text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
               Add Contact
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-[#27272a] text-[#e4e4e7] font-semibold py-2 rounded-lg text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
               Cancel
             </button>
           </div>
@@ -114,35 +114,35 @@ function LogInteractionModal({ contact, onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="log-interaction-modal">
-      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-bold text-[#e4e4e7] mb-1">Log Interaction</h2>
-        <p className="text-[#71717a] text-sm mb-4">with {contact.name}</p>
+      <div className="bg-background border border-border p-6 w-full max-w-md">
+        <h2 className="text-lg font-bold text-foreground mb-1">Log Interaction</h2>
+        <p className="text-muted-foreground text-sm mb-4">with {contact.name}</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Date</label>
+            <label className="block text-muted-foreground text-sm mb-1">Date</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
             />
           </div>
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Note</label>
+            <label className="block text-muted-foreground text-sm mb-1">Note</label>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Had coffee, discussed job opportunity..."
               rows={3}
-              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] resize-none"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] resize-none"
               data-testid="interaction-note-input"
             />
           </div>
           <div className="flex gap-3">
-            <button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold py-2 rounded-xl text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
               Log
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-[#27272a] text-[#e4e4e7] font-semibold py-2 rounded-lg text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
               Cancel
             </button>
           </div>
@@ -202,13 +202,13 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
 
   return (
     <div
-      className={`bg-[#111113] border rounded-xl p-4 ${overdue ? 'border-amber-500/50' : 'border-[#1c1c20]'}`}
+      className={`bg-secondary border p-4 ${overdue ? 'border-amber-500/50' : 'border-border'}`}
       data-testid={`contact-card-${contact.id}`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-[#e4e4e7] font-semibold">{contact.name}</h3>
+            <h3 className="text-foreground font-semibold">{contact.name}</h3>
             {overdue && (
               <span className="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full" data-testid={`overdue-badge-${contact.id}`}>
                 Follow-up overdue
@@ -216,16 +216,16 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
             )}
           </div>
           {(contact.role || contact.company) && (
-            <p className="text-[#71717a] text-sm">{[contact.role, contact.company].filter(Boolean).join(' @ ')}</p>
+            <p className="text-muted-foreground text-sm">{[contact.role, contact.company].filter(Boolean).join(' @ ')}</p>
           )}
           <div className="flex flex-wrap gap-1 mt-1">
             {(contact.tags || []).map((tag) => (
-              <span key={tag} className="text-xs bg-[#27272a] text-[#a1a1aa] px-2 py-0.5 rounded" data-testid={`tag-${contact.id}-${tag}`}>
+              <span key={tag} className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded" data-testid={`tag-${contact.id}-${tag}`}>
                 {tag}
               </span>
             ))}
           </div>
-          <p className="text-[#52525b] text-xs mt-1">
+          <p className="text-muted-foreground/80 text-xs mt-1">
             {contact.lastTouched ? `Last touched: ${days === 0 ? 'today' : `${days}d ago`}` : 'Never touched'}
           </p>
         </div>
@@ -233,14 +233,14 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="text-[#52525b] hover:text-[#e4e4e7] px-1 text-sm"
+            className="text-muted-foreground/80 hover:text-foreground px-1 text-sm"
           >
             {expanded ? '▲' : '▼'}
           </button>
           <button
             type="button"
             onClick={() => onDelete(contact.id)}
-            className="text-[#52525b] hover:text-red-400 px-1 text-sm"
+            className="text-muted-foreground/80 hover:text-red-400 px-1 text-sm"
             data-testid={`delete-contact-${contact.id}`}
           >
             ×
@@ -252,20 +252,20 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
         <div className="mt-4 space-y-4">
           {/* Contact details */}
           <div className="space-y-1 text-sm">
-            {contact.email && <p className="text-[#71717a]">📧 <a href={`mailto:${contact.email}`} className="hover:text-amber-400">{contact.email}</a></p>}
-            {contact.linkedin && <p className="text-[#71717a]">🔗 <a href={contact.linkedin} target="_blank" rel="noreferrer" className="hover:text-amber-400">LinkedIn</a></p>}
-            {contact.whereMet && <p className="text-[#71717a]">📍 Met at: {contact.whereMet}</p>}
+            {contact.email && <p className="text-muted-foreground">📧 <a href={`mailto:${contact.email}`} className="hover:text-amber-400">{contact.email}</a></p>}
+            {contact.linkedin && <p className="text-muted-foreground">🔗 <a href={contact.linkedin} target="_blank" rel="noreferrer" className="hover:text-amber-400">LinkedIn</a></p>}
+            {contact.whereMet && <p className="text-muted-foreground">📍 Met at: {contact.whereMet}</p>}
           </div>
 
           {/* Recent interactions */}
           {recent.length > 0 && (
             <div>
-              <p className="text-[#52525b] text-xs uppercase tracking-wider mb-2">Recent Interactions</p>
+              <p className="text-muted-foreground/80 text-xs uppercase tracking-wider mb-2">Recent Interactions</p>
               <div className="space-y-2">
                 {recent.map((int) => (
                   <div key={int.id} className="text-sm">
-                    <span className="text-[#52525b] text-xs">{int.date}</span>
-                    <p className="text-[#a1a1aa]">{int.note}</p>
+                    <span className="text-muted-foreground/80 text-xs">{int.date}</span>
+                    <p className="text-muted-foreground">{int.note}</p>
                   </div>
                 ))}
               </div>
@@ -276,7 +276,7 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
           <button
             type="button"
             onClick={() => setShowLog(true)}
-            className="text-sm text-amber-400 hover:text-amber-300 border border-amber-500/30 rounded-lg px-3 py-1.5 transition-colors"
+            className="text-sm text-foreground hover:underline border border-amber-500/30 px-3 py-1.5 transition-colors"
             data-testid={`log-interaction-btn-${contact.id}`}
           >
             + Log Interaction
@@ -290,7 +290,7 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
                   type="button"
                   onClick={handleDraftOutreach}
                   disabled={draftLoading}
-                  className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-40 border border-amber-500/30 rounded-lg px-3 py-1.5 transition-colors"
+                  className="text-sm text-foreground hover:underline disabled:opacity-40 border border-amber-500/30 px-3 py-1.5 transition-colors"
                   data-testid={`draft-outreach-btn-${contact.id}`}
                 >
                   {draftLoading ? '⏳ Drafting…' : '✨ Draft outreach'}
@@ -304,13 +304,13 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
                     value={meetingContext}
                     onChange={(e) => setMeetingContext(e.target.value)}
                     placeholder="Meeting context (optional)"
-                    className="flex-1 min-w-0 bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                    className="flex-1 min-w-0 bg-background border border-border px-3 py-1.5 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
                   />
                   <button
                     type="button"
                     onClick={handleMeetingPrep}
                     disabled={meetingLoading}
-                    className="text-sm text-amber-400 hover:text-amber-300 disabled:opacity-40 border border-amber-500/30 rounded-lg px-3 py-1.5 transition-colors shrink-0"
+                    className="text-sm text-foreground hover:underline disabled:opacity-40 border border-amber-500/30 px-3 py-1.5 transition-colors shrink-0"
                     data-testid={`meeting-prep-btn-${contact.id}`}
                   >
                     {meetingLoading ? '⏳ Preparing…' : '✨ Meeting prep'}
@@ -401,13 +401,13 @@ export function NetworkingTab() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#e4e4e7]">Networking</h1>
-          <p className="text-[#71717a] text-sm mt-1">Your personal contact CRM</p>
+          <h1 className="text-lg font-semibold text-foreground">Networking</h1>
+          <p className="text-muted-foreground text-sm mt-1">Your personal contact CRM</p>
         </div>
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           data-testid="add-contact-btn"
         >
           + Add Contact
@@ -416,7 +416,7 @@ export function NetworkingTab() {
 
       {/* Overdue banner */}
       {overdueContacts.length > 0 && (
-        <div className="bg-amber-950/30 border border-amber-500/30 rounded-xl p-4" data-testid="overdue-banner">
+        <div className="bg-amber-950/30 border border-amber-500/30 p-4" data-testid="overdue-banner">
           <p className="text-amber-400 text-sm font-semibold">
             {overdueContacts.length} contact{overdueContacts.length !== 1 ? 's' : ''} due for follow-up
           </p>
@@ -432,14 +432,14 @@ export function NetworkingTab() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search contacts…"
-          className="flex-1 min-w-0 bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 min-w-0 bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
           data-testid="contact-search"
         />
         {allTags.length > 0 && (
           <select
             value={filterTag}
             onChange={(e) => setFilterTag(e.target.value)}
-            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
             data-testid="tag-filter"
           >
             <option value="">All tags</option>
@@ -452,12 +452,12 @@ export function NetworkingTab() {
       {(!contacts || contacts.length === 0) ? (
         <div className="flex flex-col items-center justify-center py-16 text-center" data-testid="networking-empty-state">
           <div className="text-5xl mb-4">🤝</div>
-          <h3 className="text-[#e4e4e7] text-lg font-semibold mb-2">No contacts yet</h3>
-          <p className="text-[#71717a] text-sm mb-4">Start building your professional network</p>
+          <h3 className="text-foreground text-lg font-semibold mb-2">No contacts yet</h3>
+          <p className="text-muted-foreground text-sm mb-4">Start building your professional network</p>
           <button
             type="button"
             onClick={() => setShowAdd(true)}
-            className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           >
             + Add Contact
           </button>
@@ -465,8 +465,8 @@ export function NetworkingTab() {
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="networking-no-results">
           <div className="text-4xl mb-3">🔍</div>
-          <h3 className="text-[#e4e4e7] text-base font-semibold mb-1">No contacts found</h3>
-          <p className="text-[#71717a] text-sm">Try a different search or filter</p>
+          <h3 className="text-foreground text-base font-semibold mb-1">No contacts found</h3>
+          <p className="text-muted-foreground text-sm">Try a different search or filter</p>
         </div>
       ) : (
         <div className="space-y-3">

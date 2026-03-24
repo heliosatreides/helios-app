@@ -62,8 +62,8 @@ function AssetPieChart({ allocations }) {
         {allocations.map((a) => (
           <div key={a.assetClass} className="flex items-center gap-2 text-xs">
             <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: PIE_COLORS[a.assetClass] || '#71717a' }} />
-            <span className="text-[#a1a1aa]">{a.assetClass}</span>
-            <span className="text-[#e4e4e7] font-medium ml-auto">{a.percent.toFixed(1)}%</span>
+            <span className="text-muted-foreground">{a.assetClass}</span>
+            <span className="text-foreground font-medium ml-auto">{a.percent.toFixed(1)}%</span>
           </div>
         ))}
       </div>
@@ -88,32 +88,32 @@ function HoldingRow({ h, onRemove, onPriceUpdate, totalValue }) {
   const weightPct = totalValue > 0 ? (marketValue / totalValue) * 100 : 0;
 
   return (
-    <tr className="border-b border-[#1c1c20] last:border-0 hover:bg-[#0a0a0b]">
-      <td className="px-4 py-3 font-bold text-[#f59e0b]">{h.ticker}</td>
-      <td className="px-4 py-3 text-[#a1a1aa]">{h.name || '—'}</td>
-      <td className="px-4 py-3 text-[#71717a]">{h.assetClass}</td>
-      <td className="px-4 py-3 text-[#e4e4e7]">{h.shares}</td>
-      <td className="px-4 py-3 text-[#e4e4e7]">${h.costBasis.toFixed(2)}</td>
+    <tr className="border-b border-border last:border-0 hover:bg-background">
+      <td className="px-4 py-3 font-bold text-foreground">{h.ticker}</td>
+      <td className="px-4 py-3 text-muted-foreground">{h.name || '—'}</td>
+      <td className="px-4 py-3 text-muted-foreground">{h.assetClass}</td>
+      <td className="px-4 py-3 text-foreground">{h.shares}</td>
+      <td className="px-4 py-3 text-foreground">${h.costBasis.toFixed(2)}</td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-1.5">
-          <span className="text-[#e4e4e7] text-sm">${Number(h.currentPrice).toFixed(2)}</span>
+          <span className="text-foreground text-sm">${Number(h.currentPrice).toFixed(2)}</span>
           <button
             onClick={handleRefresh}
             disabled={quoteLoading}
             title="Refresh live price"
-            className="text-[#52525b] hover:text-amber-400 disabled:opacity-40 text-xs transition-colors"
+            className="text-muted-foreground/80 hover:text-amber-400 disabled:opacity-40 text-xs transition-colors"
           >
             {quoteLoading ? '⏳' : '🔄'}
           </button>
         </div>
         {lastUpdated && (
-          <p className="text-[#3f3f46] text-[10px] mt-0.5">
+          <p className="text-muted-foreground/60 text-[10px] mt-0.5">
             {new Date(lastUpdated).toLocaleTimeString()}
           </p>
         )}
       </td>
-      <td className="px-4 py-3 text-[#e4e4e7] font-medium">${marketValue.toFixed(2)}</td>
-      <td className="px-4 py-3 text-[#a1a1aa] tabular-nums">{weightPct.toFixed(1)}%</td>
+      <td className="px-4 py-3 text-foreground font-medium">${marketValue.toFixed(2)}</td>
+      <td className="px-4 py-3 text-muted-foreground tabular-nums">{weightPct.toFixed(1)}%</td>
       <td className={`px-4 py-3 font-medium ${pos ? 'text-green-400' : 'text-red-400'}`}>
         {pos ? '+' : ''}${gainLoss.toFixed(2)}
       </td>
@@ -123,7 +123,7 @@ function HoldingRow({ h, onRemove, onPriceUpdate, totalValue }) {
       <td className="px-4 py-3">
         <button
           onClick={() => onRemove(h.id)}
-          className="text-[#52525b] hover:text-red-400 text-xs transition-colors"
+          className="text-muted-foreground/80 hover:text-red-400 text-xs transition-colors"
           aria-label={`Remove ${h.ticker}`}
         >
           ✕
@@ -169,14 +169,14 @@ function AddHoldingForm({ onAdd, onCancel }) {
     setForm({ ticker: '', name: '', shares: '', costBasis: '', currentPrice: '', assetClass: 'Stocks' });
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
-      <h3 className="text-[#e4e4e7] font-semibold">Add Holding</h3>
+    <form onSubmit={handleSubmit} className="bg-background border border-border p-5 space-y-4">
+      <h3 className="text-foreground font-semibold">Add Holding</h3>
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2 sm:col-span-1">
-          <label className="text-[#71717a] text-xs mb-1 block">Ticker *</label>
+          <label className="text-muted-foreground text-xs mb-1 block">Ticker *</label>
           <div className="flex gap-2">
             <input
               className={inputCls}
@@ -189,7 +189,7 @@ function AddHoldingForm({ onAdd, onCancel }) {
               type="button"
               onClick={handleTickerLookup}
               disabled={lookingUp || !form.ticker.trim()}
-              className="bg-[#27272a] hover:bg-[#3f3f46] disabled:opacity-40 text-[#e4e4e7] px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0"
+              className="bg-secondary hover:bg-[#3f3f46] disabled:opacity-40 text-foreground px-3 py-2 text-xs font-medium transition-colors whitespace-nowrap shrink-0"
             >
               {lookingUp ? '⏳' : '🔍 Fetch'}
             </button>
@@ -197,33 +197,33 @@ function AddHoldingForm({ onAdd, onCancel }) {
           {tickerError && <p className="text-red-400 text-xs mt-1">{tickerError}</p>}
         </div>
         <div>
-          <label className="text-[#71717a] text-xs mb-1 block">Name</label>
+          <label className="text-muted-foreground text-xs mb-1 block">Name</label>
           <input className={inputCls} placeholder="Apple Inc." value={form.name} onChange={set('name')} />
         </div>
         <div>
-          <label className="text-[#71717a] text-xs mb-1 block">Shares *</label>
+          <label className="text-muted-foreground text-xs mb-1 block">Shares *</label>
           <input className={inputCls} type="number" step="any" min="0" placeholder="10" value={form.shares} onChange={set('shares')} required />
         </div>
         <div>
-          <label className="text-[#71717a] text-xs mb-1 block">Avg Cost Basis *</label>
+          <label className="text-muted-foreground text-xs mb-1 block">Avg Cost Basis *</label>
           <input className={inputCls} type="number" step="any" min="0" placeholder="150.00" value={form.costBasis} onChange={set('costBasis')} required />
         </div>
         <div>
-          <label className="text-[#71717a] text-xs mb-1 block">Current Price *</label>
+          <label className="text-muted-foreground text-xs mb-1 block">Current Price *</label>
           <input className={inputCls} type="number" step="any" min="0" placeholder="180.00" value={form.currentPrice} onChange={set('currentPrice')} required />
         </div>
         <div>
-          <label className="text-[#71717a] text-xs mb-1 block">Asset Class</label>
+          <label className="text-muted-foreground text-xs mb-1 block">Asset Class</label>
           <select className={inputCls} value={form.assetClass} onChange={set('assetClass')}>
             {ASSET_CLASSES.map((c) => <option key={c}>{c}</option>)}
           </select>
         </div>
       </div>
       <div className="flex gap-3 pt-1">
-        <button type="submit" className="bg-[#f59e0b] hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors">
+        <button type="submit" className="bg-foreground hover:bg-amber-400 text-black font-semibold px-4 py-2 text-sm transition-colors">
           Add Holding
         </button>
-        <button type="button" onClick={onCancel} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-4 py-2 rounded-lg text-sm transition-colors">
+        <button type="button" onClick={onCancel} className="border border-border text-muted-foreground hover:text-foreground px-4 py-2 text-sm transition-colors">
           Cancel
         </button>
       </div>
@@ -302,27 +302,27 @@ export function Portfolio() {
   return (
     <div className="space-y-5">
       {/* Summary Bar */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="bg-background border border-border p-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div>
-          <p className="text-[#71717a] text-xs mb-1">Total Value</p>
-          <p className="text-xl font-bold text-[#f59e0b]">
+          <p className="text-muted-foreground text-xs mb-1">Total Value</p>
+          <p className="text-xl font-bold text-foreground">
             ${totals.totalValue.toLocaleString('en-US', { maximumFractionDigits: 2 })}
           </p>
         </div>
         <div>
-          <p className="text-[#71717a] text-xs mb-1">Total Cost</p>
-          <p className="text-xl font-bold text-[#e4e4e7]">
+          <p className="text-muted-foreground text-xs mb-1">Total Cost</p>
+          <p className="text-xl font-bold text-foreground">
             ${totals.totalCost.toLocaleString('en-US', { maximumFractionDigits: 2 })}
           </p>
         </div>
         <div>
-          <p className="text-[#71717a] text-xs mb-1">Total Gain/Loss</p>
+          <p className="text-muted-foreground text-xs mb-1">Total Gain/Loss</p>
           <p className={`text-xl font-bold ${totals.totalGainLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {totals.totalGainLoss >= 0 ? '+' : ''}${totals.totalGainLoss.toLocaleString('en-US', { maximumFractionDigits: 2 })}
           </p>
         </div>
         <div>
-          <p className="text-[#71717a] text-xs mb-1">Return</p>
+          <p className="text-muted-foreground text-xs mb-1">Return</p>
           <p className={`text-xl font-bold ${totals.totalGainLossPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {totals.totalGainLossPercent >= 0 ? '+' : ''}{totals.totalGainLossPercent.toFixed(2)}%
           </p>
@@ -336,25 +336,25 @@ export function Portfolio() {
             type="button"
             onClick={handleAssessRisk}
             disabled={aiLoading}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            className="border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 text-sm font-semibold px-4 py-2 transition-colors disabled:opacity-50"
             data-testid="assess-risk-btn"
           >
             {aiLoading ? '⏳ Analyzing…' : '✨ Assess Risk'}
           </button>
           {riskError && <p className="text-red-400 text-xs mt-2">❌ {riskError}</p>}
           {riskResult && (
-            <div className="mt-3 border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5" data-testid="risk-card">
+            <div className="mt-3 border border-border bg-secondary/50 p-5" data-testid="risk-card">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-amber-400 text-sm font-semibold">✨ Risk Assessment</span>
                 <button
                   type="button"
                   onClick={() => setRiskResult(null)}
-                  className="text-[#52525b] hover:text-[#e4e4e7] text-xs"
+                  className="text-muted-foreground/80 hover:text-foreground text-xs"
                 >
                   Dismiss
                 </button>
               </div>
-              <p className="text-[#e4e4e7] text-sm whitespace-pre-wrap">{riskResult}</p>
+              <p className="text-foreground text-sm whitespace-pre-wrap">{riskResult}</p>
             </div>
           )}
         </div>
@@ -362,8 +362,8 @@ export function Portfolio() {
 
       {/* Asset Allocation */}
       {allocations.length > 0 && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5">
-          <h3 className="text-[#e4e4e7] font-semibold mb-4">Asset Allocation</h3>
+        <div className="bg-background border border-border p-5">
+          <h3 className="text-foreground font-semibold mb-4">Asset Allocation</h3>
           <AssetPieChart allocations={allocations} />
         </div>
       )}
@@ -383,7 +383,7 @@ export function Portfolio() {
       </div>
 
       {importMsg && (
-        <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+        <div className="text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
           ✅ {importMsg}
         </div>
       )}
@@ -394,7 +394,7 @@ export function Portfolio() {
       ) : (
         <button
           onClick={() => setShowAdd(true)}
-          className="bg-[#f59e0b] hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+          className="bg-foreground hover:bg-amber-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
         >
           + Add Holding
         </button>
@@ -402,19 +402,19 @@ export function Portfolio() {
 
       {/* Holdings Table */}
       {holdings.length === 0 ? (
-        <div className="text-center py-10 text-[#71717a]">
+        <div className="text-center py-10 text-muted-foreground">
           <div className="text-4xl mb-3">📈</div>
-          <p className="text-[#e4e4e7] mb-1">Add your first holding to track your portfolio</p>
+          <p className="text-foreground mb-1">Add your first holding to track your portfolio</p>
           <p className="text-sm">Monitor gains, losses, and asset allocation over time.</p>
         </div>
       ) : (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
+        <div className="bg-background border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#1c1c20]">
+                <tr className="border-b border-border">
                   {['Ticker', 'Name', 'Class', 'Shares', 'Cost Basis', 'Live Price', 'Mkt Value', 'Weight %', 'Gain/Loss', '%', ''].map((h) => (
-                    <th key={h} className="text-left text-[#71717a] font-medium px-4 py-3 whitespace-nowrap">{h}</th>
+                    <th key={h} className="text-left text-muted-foreground font-medium px-4 py-3 whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>

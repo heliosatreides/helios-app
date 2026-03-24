@@ -42,20 +42,20 @@ export function InvestmentsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">Investments</h1>
-        <p className="text-[#71717a] text-sm mt-1">Track your portfolio, watchlist, and strategy</p>
+        <h1 className="text-lg font-semibold text-foreground">Investments</h1>
+        <p className="text-muted-foreground text-sm mt-1">Track your portfolio, watchlist, and strategy</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-1 w-fit">
+      <div className="flex gap-1 border border-border p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`px-4 py-2 text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                : 'text-[#52525b] hover:text-[#a1a1aa] border border-transparent'
+                ? 'bg-foreground text-background'
+                : 'text-muted-foreground/80 hover:text-muted-foreground border border-transparent'
             }`}
           >
             {tab.label}
@@ -69,7 +69,7 @@ export function InvestmentsPage() {
           <button
             onClick={handleAiAnalysis}
             disabled={aiAnalysisLoading}
-            className="flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 disabled:opacity-40 border border-amber-500/30 rounded-lg px-4 py-2 transition-colors"
+            className="flex items-center gap-2 text-sm text-foreground hover:underline disabled:opacity-40 border border-amber-500/30 px-4 py-2 transition-colors"
           >
             {aiAnalysisLoading ? '⏳ Analyzing…' : '✨ Analyze portfolio'}
           </button>

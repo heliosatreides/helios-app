@@ -60,31 +60,31 @@ function AddObjectiveForm({ onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-objective-modal">
-      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-bold text-[#e4e4e7] mb-4">New Objective</h2>
+      <div className="bg-background border border-border p-6 w-full max-w-md">
+        <h2 className="text-lg font-bold text-foreground mb-4">New Objective</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Title</label>
+            <label className="block text-muted-foreground text-sm mb-1">Title</label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Launch MVP product"
-              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="objective-title-input"
             />
           </div>
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Timeframe</label>
+            <label className="block text-muted-foreground text-sm mb-1">Timeframe</label>
             <select
               value={timeframe}
               onChange={(e) => setTimeframe(e.target.value)}
-              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
             >
               {TIMEFRAMES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Color Tag</label>
+            <label className="block text-muted-foreground text-sm mb-1">Color Tag</label>
             <div className="flex gap-2">
               {COLOR_TAGS.map((c) => (
                 <button
@@ -98,10 +98,10 @@ function AddObjectiveForm({ onSave, onClose }) {
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold py-2 rounded-xl text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
               Create Objective
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-[#27272a] text-[#e4e4e7] font-semibold py-2 rounded-lg text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
               Cancel
             </button>
           </div>
@@ -132,25 +132,25 @@ function AddKRForm({ onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-kr-modal">
-      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-bold text-[#e4e4e7] mb-4">Add Key Result</h2>
+      <div className="bg-background border border-border p-6 w-full max-w-md">
+        <h2 className="text-lg font-bold text-foreground mb-4">Add Key Result</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Title</label>
+            <label className="block text-muted-foreground text-sm mb-1">Title</label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Acquire 100 beta users"
-              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="kr-title-input"
             />
           </div>
           <div>
-            <label className="block text-[#71717a] text-sm mb-1">Metric Type</label>
+            <label className="block text-muted-foreground text-sm mb-1">Metric Type</label>
             <select
               value={metricType}
               onChange={(e) => setMetricType(e.target.value)}
-              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="kr-metric-select"
             >
               {METRIC_TYPES.map((m) => <option key={m} value={m}>{m}</option>)}
@@ -159,32 +159,32 @@ function AddKRForm({ onSave, onClose }) {
           {metricType !== 'boolean' && (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[#71717a] text-sm mb-1">Current</label>
+                <label className="block text-muted-foreground text-sm mb-1">Current</label>
                 <input
                   type="number"
                   value={currentValue}
                   onChange={(e) => setCurrentValue(e.target.value)}
-                  className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                  className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
                   data-testid="kr-current-input"
                 />
               </div>
               <div>
-                <label className="block text-[#71717a] text-sm mb-1">Target</label>
+                <label className="block text-muted-foreground text-sm mb-1">Target</label>
                 <input
                   type="number"
                   value={targetValue}
                   onChange={(e) => setTargetValue(e.target.value)}
-                  className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                  className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
                   data-testid="kr-target-input"
                 />
               </div>
             </div>
           )}
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold py-2 rounded-xl text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
               Add Key Result
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-[#27272a] text-[#e4e4e7] font-semibold py-2 rounded-lg text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
               Cancel
             </button>
           </div>
@@ -211,8 +211,8 @@ function KRItem({ kr, onUpdateCurrent, objectiveId }) {
   return (
     <div className="flex items-center gap-3 py-2" data-testid={`kr-item-${kr.id}`}>
       <div className="flex-1 min-w-0">
-        <p className="text-[#a1a1aa] text-sm truncate">{kr.title}</p>
-        <p className="text-[#52525b] text-xs mt-0.5">
+        <p className="text-muted-foreground text-sm truncate">{kr.title}</p>
+        <p className="text-muted-foreground/80 text-xs mt-0.5">
           {kr.metricType === 'boolean' ? (kr.currentValue ? '✅ Done' : '⬜ Not done') : `${kr.currentValue} / ${kr.targetValue}${kr.metricType === '%' ? '%' : ''}`}
         </p>
       </div>
@@ -234,19 +234,19 @@ function KRItem({ kr, onUpdateCurrent, objectiveId }) {
                 type="number"
                 value={editVal}
                 onChange={(e) => setEditVal(e.target.value)}
-                className="w-16 bg-[#111113] border border-[#f59e0b] rounded px-2 py-1 text-[#e4e4e7] text-xs"
+                className="w-16 bg-secondary border border-[#f59e0b] rounded px-2 py-1 text-foreground text-xs"
                 data-testid={`kr-edit-input-${kr.id}`}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
               />
             )}
             <button type="button" onClick={handleSave} className="text-xs text-green-400 px-1">✓</button>
-            <button type="button" onClick={() => setEditing(false)} className="text-xs text-[#52525b] px-1">✕</button>
+            <button type="button" onClick={() => setEditing(false)} className="text-xs text-muted-foreground/80 px-1">✕</button>
           </div>
         ) : (
           <button
             type="button"
             onClick={() => { setEditVal(String(kr.currentValue)); setEditing(true); }}
-            className="text-xs text-[#52525b] hover:text-amber-400 px-1"
+            className="text-xs text-muted-foreground/80 hover:text-amber-400 px-1"
             data-testid={`kr-edit-btn-${kr.id}`}
           >
             Edit
@@ -289,14 +289,14 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
   }
 
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5" data-testid={`objective-card-${objective.id}`}>
+    <div className="bg-background border border-border p-5" data-testid={`objective-card-${objective.id}`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span className={`w-3 h-3 rounded-full shrink-0 ${colorDot}`} />
           <div className="min-w-0">
-            <h3 className="text-[#e4e4e7] font-semibold truncate">{objective.title}</h3>
-            <p className="text-[#52525b] text-xs mt-0.5">{objective.timeframe}</p>
+            <h3 className="text-foreground font-semibold truncate">{objective.title}</h3>
+            <p className="text-muted-foreground/80 text-xs mt-0.5">{objective.timeframe}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -304,14 +304,14 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="text-[#52525b] hover:text-[#e4e4e7] px-1"
+            className="text-muted-foreground/80 hover:text-foreground px-1"
           >
             {expanded ? '▲' : '▼'}
           </button>
           <button
             type="button"
             onClick={() => onDelete(objective.id)}
-            className="text-[#52525b] hover:text-red-400 px-1 text-sm"
+            className="text-muted-foreground/80 hover:text-red-400 px-1 text-sm"
             data-testid={`delete-objective-${objective.id}`}
           >
             ×
@@ -320,7 +320,7 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
       </div>
 
       {/* Progress bar */}
-      <div className="h-2 bg-[#27272a] rounded-full overflow-hidden mb-4">
+      <div className="h-2 bg-secondary rounded-full overflow-hidden mb-4">
         <div
           className={`h-full rounded-full transition-all ${progressColor(pct)}`}
           style={{ width: `${pct}%` }}
@@ -333,7 +333,7 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
           {/* Key Results */}
           <div className="divide-y divide-[#27272a]">
             {objective.keyResults.length === 0 ? (
-              <p className="text-[#52525b] text-sm py-2">No key results yet. Add some below.</p>
+              <p className="text-muted-foreground/80 text-sm py-2">No key results yet. Add some below.</p>
             ) : (
               objective.keyResults.map((kr) => (
                 <KRItem
@@ -349,16 +349,16 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
           {/* Cross-app suggestions */}
           {upcomingTripsWithBudget.length > 0 && (
             <div className="mt-3 space-y-1">
-              <p className="text-[#52525b] text-xs uppercase tracking-wider">Trip suggestions</p>
+              <p className="text-muted-foreground/80 text-xs uppercase tracking-wider">Trip suggestions</p>
               {upcomingTripsWithBudget.map((trip) => (
-                <p key={trip.id} className="text-[#71717a] text-xs">
+                <p key={trip.id} className="text-muted-foreground text-xs">
                   💡 Travel to {trip.destination} — Budget goal: ${trip.budget.toLocaleString()}
                 </p>
               ))}
             </div>
           )}
           {hasBudgets && (
-            <p className="text-[#71717a] text-xs mt-2">💡 Monthly budget available — link it as a finance KR</p>
+            <p className="text-muted-foreground text-xs mt-2">💡 Monthly budget available — link it as a finance KR</p>
           )}
 
           {/* Actions */}
@@ -367,7 +367,7 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
               <button
                 type="button"
                 onClick={() => setShowAddKR(true)}
-                className="text-sm text-amber-400 hover:text-amber-300 border border-amber-500/30 rounded-lg px-3 py-1.5 transition-colors"
+                className="text-sm text-foreground hover:underline border border-amber-500/30 px-3 py-1.5 transition-colors"
                 data-testid={`add-kr-btn-${objective.id}`}
               >
                 + Add Key Result
@@ -378,7 +378,7 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
                 type="button"
                 onClick={handleSuggestKRs}
                 disabled={suggestLoading}
-                className="text-sm text-amber-400 hover:text-amber-300 border border-amber-500/30 rounded-lg px-3 py-1.5 transition-colors disabled:opacity-50"
+                className="text-sm text-foreground hover:underline border border-amber-500/30 px-3 py-1.5 transition-colors disabled:opacity-50"
               >
                 {suggestLoading ? '⏳ Suggesting…' : '✨ Suggest key results'}
               </button>
@@ -467,13 +467,13 @@ export function GoalsTab({ trips = [], budgets = [] }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#e4e4e7]">Goals & OKRs</h1>
-          <p className="text-[#71717a] text-sm mt-1">Track your objectives and key results</p>
+          <h1 className="text-lg font-semibold text-foreground">Goals & OKRs</h1>
+          <p className="text-muted-foreground text-sm mt-1">Track your objectives and key results</p>
         </div>
         <button
           type="button"
           onClick={() => setShowAddObjective(true)}
-          className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           data-testid="add-objective-btn"
         >
           + New Objective
@@ -487,7 +487,7 @@ export function GoalsTab({ trips = [], budgets = [] }) {
             type="button"
             onClick={handleRateProgress}
             disabled={rateLoading}
-            className="flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 disabled:opacity-40 border border-amber-500/30 rounded-lg px-4 py-2 transition-colors"
+            className="flex items-center gap-2 text-sm text-foreground hover:underline disabled:opacity-40 border border-amber-500/30 px-4 py-2 transition-colors"
             data-testid="rate-progress-btn"
           >
             {rateLoading ? '⏳ Analyzing…' : '✨ Rate my progress'}
@@ -500,12 +500,12 @@ export function GoalsTab({ trips = [], budgets = [] }) {
       {(!objectives || objectives.length === 0) ? (
         <div className="flex flex-col items-center justify-center py-16 text-center" data-testid="goals-empty-state">
           <div className="text-5xl mb-4">🎯</div>
-          <h3 className="text-[#e4e4e7] text-lg font-semibold mb-2">No objectives yet</h3>
-          <p className="text-[#71717a] text-sm mb-4">Set your first objective to start tracking progress with OKRs</p>
+          <h3 className="text-foreground text-lg font-semibold mb-2">No objectives yet</h3>
+          <p className="text-muted-foreground text-sm mb-4">Set your first objective to start tracking progress with OKRs</p>
           <button
             type="button"
             onClick={() => setShowAddObjective(true)}
-            className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           >
             + New Objective
           </button>

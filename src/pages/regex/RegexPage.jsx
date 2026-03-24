@@ -63,10 +63,10 @@ export function RegexPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">🔤 Regex Tester</h1>
+        <h1 className="text-lg font-semibold text-foreground">Regex Tester</h1>
         <div className="flex gap-2">
           {['tester', 'library', 'saved'].map(t => (
-            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 rounded-lg text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-[#27272a] text-[#a1a1aa]'}`}>
+            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>
               {t === 'tester' ? '🔧 Tester' : t === 'library' ? '📚 Library' : '💾 Saved'}
             </button>
           ))}
@@ -76,35 +76,35 @@ export function RegexPage() {
       {tab === 'tester' && (
         <div className="space-y-5">
           {/* Pattern input */}
-          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+          <div className="bg-background border border-border p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-[#71717a] font-mono">/</span>
-              <input value={pattern} onChange={e => setPattern(e.target.value)} placeholder="your regex pattern" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm font-mono outline-none focus:border-amber-500" />
-              <span className="text-[#71717a] font-mono">/{flagStr}</span>
+              <span className="text-muted-foreground font-mono">/</span>
+              <input value={pattern} onChange={e => setPattern(e.target.value)} placeholder="your regex pattern" className="flex-1 bg-secondary border border-border px-3 py-2 text-foreground text-sm font-mono outline-none focus:border-amber-500" />
+              <span className="text-muted-foreground font-mono">/{flagStr}</span>
             </div>
             {regexError && <p className="text-red-400 text-xs">{regexError}</p>}
 
             {/* Flags */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-[#71717a]">Flags:</span>
+              <span className="text-xs text-muted-foreground">Flags:</span>
               {ALL_FLAGS.map(f => (
-                <button key={f} onClick={() => toggleFlag(f)} className={`px-2 py-0.5 rounded text-xs font-mono border ${flags.includes(f) ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'border-[#1c1c20] text-[#71717a]'}`}>{f}</button>
+                <button key={f} onClick={() => toggleFlag(f)} className={`px-2 py-0.5 rounded text-xs font-mono border ${flags.includes(f) ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'border-border text-muted-foreground'}`}>{f}</button>
               ))}
             </div>
           </div>
 
           {/* Test string */}
-          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-[#a1a1aa]">Test String</h3>
-            <textarea value={testStr} onChange={e => setTestStr(e.target.value)} placeholder="Paste your test text here..." rows={5} className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm font-mono outline-none focus:border-amber-500 resize-none" />
+          <div className="bg-background border border-border p-4 space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">Test String</h3>
+            <textarea value={testStr} onChange={e => setTestStr(e.target.value)} placeholder="Paste your test text here..." rows={5} className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm font-mono outline-none focus:border-amber-500 resize-none" />
 
             {/* Highlighted result */}
             {testStr && pattern && !regexError && (
-              <div className="bg-[#18181b] rounded-lg px-3 py-2 text-sm font-mono leading-relaxed whitespace-pre-wrap break-all">
+              <div className="bg-secondary px-3 py-2 text-sm font-mono leading-relaxed whitespace-pre-wrap break-all">
                 {segments.map((seg, i) => (
                   seg.highlight
                     ? <mark key={i} className="bg-amber-500/30 text-amber-300 rounded">{seg.text}</mark>
-                    : <span key={i} className="text-[#a1a1aa]">{seg.text}</span>
+                    : <span key={i} className="text-muted-foreground">{seg.text}</span>
                 ))}
               </div>
             )}
@@ -112,18 +112,18 @@ export function RegexPage() {
 
           {/* Matches */}
           {matches.length > 0 && (
-            <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
-              <h3 className="text-sm font-semibold text-[#a1a1aa]">{matches.length} Match{matches.length !== 1 ? 'es' : ''}</h3>
+            <div className="bg-background border border-border p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-muted-foreground">{matches.length} Match{matches.length !== 1 ? 'es' : ''}</h3>
               <div className="space-y-2">
                 {matches.map((m, i) => (
-                  <div key={i} className="bg-[#18181b] rounded-lg p-2 text-xs font-mono">
+                  <div key={i} className="bg-secondary p-2 text-xs font-mono">
                     <div className="flex gap-4">
-                      <span className="text-[#52525b]">#{i + 1}</span>
+                      <span className="text-muted-foreground/80">#{i + 1}</span>
                       <span className="text-amber-400">"{m.match}"</span>
-                      <span className="text-[#71717a]">at {m.index}</span>
+                      <span className="text-muted-foreground">at {m.index}</span>
                     </div>
                     {m.groups.filter(Boolean).length > 0 && (
-                      <div className="mt-1 ml-6 text-[#71717a]">
+                      <div className="mt-1 ml-6 text-muted-foreground">
                         Groups: {m.groups.map((g, gi) => <span key={gi} className="text-blue-400 mr-2">${gi + 1}="{g}"</span>)}
                       </div>
                     )}
@@ -134,45 +134,45 @@ export function RegexPage() {
           )}
 
           {pattern && testStr && matches.length === 0 && !regexError && (
-            <div className="text-center py-4 text-[#71717a] text-sm">No matches found</div>
+            <div className="text-center py-4 text-muted-foreground text-sm">No matches found</div>
           )}
 
           {/* Save */}
           <div className="flex gap-2">
-            <button onClick={() => setShowSave(!showSave)} className="px-3 py-1.5 bg-[#27272a] text-[#a1a1aa] rounded-lg text-sm hover:bg-[#3f3f46]">💾 Save</button>
+            <button onClick={() => setShowSave(!showSave)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">💾 Save</button>
             {showSave && (
               <>
-                <input value={saveName} onChange={e => setSaveName(e.target.value)} placeholder="Pattern name" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-                <button onClick={savePattern} className="px-3 py-1.5 bg-amber-500 text-black rounded-lg text-sm font-semibold">Save</button>
+                <input value={saveName} onChange={e => setSaveName(e.target.value)} placeholder="Pattern name" className="flex-1 bg-secondary border border-border px-3 py-1.5 text-foreground text-sm outline-none focus:border-amber-500" />
+                <button onClick={savePattern} className="px-3 py-1.5 bg-amber-500 text-black text-sm font-semibold">Save</button>
               </>
             )}
           </div>
 
           {/* AI panel */}
-          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-[#a1a1aa]">✨ AI Tools</h3>
+          <div className="bg-background border border-border p-4 space-y-3">
+            <h3 className="text-sm font-semibold text-muted-foreground">✨ AI Tools</h3>
             <div className="flex gap-2 flex-wrap">
-              <button onClick={explainRegex} disabled={!pattern || loading} className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-500 disabled:opacity-50">Explain this regex</button>
+              <button onClick={explainRegex} disabled={!pattern || loading} className="px-3 py-2 bg-purple-600 text-white text-sm hover:bg-purple-500 disabled:opacity-50">Explain this regex</button>
             </div>
             <div className="flex gap-2">
-              <input value={aiDesc} onChange={e => setAiDesc(e.target.value)} placeholder="Describe what you want to match..." className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-              <button onClick={generateRegex} disabled={!aiDesc.trim() || loading} className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-500 disabled:opacity-50">Write regex</button>
+              <input value={aiDesc} onChange={e => setAiDesc(e.target.value)} placeholder="Describe what you want to match..." className="flex-1 bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
+              <button onClick={generateRegex} disabled={!aiDesc.trim() || loading} className="px-3 py-2 bg-purple-600 text-white text-sm hover:bg-purple-500 disabled:opacity-50">Write regex</button>
             </div>
-            {loading && <p className="text-sm text-[#71717a]">Thinking...</p>}
+            {loading && <p className="text-sm text-muted-foreground">Thinking...</p>}
             {error && <p className="text-red-400 text-sm">{error}</p>}
-            {aiExplanation && <pre className="text-sm text-[#a1a1aa] bg-[#18181b] rounded-lg p-3 whitespace-pre-wrap">{aiExplanation}</pre>}
+            {aiExplanation && <pre className="text-sm text-muted-foreground bg-secondary p-3 whitespace-pre-wrap">{aiExplanation}</pre>}
           </div>
         </div>
       )}
 
       {tab === 'library' && (
         <div className="space-y-3">
-          <p className="text-sm text-[#71717a]">Click a pattern to load it in the tester.</p>
+          <p className="text-sm text-muted-foreground">Click a pattern to load it in the tester.</p>
           {COMMON_PATTERNS.map(p => (
-            <div key={p.name} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => loadPattern(p)}>
+            <div key={p.name} className="bg-background border border-border p-4 flex items-center gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => loadPattern(p)}>
               <div className="flex-1">
-                <div className="font-semibold text-[#e4e4e7] text-sm">{p.name}</div>
-                <div className="text-xs text-[#71717a] font-mono mt-1">/{p.pattern}/{p.flags}</div>
+                <div className="font-semibold text-foreground text-sm">{p.name}</div>
+                <div className="text-xs text-muted-foreground font-mono mt-1">/{p.pattern}/{p.flags}</div>
               </div>
               <span className="text-xs text-amber-400">Load →</span>
             </div>
@@ -183,15 +183,15 @@ export function RegexPage() {
       {tab === 'saved' && (
         <div className="space-y-3">
           {saved.length === 0 ? (
-            <div className="text-center py-16 text-[#52525b]">No saved patterns yet.</div>
+            <div className="text-center py-16 text-muted-foreground/80">No saved patterns yet.</div>
           ) : (
             saved.map(p => (
-              <div key={p.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center gap-4">
+              <div key={p.id} className="bg-background border border-border p-4 flex items-center gap-4">
                 <div className="flex-1 cursor-pointer" onClick={() => loadPattern(p)}>
-                  <div className="font-semibold text-[#e4e4e7] text-sm">{p.name}</div>
-                  <div className="text-xs text-[#71717a] font-mono mt-1">/{p.pattern}/{p.flags}</div>
+                  <div className="font-semibold text-foreground text-sm">{p.name}</div>
+                  <div className="text-xs text-muted-foreground font-mono mt-1">/{p.pattern}/{p.flags}</div>
                 </div>
-                <button onClick={() => setSaved(prev => prev.filter(x => x.id !== p.id))} className="text-[#52525b] hover:text-red-400">✕</button>
+                <button onClick={() => setSaved(prev => prev.filter(x => x.id !== p.id))} className="text-muted-foreground/80 hover:text-red-400">✕</button>
               </div>
             ))
           )}

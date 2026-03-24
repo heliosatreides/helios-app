@@ -10,9 +10,9 @@ export function AccountList({ accounts, onEdit, onDelete }) {
 
   if (accounts.length === 0) {
     return (
-      <div className="text-center py-12 text-[#71717a]">
+      <div className="text-center py-12 text-muted-foreground">
         <div className="text-5xl mb-4">💰</div>
-        <p className="text-lg text-[#e4e4e7] mb-2">Add your first account to get started</p>
+        <p className="text-lg text-foreground mb-2">Add your first account to get started</p>
         <p className="text-sm">Track checking, savings, credit cards, and more.</p>
       </div>
     );
@@ -21,9 +21,9 @@ export function AccountList({ accounts, onEdit, onDelete }) {
   return (
     <div className="space-y-4">
       {/* Net Worth */}
-      <div className="bg-gradient-to-br from-amber-900/20 to-[#111113] border border-[#1c1c20] rounded-xl p-5">
-        <p className="text-[#71717a] text-sm mb-1">Net Worth</p>
-        <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-[#f59e0b]' : 'text-red-400'}`}>
+      <div className="bg-gradient-to-br from-amber-900/20 to-[#111113] border border-border p-5">
+        <p className="text-muted-foreground text-sm mb-1">Net Worth</p>
+        <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-foreground' : 'text-red-400'}`}>
           {netWorth < 0 ? '-' : ''}${Math.abs(netWorth).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </p>
       </div>
@@ -33,27 +33,27 @@ export function AccountList({ accounts, onEdit, onDelete }) {
         {accounts.map((account) => (
           <div
             key={account.id}
-            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center justify-between"
+            className="bg-background border border-border p-4 flex items-center justify-between"
           >
             <div>
-              <p className="text-[#e4e4e7] font-medium">{account.name}</p>
-              <p className={`text-sm ${typeColors[account.type] || 'text-[#71717a]'}`}>{account.type}</p>
+              <p className="text-foreground font-medium">{account.name}</p>
+              <p className={`text-sm ${typeColors[account.type] || 'text-muted-foreground'}`}>{account.type}</p>
             </div>
             <div className="flex items-center gap-3">
-              <span className={`font-semibold ${account.balance < 0 ? 'text-red-400' : 'text-[#e4e4e7]'}`}>
+              <span className={`font-semibold ${account.balance < 0 ? 'text-red-400' : 'text-foreground'}`}>
                 {account.balance < 0 ? '-' : ''}${Math.abs(account.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               <button
                 data-testid={`edit-account-${account.id}`}
                 onClick={() => onEdit(account)}
-                className="text-[#71717a] hover:text-[#f59e0b] transition-colors text-sm px-2 py-1"
+                className="text-muted-foreground hover:text-foreground transition-colors text-sm px-2 py-1"
               >
                 Edit
               </button>
               <button
                 data-testid={`delete-account-${account.id}`}
                 onClick={() => onDelete(account.id)}
-                className="text-[#71717a] hover:text-red-400 transition-colors text-sm px-2 py-1"
+                className="text-muted-foreground hover:text-red-400 transition-colors text-sm px-2 py-1"
               >
                 Delete
               </button>

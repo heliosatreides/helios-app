@@ -119,28 +119,28 @@ export function PackingPage() {
   if (view === 'list') return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">🧳 Packing Lists</h1>
-        <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-black rounded-lg font-semibold text-sm hover:bg-amber-400">+ New List</button>
+        <h1 className="text-lg font-semibold text-foreground">Packing Lists</h1>
+        <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">+ New List</button>
       </div>
 
       {lists.length === 0 ? (
-        <div className="text-center py-8 text-[#52525b]">No packing lists yet. Create one or use a template!</div>
+        <div className="text-center py-8 text-muted-foreground/80">No packing lists yet. Create one or use a template!</div>
       ) : (
         <div className="space-y-3">
           {lists.map(list => {
             const done = list.items.filter(i => i.checked).length;
             return (
-              <div key={list.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center gap-4">
+              <div key={list.id} className="bg-background border border-border p-4 flex items-center gap-4">
                 <div className="flex-1 cursor-pointer" onClick={() => { setActiveList(list); setFilterCat('All'); setAiSuggestion(''); setView('detail'); }}>
-                  <div className="font-semibold text-[#e4e4e7]">{list.name}</div>
-                  <div className="text-sm text-[#71717a]">{done}/{list.items.length} items packed</div>
+                  <div className="font-semibold text-foreground">{list.name}</div>
+                  <div className="text-sm text-muted-foreground">{done}/{list.items.length} items packed</div>
                   {list.items.length > 0 && (
-                    <div className="mt-2 h-1.5 bg-[#27272a] rounded-full overflow-hidden">
+                    <div className="mt-2 h-1.5 bg-secondary rounded-full overflow-hidden">
                       <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${(done / list.items.length) * 100}%` }} />
                     </div>
                   )}
                 </div>
-                <button onClick={() => deleteList(list.id)} className="text-[#52525b] hover:text-red-400">✕</button>
+                <button onClick={() => deleteList(list.id)} className="text-muted-foreground/80 hover:text-red-400">✕</button>
               </div>
             );
           })}
@@ -152,45 +152,45 @@ export function PackingPage() {
   if (view === 'new') return (
     <div className="space-y-6 max-w-lg">
       <div className="flex items-center gap-3">
-        <button onClick={() => setView('list')} className="text-[#71717a] hover:text-[#e4e4e7]">← Back</button>
-        <h1 className="text-xl font-bold text-[#e4e4e7]">New Packing List</h1>
+        <button onClick={() => setView('list')} className="text-muted-foreground hover:text-foreground">← Back</button>
+        <h1 className="text-xl font-bold text-foreground">New Packing List</h1>
       </div>
 
       {/* Templates */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-[#a1a1aa]">Use a Template</h2>
+      <div className="bg-background border border-border p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground">Use a Template</h2>
         <div className="grid grid-cols-2 gap-2">
           {TEMPLATE_NAMES.map(t => (
-            <button key={t} onClick={() => createFromTemplate(t)} className="p-3 bg-[#18181b] border border-[#1c1c20] rounded-lg text-sm text-[#e4e4e7] hover:border-amber-500 text-left">{t}</button>
+            <button key={t} onClick={() => createFromTemplate(t)} className="p-3 bg-secondary border border-border text-sm text-foreground hover:border-amber-500 text-left">{t}</button>
           ))}
         </div>
       </div>
 
       {/* Blank list */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-[#a1a1aa]">Create from Scratch</h2>
+      <div className="bg-background border border-border p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground">Create from Scratch</h2>
         <div className="flex gap-2">
-          <input value={newListName} onChange={e => setNewListName(e.target.value)} placeholder="List name" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-          <button onClick={createBlank} disabled={!newListName.trim()} className="px-4 py-2 bg-amber-500 text-black rounded-lg font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">Create</button>
+          <input value={newListName} onChange={e => setNewListName(e.target.value)} placeholder="List name" className="flex-1 bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
+          <button onClick={createBlank} disabled={!newListName.trim()} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">Create</button>
         </div>
       </div>
 
       {/* AI builder */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-[#a1a1aa]">✨ AI Packing List Builder</h2>
+      <div className="bg-background border border-border p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground">✨ AI Packing List Builder</h2>
         <div className="grid grid-cols-2 gap-2">
-          <input value={aiDestination} onChange={e => setAiDestination(e.target.value)} placeholder="Destination (e.g., Bali)" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-          <input value={aiTripType} onChange={e => setAiTripType(e.target.value)} placeholder="Trip type (e.g., beach)" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-          <input value={aiDuration} onChange={e => setAiDuration(e.target.value)} placeholder="Duration (e.g., 7 days)" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 col-span-2" />
+          <input value={aiDestination} onChange={e => setAiDestination(e.target.value)} placeholder="Destination (e.g., Bali)" className="bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
+          <input value={aiTripType} onChange={e => setAiTripType(e.target.value)} placeholder="Trip type (e.g., beach)" className="bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
+          <input value={aiDuration} onChange={e => setAiDuration(e.target.value)} placeholder="Duration (e.g., 7 days)" className="bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500 col-span-2" />
         </div>
-        <button onClick={buildWithAI} disabled={loading || !aiDestination.trim()} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
+        <button onClick={buildWithAI} disabled={loading || !aiDestination.trim()} className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
           {loading ? 'Building...' : '✨ Build with AI'}
         </button>
         {error && <p className="text-red-400 text-sm">{error}</p>}
         {aiSuggestion && (
           <div className="space-y-2">
-            <pre className="text-sm text-[#a1a1aa] bg-[#18181b] rounded-lg p-3 whitespace-pre-wrap max-h-60 overflow-auto">{aiSuggestion}</pre>
-            <button onClick={importAISuggestion} className="px-4 py-2 bg-amber-500 text-black rounded-lg text-sm font-semibold hover:bg-amber-400">Import as List</button>
+            <pre className="text-sm text-muted-foreground bg-secondary p-3 whitespace-pre-wrap max-h-60 overflow-auto">{aiSuggestion}</pre>
+            <button onClick={importAISuggestion} className="px-4 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400">Import as List</button>
           </div>
         )}
       </div>
@@ -205,14 +205,14 @@ export function PackingPage() {
   return (
     <div className="space-y-5 max-w-lg">
       <div className="flex items-center gap-3">
-        <button onClick={() => setView('list')} className="text-[#71717a] hover:text-[#e4e4e7]">← Lists</button>
-        <h1 className="text-xl font-bold text-[#e4e4e7]">{activeList.name}</h1>
-        <span className="text-sm text-[#71717a] ml-auto">{done}/{activeList.items.length}</span>
+        <button onClick={() => setView('list')} className="text-muted-foreground hover:text-foreground">← Lists</button>
+        <h1 className="text-xl font-bold text-foreground">{activeList.name}</h1>
+        <span className="text-sm text-muted-foreground ml-auto">{done}/{activeList.items.length}</span>
       </div>
 
       {/* Progress */}
       {activeList.items.length > 0 && (
-        <div className="h-2 bg-[#27272a] rounded-full overflow-hidden">
+        <div className="h-2 bg-secondary rounded-full overflow-hidden">
           <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${(done / activeList.items.length) * 100}%` }} />
         </div>
       )}
@@ -220,17 +220,17 @@ export function PackingPage() {
       {/* Category filter */}
       <div className="flex gap-2 flex-wrap">
         {['All', ...CATEGORIES].map(c => (
-          <button key={c} onClick={() => setFilterCat(c)} className={`px-3 py-1 rounded-lg text-xs ${filterCat === c ? 'bg-amber-500 text-black font-semibold' : 'bg-[#27272a] text-[#a1a1aa]'}`}>{c}</button>
+          <button key={c} onClick={() => setFilterCat(c)} className={`px-3 py-1 text-xs ${filterCat === c ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>{c}</button>
         ))}
       </div>
 
       {/* Add item */}
       <div className="flex gap-2">
-        <input value={newItemName} onChange={e => setNewItemName(e.target.value)} onKeyDown={e => e.key === 'Enter' && addItem()} placeholder="Add item..." className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-        <select value={newItemCat} onChange={e => setNewItemCat(e.target.value)} className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-2 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500">
+        <input value={newItemName} onChange={e => setNewItemName(e.target.value)} onKeyDown={e => e.key === 'Enter' && addItem()} placeholder="Add item..." className="flex-1 bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
+        <select value={newItemCat} onChange={e => setNewItemCat(e.target.value)} className="bg-secondary border border-border px-2 py-2 text-foreground text-sm outline-none focus:border-amber-500">
           {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
-        <button onClick={addItem} className="px-3 py-2 bg-amber-500 text-black rounded-lg text-sm font-semibold hover:bg-amber-400">+</button>
+        <button onClick={addItem} className="px-3 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400">+</button>
       </div>
 
       {/* Items grouped by category */}
@@ -239,12 +239,12 @@ export function PackingPage() {
         if (catItems.length === 0) return null;
         return (
           <div key={cat} className="space-y-2">
-            <h3 className="text-xs font-semibold text-[#52525b] uppercase tracking-widest">{cat}</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-widest">{cat}</h3>
             {catItems.map(item => (
-              <div key={item.id} className="flex items-center gap-3 bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2.5">
+              <div key={item.id} className="flex items-center gap-3 bg-background border border-border px-3 py-2.5">
                 <input type="checkbox" checked={item.checked} onChange={() => toggleItem(item.id)} className="w-4 h-4 rounded accent-amber-500" />
-                <span className={`flex-1 text-sm ${item.checked ? 'line-through text-[#52525b]' : 'text-[#e4e4e7]'}`}>{item.name}</span>
-                <button onClick={() => removeItem(item.id)} className="text-[#52525b] hover:text-red-400 text-xs">✕</button>
+                <span className={`flex-1 text-sm ${item.checked ? 'line-through text-muted-foreground/80' : 'text-foreground'}`}>{item.name}</span>
+                <button onClick={() => removeItem(item.id)} className="text-muted-foreground/80 hover:text-red-400 text-xs">✕</button>
               </div>
             ))}
           </div>
@@ -252,7 +252,7 @@ export function PackingPage() {
       })}
 
       {filteredItems.length === 0 && (
-        <div className="text-center py-8 text-[#52525b] text-sm">No items yet. Add some above!</div>
+        <div className="text-center py-8 text-muted-foreground/80 text-sm">No items yet. Add some above!</div>
       )}
     </div>
   );

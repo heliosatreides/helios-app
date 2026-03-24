@@ -18,7 +18,7 @@ function ClockCard({ city, now, onRemove }) {
   const business = isBusinessHours(city.timezone, now);
 
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4">
+    <div className="bg-background border border-border p-4">
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2">
@@ -26,14 +26,14 @@ function ClockCard({ city, now, onRemove }) {
               className={`w-2 h-2 rounded-full shrink-0 ${business ? 'bg-green-500' : 'bg-[#3f3f46]'}`}
               title={business ? 'Business hours' : 'Outside business hours'}
             />
-            <h3 className="text-[#e4e4e7] font-semibold text-sm">{city.name}</h3>
+            <h3 className="text-foreground font-semibold text-sm">{city.name}</h3>
           </div>
-          <p className="text-[#52525b] text-xs mt-0.5 pl-4">{offset}</p>
+          <p className="text-muted-foreground/80 text-xs mt-0.5 pl-4">{offset}</p>
         </div>
         <button
           type="button"
           onClick={() => onRemove(city.id)}
-          className="text-[#3f3f46] hover:text-red-400 text-xs transition-colors"
+          className="text-muted-foreground/60 hover:text-red-400 text-xs transition-colors"
           aria-label={`Remove ${city.name}`}
         >
           ×
@@ -41,7 +41,7 @@ function ClockCard({ city, now, onRemove }) {
       </div>
       <div className="pl-4">
         <p className="text-amber-400 text-2xl font-mono font-bold">{time}</p>
-        <p className="text-[#71717a] text-xs mt-0.5">{date}</p>
+        <p className="text-muted-foreground text-xs mt-0.5">{date}</p>
       </div>
     </div>
   );
@@ -59,22 +59,22 @@ function MeetingPlanner({ cities, now }) {
   const meetingDate = localTime ? new Date(localTime) : null;
 
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4">
-      <h3 className="text-[#e4e4e7] font-semibold text-sm mb-3">🗓️ Meeting Planner</h3>
+    <div className="bg-background border border-border p-4">
+      <h3 className="text-foreground font-semibold text-sm mb-3">🗓️ Meeting Planner</h3>
       <div className="mb-4">
-        <label className="text-[#71717a] text-xs block mb-1">Pick a time (your local)</label>
+        <label className="text-muted-foreground text-xs block mb-1">Pick a time (your local)</label>
         <input
           type="datetime-local"
           value={localTime}
           onChange={(e) => setLocalTime(e.target.value)}
-          className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+          className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
         />
       </div>
       {meetingDate && (
         <div className="space-y-2">
           {cities.map((city) => (
-            <div key={city.id} className="flex items-center justify-between py-1.5 border-b border-[#1c1c20]/40 last:border-0">
-              <span className="text-[#a1a1aa] text-sm">{city.name}</span>
+            <div key={city.id} className="flex items-center justify-between py-1.5 border-b border-border/40 last:border-0">
+              <span className="text-muted-foreground text-sm">{city.name}</span>
               <span className="text-amber-400 font-mono text-sm">
                 {formatTimeInZone(city.timezone, meetingDate)}
               </span>
@@ -125,13 +125,13 @@ export function WorldClockPage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#e4e4e7]">🕐 World Clock</h1>
-          <p className="text-[#71717a] text-sm mt-0.5">Live time across time zones</p>
+          <h1 className="text-lg font-semibold text-foreground">World Clock</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Live time across time zones</p>
         </div>
         <button
           type="button"
           onClick={() => setShowSearch((s) => !s)}
-          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-1.5 rounded-lg text-sm transition-colors"
+          className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-1.5 text-sm transition-colors"
         >
           + Add city
         </button>
@@ -139,14 +139,14 @@ export function WorldClockPage() {
 
       {/* City search */}
       {showSearch && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3 space-y-2">
+        <div className="bg-background border border-border p-3 space-y-2">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search cities…"
             autoFocus
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
           />
           {filteredSearch.length > 0 && (
             <div className="max-h-40 overflow-y-auto space-y-0.5">
@@ -155,15 +155,15 @@ export function WorldClockPage() {
                   key={city.id}
                   type="button"
                   onClick={() => addCity(city)}
-                  className="w-full text-left px-3 py-2 rounded-lg text-sm text-[#a1a1aa] hover:text-[#e4e4e7] hover:bg-[#27272a] transition-colors"
+                  className="w-full text-left px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                 >
-                  {city.name} <span className="text-[#52525b] text-xs">({city.timezone})</span>
+                  {city.name} <span className="text-muted-foreground/80 text-xs">({city.timezone})</span>
                 </button>
               ))}
             </div>
           )}
           {search.trim() && filteredSearch.length === 0 && (
-            <p className="text-[#52525b] text-xs px-3">No cities found</p>
+            <p className="text-muted-foreground/80 text-xs px-3">No cities found</p>
           )}
         </div>
       )}
@@ -176,7 +176,7 @@ export function WorldClockPage() {
       </div>
 
       {cities.length === 0 && (
-        <p className="text-[#52525b] text-sm text-center py-8">No cities added. Click "+ Add city" to start.</p>
+        <p className="text-muted-foreground/80 text-sm text-center py-8">No cities added. Click "+ Add city" to start.</p>
       )}
 
       {/* Meeting planner */}
@@ -185,7 +185,7 @@ export function WorldClockPage() {
       )}
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xs text-[#52525b]">
+      <div className="flex items-center gap-4 text-xs text-muted-foreground/80">
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-green-500" />
           Business hours (9am–5pm)

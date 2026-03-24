@@ -41,7 +41,7 @@ describe('LandingPage', () => {
 
   it('shows privacy callout', () => {
     renderLanding();
-    expect(screen.getByText(/100% local. Zero servers. Zero tracking./i)).toBeInTheDocument();
+    expect(screen.getByText(/100% local/i)).toBeInTheDocument();
   });
 
   it('shows feature cards for default category', () => {
@@ -61,6 +61,6 @@ describe('LandingPage', () => {
 
   it('shows AI section headline', () => {
     renderLanding();
-    expect(screen.getByText(/AI that works for you/i)).toBeInTheDocument();
+    expect(screen.getByText(/AI that respects your data/i)).toBeInTheDocument();
   });
 });

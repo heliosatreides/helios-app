@@ -42,14 +42,14 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
         {!saving ? (
           <button
             onClick={() => setSaving(true)}
-            className="px-4 py-2 bg-amber-500 text-black font-semibold rounded-lg text-sm hover:bg-amber-400 transition-colors"
+            className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 transition-colors"
           >
             + Save as Version
           </button>
         ) : (
-          <div className="bg-[#18181b] border border-amber-500/30 rounded-xl p-4 flex gap-3 items-end max-w-sm">
+          <div className="bg-secondary border border-amber-500/30 p-4 flex gap-3 items-end max-w-sm">
             <div className="flex-1">
-              <label className="block text-xs text-[#71717a] mb-1">Version Name</label>
+              <label className="block text-xs text-muted-foreground mb-1">Version Name</label>
               <input
                 type="text"
                 value={versionName}
@@ -57,19 +57,19 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
                 onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                 placeholder='e.g. "SWE Resume"'
                 autoFocus
-                className="w-full bg-[#27272a] border border-[#3f3f46] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+                className="w-full bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
               />
             </div>
             <button
               onClick={handleSave}
               disabled={!versionName.trim()}
-              className="px-3 py-2 bg-amber-500 text-black font-semibold rounded-lg text-sm hover:bg-amber-400 disabled:opacity-50"
+              className="px-3 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 disabled:opacity-50"
             >
               Save
             </button>
             <button
               onClick={() => { setSaving(false); setVersionName(''); }}
-              className="px-3 py-2 text-[#71717a] hover:text-[#e4e4e7] text-sm"
+              className="px-3 py-2 text-muted-foreground hover:text-foreground text-sm"
             >
               Cancel
             </button>
@@ -78,7 +78,7 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
       </div>
 
       {versions.length === 0 ? (
-        <div className="text-center py-12 text-[#52525b]">
+        <div className="text-center py-12 text-muted-foreground/80">
           <p className="text-3xl mb-2">📄</p>
           <p className="text-sm">No saved versions yet.</p>
           <p className="text-xs mt-1">Save your current resume as a named version to switch between them.</p>
@@ -88,29 +88,29 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
           {versions.map((v) => (
             <div
               key={v.id}
-              className="bg-[#18181b] border border-[#1c1c20] rounded-xl p-4 flex items-center justify-between"
+              className="bg-secondary border border-border p-4 flex items-center justify-between"
             >
               <div>
-                <p className="text-[#e4e4e7] font-medium">{v.name}</p>
-                <p className="text-xs text-[#52525b] mt-0.5">Saved {formatDate(v.savedAt)}</p>
+                <p className="text-foreground font-medium">{v.name}</p>
+                <p className="text-xs text-muted-foreground/80 mt-0.5">Saved {formatDate(v.savedAt)}</p>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => onLoad(v.id)}
-                  className="px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-xs hover:bg-amber-500/20 transition-colors"
+                  className="px-3 py-1.5 bg-secondary text-foreground border border-amber-500/30 text-xs hover:bg-amber-500/20 transition-colors"
                 >
                   Load
                 </button>
                 <button
                   onClick={() => downloadJSON(v, `resume-${v.name.replace(/\s+/g, '-').toLowerCase()}.json`)}
-                  className="px-3 py-1.5 text-[#71717a] hover:text-amber-400 text-xs transition-colors border border-[#1c1c20] hover:border-amber-400/30 rounded-lg"
+                  className="px-3 py-1.5 text-muted-foreground hover:text-amber-400 text-xs transition-colors border border-border hover:border-amber-400/30"
                   title="Download as JSON"
                 >
                   ⬇️ JSON
                 </button>
                 <button
                   onClick={() => onDelete(v.id)}
-                  className="px-3 py-1.5 text-[#52525b] hover:text-red-400 text-xs transition-colors"
+                  className="px-3 py-1.5 text-muted-foreground/80 hover:text-red-400 text-xs transition-colors"
                 >
                   Delete
                 </button>

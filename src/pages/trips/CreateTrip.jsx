@@ -49,18 +49,18 @@ export function CreateTrip({ onSubmit }) {
   };
 
   const inputClass = (field) =>
-    `w-full bg-[#111113] border rounded-lg px-4 py-2.5 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none transition-colors ${
+    `w-full bg-secondary border px-4 py-2.5 text-foreground placeholder-[#52525b] focus:outline-none transition-colors ${
       errors[field]
         ? 'border-red-500 focus:border-red-400'
-        : 'border-[#1c1c20] focus:border-[#f59e0b]'
+        : 'border-border focus:border-[#f59e0b]'
     }`;
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-xl font-semibold text-[#e4e4e7] mb-6">New Trip</h2>
+      <h2 className="text-xl font-semibold text-foreground mb-6">New Trip</h2>
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-[#a1a1aa] mb-1">
+          <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-1">
             Trip Name
           </label>
           <input
@@ -76,7 +76,7 @@ export function CreateTrip({ onSubmit }) {
         </div>
 
         <div>
-          <label htmlFor="destination" className="block text-sm font-medium text-[#a1a1aa] mb-1">
+          <label htmlFor="destination" className="block text-sm font-medium text-muted-foreground mb-1">
             Destination
           </label>
           <input
@@ -93,7 +93,7 @@ export function CreateTrip({ onSubmit }) {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-[#a1a1aa] mb-1">
+            <label htmlFor="startDate" className="block text-sm font-medium text-muted-foreground mb-1">
               Start Date
             </label>
             <input
@@ -107,7 +107,7 @@ export function CreateTrip({ onSubmit }) {
             {errors.startDate && <p className="mt-1 text-xs text-red-400">{errors.startDate}</p>}
           </div>
           <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-[#a1a1aa] mb-1">
+            <label htmlFor="endDate" className="block text-sm font-medium text-muted-foreground mb-1">
               End Date
             </label>
             <input
@@ -123,8 +123,8 @@ export function CreateTrip({ onSubmit }) {
         </div>
 
         <div>
-          <label htmlFor="budget" className="block text-sm font-medium text-[#a1a1aa] mb-1">
-            Budget ($) <span className="text-[#52525b]">optional</span>
+          <label htmlFor="budget" className="block text-sm font-medium text-muted-foreground mb-1">
+            Budget ($) <span className="text-muted-foreground/80">optional</span>
           </label>
           <input
             id="budget"
@@ -143,14 +143,14 @@ export function CreateTrip({ onSubmit }) {
         <div className="flex gap-3 pt-2">
           <button
             type="submit"
-            className="flex-1 bg-[#f59e0b] hover:bg-[#d97706] text-black font-semibold py-2.5 rounded-lg transition-colors"
+            className="flex-1 bg-foreground hover:bg-[#d97706] text-black font-semibold py-2.5 transition-colors"
           >
             Create Trip
           </button>
           <button
             type="button"
             onClick={() => navigate('/trips')}
-            className="flex-1 bg-[#0c0c0e] border border-[#1c1c20] hover:border-[#52525b] text-[#a1a1aa] font-medium py-2.5 rounded-lg transition-colors"
+            className="flex-1 bg-background border border-border hover:border-[#52525b] text-muted-foreground font-medium py-2.5 transition-colors"
           >
             Cancel
           </button>

@@ -82,7 +82,7 @@ describe('sleepColor', () => {
   });
 
   it('returns gray for null', () => {
-    expect(sleepColor(null)).toBe('text-[#71717a]');
+    expect(sleepColor(null)).toBe('text-muted-foreground');
   });
 });
 

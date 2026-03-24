@@ -25,7 +25,7 @@ export function TransactionList({ transactions, accounts, onDelete, filterAccoun
 
   if (filtered.length === 0) {
     return (
-      <div className="text-center py-12 text-[#71717a]">
+      <div className="text-center py-12 text-muted-foreground">
         <p className="text-lg">No transactions yet.</p>
         <p className="text-sm mt-1">Log a transaction to see it here.</p>
       </div>
@@ -39,16 +39,16 @@ export function TransactionList({ transactions, accounts, onDelete, filterAccoun
         return (
           <div
             key={tx.id}
-            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center justify-between"
+            className="bg-background border border-border p-4 flex items-center justify-between"
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <p className="text-[#e4e4e7] font-medium truncate">{tx.description}</p>
-                <span className="text-xs text-[#71717a] bg-[#0a0a0b] border border-[#1c1c20] rounded px-2 py-0.5 shrink-0">
+                <p className="text-foreground font-medium truncate">{tx.description}</p>
+                <span className="text-xs text-muted-foreground bg-background border border-border rounded px-2 py-0.5 shrink-0">
                   {tx.category}
                 </span>
               </div>
-              <p className="text-[#71717a] text-xs mt-1">
+              <p className="text-muted-foreground text-xs mt-1">
                 {accountMap[tx.accountId]?.name || 'Unknown'} · {tx.date}
               </p>
             </div>
@@ -58,7 +58,7 @@ export function TransactionList({ transactions, accounts, onDelete, filterAccoun
                   {tx.type === 'income' ? '+' : '-'}${tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
                 <span
-                  className={`text-xs tabular-nums ${runningBalance >= 0 ? 'text-[#52525b]' : 'text-red-400/60'}`}
+                  className={`text-xs tabular-nums ${runningBalance >= 0 ? 'text-muted-foreground/80' : 'text-red-400/60'}`}
                   data-testid={`running-balance-${tx.id}`}
                   aria-label={`Balance: ${runningBalance >= 0 ? '' : '-'}$${Math.abs(runningBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 >
@@ -68,7 +68,7 @@ export function TransactionList({ transactions, accounts, onDelete, filterAccoun
               <button
                 data-testid={`delete-transaction-${tx.id}`}
                 onClick={() => onDelete(tx.id)}
-                className="text-[#71717a] hover:text-red-400 transition-colors text-sm px-2 py-1"
+                className="text-muted-foreground hover:text-red-400 transition-colors text-sm px-2 py-1"
               >
                 Delete
               </button>

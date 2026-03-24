@@ -70,7 +70,7 @@ export function ImportButton({ mode = 'json', onImport, label, className = '' })
         type="button"
         onClick={handleButtonClick}
         disabled={status === 'importing'}
-        className={`border border-[#1c1c20] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm transition-colors text-left ${className}`}
+        className={`border border-border text-foreground hover:border-amber-400/50 hover:text-amber-400 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 text-sm transition-colors text-left ${className}`}
       >
         {buttonLabel}
       </button>

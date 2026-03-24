@@ -61,10 +61,10 @@ export function TripsPage() {
         element={
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-[#e4e4e7]">Trips</h2>
+              <h2 className="text-lg font-semibold text-foreground">Trips</h2>
               <Link
                 to="/trips/new"
-                className="bg-[#f59e0b] hover:bg-[#d97706] text-black font-semibold px-4 py-2 rounded-lg transition-colors"
+                className="bg-foreground hover:bg-[#d97706] text-black font-semibold px-4 py-2 transition-colors"
               >
                 + New Trip
               </Link>
@@ -85,7 +85,7 @@ export function TripsPage() {
             </div>
 
             {importMsg && (
-              <div className="mb-4 text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+              <div className="mb-4 text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
                 ✅ {importMsg}
               </div>
             )}

@@ -173,8 +173,8 @@ export function FinancePage() {
     <div className="space-y-6">
       {/* Net Worth Banner */}
       {accounts.length > 0 && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6" data-testid="net-worth-banner">
-          <p className="text-[#71717a] text-sm mb-1">Net Worth</p>
+        <div className="bg-background border border-border p-6" data-testid="net-worth-banner">
+          <p className="text-muted-foreground text-sm mb-1">Net Worth</p>
           <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-amber-400' : 'text-red-400'}`} data-testid="net-worth-value">
             {netWorth < 0 ? '-' : ''}${Math.abs(netWorth).toLocaleString('en-US', { maximumFractionDigits: 2 })}
           </p>
@@ -183,9 +183,9 @@ export function FinancePage() {
 
       {/* Monthly Summary */}
       {(monthlyIncome > 0 || monthlyExpensesTotal > 0) && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6" data-testid="monthly-summary-card">
-          <p className="text-[#e4e4e7] font-semibold mb-3">
-            Monthly Summary <span className="text-[#52525b] text-sm font-normal">({currentMonth})</span>
+        <div className="bg-background border border-border p-6" data-testid="monthly-summary-card">
+          <p className="text-foreground font-semibold mb-3">
+            Monthly Summary <span className="text-muted-foreground/80 text-sm font-normal">({currentMonth})</span>
           </p>
           <div className="space-y-3">
             <div>
@@ -193,7 +193,7 @@ export function FinancePage() {
                 <span className="text-green-400">Income</span>
                 <span className="text-green-400 font-medium">${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</span>
               </div>
-              <div className="h-2 bg-[#27272a] rounded-full overflow-hidden">
+              <div className="h-2 bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-green-500 rounded-full transition-all"
                   style={{ width: `${(monthlyIncome / maxBar) * 100}%` }}
@@ -206,7 +206,7 @@ export function FinancePage() {
                 <span className="text-red-400">Expenses</span>
                 <span className="text-red-400 font-medium">${monthlyExpensesTotal.toLocaleString('en-US', { maximumFractionDigits: 2 })}</span>
               </div>
-              <div className="h-2 bg-[#27272a] rounded-full overflow-hidden">
+              <div className="h-2 bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-red-500 rounded-full transition-all"
                   style={{ width: `${(monthlyExpensesTotal / maxBar) * 100}%` }}
@@ -214,8 +214,8 @@ export function FinancePage() {
                 />
               </div>
             </div>
-            <div className="flex justify-between text-sm pt-1 border-t border-[#1c1c20]">
-              <span className="text-[#71717a]">Net</span>
+            <div className="flex justify-between text-sm pt-1 border-t border-border">
+              <span className="text-muted-foreground">Net</span>
               <span className={`font-semibold ${monthlyIncome - monthlyExpensesTotal >= 0 ? 'text-green-400' : 'text-red-400'}`} data-testid="monthly-net">
                 {monthlyIncome - monthlyExpensesTotal >= 0 ? '+' : ''}${(monthlyIncome - monthlyExpensesTotal).toLocaleString('en-US', { maximumFractionDigits: 2 })}
               </span>
@@ -227,8 +227,8 @@ export function FinancePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#e4e4e7]">Finance</h1>
-          <p className="text-[#71717a] text-sm mt-1">Track your accounts, transactions, and budgets</p>
+          <h1 className="text-lg font-semibold text-foreground">Finance</h1>
+          <p className="text-muted-foreground text-sm mt-1">Track your accounts, transactions, and budgets</p>
         </div>
         <button
           onClick={() => {
@@ -236,22 +236,22 @@ export function FinancePage() {
             else if (activeTab === 'Transactions') setShowTxModal(true);
             else if (activeTab === 'Budget') setShowBudgetForm(true);
           }}
-          className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
         >
           + Add {activeTab === 'Accounts' ? 'Account' : activeTab === 'Transactions' ? 'Transaction' : 'Budget'}
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-1 w-fit">
+      <div className="flex gap-1 border border-border p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            className={`px-4 py-2 text-sm font-medium transition-all ${
               activeTab === tab
-                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                : 'text-[#52525b] hover:text-[#a1a1aa] border border-transparent'
+                ? 'bg-foreground text-background'
+                : 'text-muted-foreground/80 hover:text-muted-foreground border border-transparent'
             }`}
           >
             {tab}
@@ -261,7 +261,7 @@ export function FinancePage() {
 
       {/* Import flash */}
       {importMsg && (
-        <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+        <div className="text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
           ✅ {importMsg}
         </div>
       )}
@@ -299,7 +299,7 @@ export function FinancePage() {
             <select
               value={filterAccountId}
               onChange={(e) => setFilterAccountId(e.target.value)}
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
             >
               <option value="">All Accounts</option>
               {accounts.map((a) => (
@@ -309,7 +309,7 @@ export function FinancePage() {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
             >
               <option value="">All Categories</option>
               {CATEGORIES.map((c) => (
@@ -334,7 +334,7 @@ export function FinancePage() {
               <button
                 onClick={handleAiInsights}
                 disabled={aiInsightsLoading}
-                className="flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 disabled:opacity-40 border border-amber-500/30 rounded-lg px-4 py-2 transition-colors"
+                className="flex items-center gap-2 text-sm text-foreground hover:underline disabled:opacity-40 border border-amber-500/30 px-4 py-2 transition-colors"
               >
                 {aiInsightsLoading ? '⏳ Analyzing…' : '✨ Monthly insights'}
               </button>
@@ -347,7 +347,7 @@ export function FinancePage() {
                 <button
                   key={b.category}
                   onClick={() => handleDeleteBudget(b.category)}
-                  className="text-xs text-[#71717a] hover:text-red-400 bg-[#0c0c0e] border border-[#1c1c20] rounded px-2 py-1 transition-colors"
+                  className="text-xs text-muted-foreground hover:text-red-400 bg-background border border-border rounded px-2 py-1 transition-colors"
                 >
                   Remove {b.category}
                 </button>

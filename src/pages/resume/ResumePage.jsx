@@ -78,7 +78,7 @@ export function ResumePage() {
   if (!ready) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-[#71717a] text-sm">Loading resume data…</div>
+        <div className="text-muted-foreground text-sm">Loading resume data…</div>
       </div>
     );
   }
@@ -86,20 +86,20 @@ export function ResumePage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">📄 Resume Builder</h1>
-        <p className="text-[#71717a] text-sm mt-1">Build, preview, and manage your resume versions</p>
+        <h1 className="text-lg font-semibold text-foreground">Resume Builder</h1>
+        <p className="text-muted-foreground text-sm mt-1">Build, preview, and manage your resume versions</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#18181b] border border-[#1c1c20] rounded-xl p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-secondary border border-border p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab
                 ? 'bg-amber-500 text-black'
-                : 'text-[#71717a] hover:text-[#e4e4e7]'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {tab}

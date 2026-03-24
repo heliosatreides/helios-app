@@ -39,10 +39,10 @@ export function ScoreCard({ game }) {
   };
 
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex flex-col gap-2">
+    <div className="bg-background border border-border p-4 flex flex-col gap-2">
       {/* Game name */}
       {game.name && (
-        <p className="text-xs text-[#71717a] truncate">{game.name}</p>
+        <p className="text-xs text-muted-foreground truncate">{game.name}</p>
       )}
       {/* Status row */}
       <div className="flex items-center justify-between mb-1">
@@ -55,9 +55,9 @@ export function ScoreCard({ game }) {
             LIVE
           </span>
         ) : isFinal ? (
-          <span className="text-xs font-medium text-[#71717a]">Final</span>
+          <span className="text-xs font-medium text-muted-foreground">Final</span>
         ) : (
-          <span className="text-xs font-medium text-[#71717a]">{formatTime(date)}</span>
+          <span className="text-xs font-medium text-muted-foreground">{formatTime(date)}</span>
         )}
       </div>
 
@@ -66,11 +66,11 @@ export function ScoreCard({ game }) {
         {awayTeam.logo ? (
           <img src={awayTeam.logo} alt={awayTeam.displayName} className="w-8 h-8 object-contain" />
         ) : (
-          <div className="w-8 h-8 bg-[#27272a] rounded-full" />
+          <div className="w-8 h-8 bg-secondary rounded-full" />
         )}
-        <span className="flex-1 text-sm text-[#e4e4e7] font-medium">{awayTeam.displayName}</span>
+        <span className="flex-1 text-sm text-foreground font-medium">{awayTeam.displayName}</span>
         {!isScheduled && (
-          <span className="text-lg font-bold text-[#e4e4e7]">{awayTeam.score}</span>
+          <span className="text-lg font-bold text-foreground">{awayTeam.score}</span>
         )}
       </div>
 
@@ -79,37 +79,37 @@ export function ScoreCard({ game }) {
         {homeTeam.logo ? (
           <img src={homeTeam.logo} alt={homeTeam.displayName} className="w-8 h-8 object-contain" />
         ) : (
-          <div className="w-8 h-8 bg-[#27272a] rounded-full" />
+          <div className="w-8 h-8 bg-secondary rounded-full" />
         )}
-        <span className="flex-1 text-sm text-[#e4e4e7] font-medium">{homeTeam.displayName}</span>
+        <span className="flex-1 text-sm text-foreground font-medium">{homeTeam.displayName}</span>
         {!isScheduled && (
-          <span className="text-lg font-bold text-[#e4e4e7]">{homeTeam.score}</span>
+          <span className="text-lg font-bold text-foreground">{homeTeam.score}</span>
         )}
       </div>
 
       {/* AI Game Preview — only for scheduled games when key is set */}
       {hasKey && isScheduled && (
-        <div className="mt-2 pt-2 border-t border-[#1c1c20]">
+        <div className="mt-2 pt-2 border-t border-border">
           <button
             type="button"
             onClick={handleGamePreview}
             disabled={aiLoading}
-            className="text-xs text-amber-400/70 hover:text-amber-400 disabled:opacity-40 transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
             data-testid="game-preview-btn"
           >
             {aiLoading && showPreview ? '⏳ Loading…' : '✨ Game Preview'}
           </button>
           {showPreview && (
-            <div className="mt-2 border border-amber-500/20 bg-amber-500/5 rounded-2xl p-4" data-testid="game-preview-card">
+            <div className="mt-2 border border-border bg-secondary/50 p-4" data-testid="game-preview-card">
               {aiLoading && <p className="text-amber-400 text-xs">Generating preview…</p>}
               {previewError && <p className="text-red-400 text-xs">❌ {previewError}</p>}
               {preview && !aiLoading && (
                 <div>
-                  <p className="text-[#e4e4e7] text-xs leading-relaxed">{preview}</p>
+                  <p className="text-foreground text-xs leading-relaxed">{preview}</p>
                   <button
                     type="button"
                     onClick={() => { setShowPreview(false); setPreview(null); }}
-                    className="text-[#52525b] hover:text-[#e4e4e7] text-xs mt-2"
+                    className="text-muted-foreground/80 hover:text-foreground text-xs mt-2"
                   >
                     Dismiss
                   </button>

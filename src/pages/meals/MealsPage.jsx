@@ -93,13 +93,13 @@ export function MealsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">🍽️ Meal Planner</h1>
-        <div className="text-sm text-[#71717a]">~{totalCalories.toLocaleString()} cal/week</div>
+        <h1 className="text-lg font-semibold text-foreground">Meal Planner</h1>
+        <div className="text-sm text-muted-foreground">~{totalCalories.toLocaleString()} cal/week</div>
       </div>
 
       <div className="flex gap-2">
         {['planner', 'grocery', 'ai'].map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === t ? 'bg-amber-500 text-black' : 'bg-[#27272a] text-[#a1a1aa] hover:text-[#e4e4e7]'}`}>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium ${tab === t ? 'bg-amber-500 text-black' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}>
             {t === 'planner' ? '📅 Planner' : t === 'grocery' ? '🛒 Grocery List' : '✨ AI Help'}
           </button>
         ))}
@@ -110,31 +110,31 @@ export function MealsPage() {
           <table className="w-full border-collapse" style={{ minWidth: '700px' }}>
             <thead>
               <tr>
-                <th className="text-left text-xs text-[#52525b] font-semibold pb-2 w-24">Day</th>
-                {SLOTS.map(s => <th key={s} className="text-left text-xs text-[#52525b] font-semibold pb-2 px-2">{s}</th>)}
+                <th className="text-left text-xs text-muted-foreground/80 font-semibold pb-2 w-24">Day</th>
+                {SLOTS.map(s => <th key={s} className="text-left text-xs text-muted-foreground/80 font-semibold pb-2 px-2">{s}</th>)}
               </tr>
             </thead>
             <tbody className="space-y-2">
               {DAYS.map(day => (
                 <tr key={day}>
-                  <td className="text-sm font-medium text-[#a1a1aa] py-2 pr-4">{day.slice(0,3)}</td>
+                  <td className="text-sm font-medium text-muted-foreground py-2 pr-4">{day.slice(0,3)}</td>
                   {SLOTS.map(slot => {
                     const meal = plan[day]?.[slot];
                     return (
                       <td key={slot} className="px-2 py-1">
                         <div
                           onClick={() => openCell(day, slot)}
-                          className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg p-2 min-h-[60px] cursor-pointer hover:border-amber-500/50 transition-colors relative group"
+                          className="bg-background border border-border p-2 min-h-[60px] cursor-pointer hover:border-amber-500/50 transition-colors relative group"
                         >
                           {meal ? (
                             <>
-                              <div className="text-xs font-medium text-[#e4e4e7]">{meal.name}</div>
-                              {meal.calories && <div className="text-xs text-[#71717a]">{meal.calories} cal</div>}
-                              {meal.prepTime && <div className="text-xs text-[#52525b]">{meal.prepTime}m prep</div>}
-                              <button onClick={e => { e.stopPropagation(); clearCell(day, slot); }} className="absolute top-1 right-1 text-[#52525b] hover:text-red-400 text-xs opacity-0 group-hover:opacity-100">✕</button>
+                              <div className="text-xs font-medium text-foreground">{meal.name}</div>
+                              {meal.calories && <div className="text-xs text-muted-foreground">{meal.calories} cal</div>}
+                              {meal.prepTime && <div className="text-xs text-muted-foreground/80">{meal.prepTime}m prep</div>}
+                              <button onClick={e => { e.stopPropagation(); clearCell(day, slot); }} className="absolute top-1 right-1 text-muted-foreground/80 hover:text-red-400 text-xs opacity-0 group-hover:opacity-100">✕</button>
                             </>
                           ) : (
-                            <span className="text-xs text-[#3f3f46]">+ Add meal</span>
+                            <span className="text-xs text-muted-foreground/60">+ Add meal</span>
                           )}
                         </div>
                       </td>
@@ -148,15 +148,15 @@ export function MealsPage() {
       )}
 
       {tab === 'grocery' && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-[#a1a1aa] mb-4">Auto-generated Grocery List</h2>
+        <div className="bg-background border border-border p-5">
+          <h2 className="text-sm font-semibold text-muted-foreground mb-4">Auto-generated Grocery List</h2>
           {groceryList.length === 0 ? (
-            <p className="text-[#52525b] text-sm">Add meals with ingredients in the Planner tab to generate a grocery list.</p>
+            <p className="text-muted-foreground/80 text-sm">Add meals with ingredients in the Planner tab to generate a grocery list.</p>
           ) : (
             <ul className="space-y-2">
               {groceryList.map((ing, i) => (
-                <li key={i} className="flex items-center gap-3 text-sm text-[#e4e4e7]">
-                  <span className="w-4 h-4 border border-[#1c1c20] rounded" />
+                <li key={i} className="flex items-center gap-3 text-sm text-foreground">
+                  <span className="w-4 h-4 border border-border rounded" />
                   {ing}
                 </li>
               ))}
@@ -167,28 +167,28 @@ export function MealsPage() {
 
       {tab === 'ai' && (
         <div className="space-y-6">
-          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-[#a1a1aa]">✨ Plan My Week</h2>
+          <div className="bg-background border border-border p-5 space-y-4">
+            <h2 className="text-sm font-semibold text-muted-foreground">✨ Plan My Week</h2>
             <div>
-              <label className="block text-xs text-[#71717a] mb-1">Dietary Preferences (e.g., vegetarian, high-protein, low-carb)</label>
-              <input value={dietPrefs} onChange={e => setDietPrefs(e.target.value)} placeholder="e.g., vegetarian, gluten-free, high protein" className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+              <label className="block text-xs text-muted-foreground mb-1">Dietary Preferences (e.g., vegetarian, high-protein, low-carb)</label>
+              <input value={dietPrefs} onChange={e => setDietPrefs(e.target.value)} placeholder="e.g., vegetarian, gluten-free, high protein" className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
             </div>
-            <button onClick={planMyWeek} disabled={loading} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
+            <button onClick={planMyWeek} disabled={loading} className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
               {loading ? 'Planning...' : '✨ Plan My Week'}
             </button>
-            {aiPlan && <pre className="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap bg-[#18181b] rounded-lg p-4">{aiPlan}</pre>}
+            {aiPlan && <pre className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap bg-secondary p-4">{aiPlan}</pre>}
           </div>
 
-          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
-            <h2 className="text-sm font-semibold text-[#a1a1aa]">✨ What Can I Make?</h2>
+          <div className="bg-background border border-border p-5 space-y-4">
+            <h2 className="text-sm font-semibold text-muted-foreground">✨ What Can I Make?</h2>
             <div>
-              <label className="block text-xs text-[#71717a] mb-1">Paste your available ingredients</label>
-              <textarea value={availableIngredients} onChange={e => setAvailableIngredients(e.target.value)} placeholder="chicken, rice, onions, garlic, tomatoes..." rows={3} className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 resize-none" />
+              <label className="block text-xs text-muted-foreground mb-1">Paste your available ingredients</label>
+              <textarea value={availableIngredients} onChange={e => setAvailableIngredients(e.target.value)} placeholder="chicken, rice, onions, garlic, tomatoes..." rows={3} className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500 resize-none" />
             </div>
-            <button onClick={suggestMeals} disabled={loading || !availableIngredients.trim()} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
+            <button onClick={suggestMeals} disabled={loading || !availableIngredients.trim()} className="px-4 py-2 bg-purple-600 text-white text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
               {loading ? 'Thinking...' : '✨ Suggest Meals'}
             </button>
-            {aiMeals && <pre className="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap bg-[#18181b] rounded-lg p-4">{aiMeals}</pre>}
+            {aiMeals && <pre className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap bg-secondary p-4">{aiMeals}</pre>}
           </div>
           {error && <p className="text-red-400 text-sm">{error}</p>}
         </div>
@@ -197,8 +197,8 @@ export function MealsPage() {
       {/* Edit modal */}
       {editCell && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md space-y-4">
-            <h2 className="font-semibold text-[#e4e4e7]">{editCell.day} – {editCell.slot}</h2>
+          <div className="bg-background border border-border p-6 w-full max-w-md space-y-4">
+            <h2 className="font-semibold text-foreground">{editCell.day} – {editCell.slot}</h2>
             {[
               { label: 'Meal Name', key: 'name', placeholder: 'e.g., Oatmeal with Berries' },
               { label: 'Calories (optional)', key: 'calories', placeholder: '350', type: 'number' },
@@ -207,13 +207,13 @@ export function MealsPage() {
               { label: 'Ingredients (comma-separated)', key: 'ingredients', placeholder: 'oats, berries, honey' },
             ].map(({ label, key, placeholder, type }) => (
               <div key={key}>
-                <label className="block text-xs text-[#71717a] mb-1">{label}</label>
-                <input type={type || 'text'} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+                <label className="block text-xs text-muted-foreground mb-1">{label}</label>
+                <input type={type || 'text'} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
               </div>
             ))}
             <div className="flex gap-3">
-              <button onClick={saveCell} className="flex-1 py-2 bg-amber-500 text-black rounded-lg text-sm font-semibold hover:bg-amber-400">Save</button>
-              <button onClick={() => setEditCell(null)} className="flex-1 py-2 bg-[#27272a] text-[#a1a1aa] rounded-lg text-sm hover:bg-[#3f3f46]">Cancel</button>
+              <button onClick={saveCell} className="flex-1 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400">Save</button>
+              <button onClick={() => setEditCell(null)} className="flex-1 py-2 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">Cancel</button>
             </div>
           </div>
         </div>

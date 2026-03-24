@@ -5,55 +5,55 @@ const navGroups = [
   {
     label: 'Main',
     items: [
-      { to: '/dashboard', label: 'Dashboard', icon: '⚡' },
-      { to: '/planner', label: 'Planner', icon: '🗓️' },
-      { to: '/goals', label: 'Goals', icon: '🎯' },
-      { to: '/resume', label: 'Resume', icon: '📄' },
+      { to: '/dashboard', label: 'Dashboard' },
+      { to: '/planner', label: 'Planner' },
+      { to: '/goals', label: 'Goals' },
+      { to: '/resume', label: 'Resume' },
     ],
   },
   {
     label: 'Personal',
     items: [
-      { to: '/trips', label: 'Trips', icon: '✈️' },
-      { to: '/finance', label: 'Finance', icon: '💰' },
-      { to: '/investments', label: 'Investments', icon: '📈' },
-      { to: '/sports', label: 'Sports', icon: '🏆' },
-      { to: '/health', label: 'Health', icon: '🏥' },
-      { to: '/meals', label: 'Meals', icon: '🍽️' },
-      { to: '/subscriptions', label: 'Subscriptions', icon: '📋' },
+      { to: '/trips', label: 'Trips' },
+      { to: '/finance', label: 'Finance' },
+      { to: '/investments', label: 'Investments' },
+      { to: '/sports', label: 'Sports' },
+      { to: '/health', label: 'Health' },
+      { to: '/meals', label: 'Meals' },
+      { to: '/subscriptions', label: 'Subscriptions' },
     ],
   },
   {
     label: 'Tools',
     items: [
-      { to: '/chat', label: 'P2P Chat', icon: '💬' },
-      { to: '/focus', label: 'Focus', icon: '🔥' },
-      { to: '/knowledge', label: 'Knowledge', icon: '📚' },
-      { to: '/networking', label: 'Networking', icon: '🤝' },
-      { to: '/news', label: 'News', icon: '📰' },
-      { to: '/flashcards', label: 'Flashcards', icon: '🃏' },
-      { to: '/music', label: 'Music', icon: '🎵' },
-      { to: '/splitter', label: 'Splitter', icon: '💸' },
-      { to: '/packing', label: 'Packing', icon: '🧳' },
+      { to: '/chat', label: 'Chat' },
+      { to: '/focus', label: 'Focus' },
+      { to: '/knowledge', label: 'Knowledge' },
+      { to: '/networking', label: 'Networking' },
+      { to: '/news', label: 'News' },
+      { to: '/flashcards', label: 'Flashcards' },
+      { to: '/music', label: 'Music' },
+      { to: '/splitter', label: 'Splitter' },
+      { to: '/packing', label: 'Packing' },
     ],
   },
   {
     label: 'Developer',
     items: [
-      { to: '/devtools', label: 'Dev Tools', icon: '💻' },
-      { to: '/converter', label: 'Converter', icon: '🔄' },
-      { to: '/worldclock', label: 'World Clock', icon: '🕐' },
-      { to: '/apiplayground', label: 'API Playground', icon: '🔌' },
-      { to: '/colors', label: 'Colors', icon: '🎨' },
-      { to: '/wiki', label: 'Wiki', icon: '📝' },
-      { to: '/regex', label: 'Regex', icon: '🔤' },
-      { to: '/calculator', label: 'Calculator', icon: '🧮' },
+      { to: '/devtools', label: 'Dev Tools' },
+      { to: '/converter', label: 'Converter' },
+      { to: '/worldclock', label: 'World Clock' },
+      { to: '/apiplayground', label: 'API Playground' },
+      { to: '/colors', label: 'Colors' },
+      { to: '/wiki', label: 'Wiki' },
+      { to: '/regex', label: 'Regex' },
+      { to: '/calculator', label: 'Calculator' },
     ],
   },
   {
-    label: 'Account',
+    label: '',
     items: [
-      { to: '/settings', label: 'Settings', icon: '⚙️' },
+      { to: '/settings', label: 'Settings' },
     ],
   },
 ];
@@ -62,54 +62,43 @@ export function Sidebar({ onNavClick }) {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="w-60 bg-[#0c0c0e] border-r border-[#1c1c20] flex flex-col h-full shrink-0 overflow-hidden">
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-[#1c1c20] shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-sm font-bold text-black">
-            H
-          </div>
-          <span className="text-lg font-bold text-[#e4e4e7]">Helios</span>
-        </div>
+    <aside className="w-56 bg-background border-r border-border flex flex-col h-full shrink-0 overflow-hidden">
+      <div className="px-4 py-4 border-b border-border shrink-0">
+        <span className="text-sm font-semibold tracking-tight text-foreground">Helios</span>
       </div>
 
-      {/* Search hint */}
+      {/* Search trigger */}
       <div className="px-3 pt-3 pb-1 shrink-0">
         <button
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-[#111113] border border-[#1c1c20] hover:border-[#27272a] text-[#3f3f46] text-xs transition-colors"
+          className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-muted-foreground text-xs hover:bg-secondary transition-colors"
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-          </svg>
-          <span className="flex-1 text-left">Search…</span>
-          <kbd className="text-[10px] bg-[#18181b] px-1.5 py-0.5 rounded border border-[#27272a] font-mono">⌘K</kbd>
+          <span className="flex-1 text-left">Search...</span>
+          <kbd className="text-[10px] text-muted-foreground font-mono">⌘K</kbd>
         </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-5 scrollbar-hide">
+      <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-4 scrollbar-hide">
         {navGroups.map((group) => (
-          <div key={group.label}>
-            <p className="text-[#3f3f46] text-[10px] font-semibold uppercase tracking-[0.12em] px-3 mb-1.5">
-              {group.label}
-            </p>
+          <div key={group.label || 'bottom'}>
+            {group.label && (
+              <p className="text-muted-foreground text-[11px] font-medium px-3 mb-1">{group.label}</p>
+            )}
             <div className="space-y-0.5">
-              {group.items.map(({ to, label, icon }) => (
+              {group.items.map(({ to, label }) => (
                 <NavLink
                   key={to}
                   to={to}
                   onClick={onNavClick}
                   className={({ isActive }) =>
-                    `group flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 ${
+                    `block px-3 py-1.5 rounded-md text-[13px] transition-colors ${
                       isActive
-                        ? 'bg-amber-500/10 text-amber-400'
-                        : 'text-[#71717a] hover:text-[#e4e4e7] hover:bg-[#18181b]'
+                        ? 'bg-secondary text-foreground font-medium'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                     }`
                   }
                 >
-                  <span className="shrink-0 text-base w-5 text-center">{icon}</span>
-                  <span className="truncate">{label}</span>
+                  {label}
                 </NavLink>
               ))}
             </div>
@@ -117,26 +106,21 @@ export function Sidebar({ onNavClick }) {
         ))}
       </nav>
 
-      {/* User section */}
       {user && (
-        <div className="px-3 py-3 border-t border-[#1c1c20] shrink-0">
-          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#111113]">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-black flex items-center justify-center text-xs font-bold shrink-0">
+        <div className="px-3 py-3 border-t border-border shrink-0">
+          <div className="flex items-center justify-between px-3 py-1.5">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-6 h-6 rounded-full bg-secondary text-foreground flex items-center justify-center text-[11px] font-medium shrink-0">
                 {user.username[0].toUpperCase()}
               </span>
-              <span className="text-[#a1a1aa] text-xs font-medium truncate">{user.username}</span>
+              <span className="text-muted-foreground text-xs truncate">{user.username}</span>
             </div>
             <button
               onClick={logout}
-              className="text-[#3f3f46] hover:text-red-400 text-xs ml-2 transition-colors shrink-0 p-1 rounded-lg hover:bg-red-950/20"
+              className="text-muted-foreground hover:text-foreground text-xs transition-colors"
               title="Sign out"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16,17 21,12 16,7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
+              Log out
             </button>
           </div>
         </div>

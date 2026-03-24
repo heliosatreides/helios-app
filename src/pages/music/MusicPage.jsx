@@ -80,14 +80,14 @@ export function MusicPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-[#e4e4e7]">🎵 Music Recommendations</h1>
+      <h1 className="text-lg font-semibold text-foreground">Music Recommendations</h1>
 
       {/* Mood selector */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-[#a1a1aa]">How are you feeling?</h2>
+      <div className="bg-background border border-border p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground">How are you feeling?</h2>
         <div className="grid grid-cols-3 gap-2">
           {MOODS.map(m => (
-            <button key={m.id} onClick={() => setMood(m.id)} className={`py-3 rounded-xl text-sm font-medium border transition-all ${mood === m.id ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-[#18181b] border-[#1c1c20] text-[#71717a] hover:border-[#3f3f46]'}`}>
+            <button key={m.id} onClick={() => setMood(m.id)} className={`py-3 text-sm font-medium border transition-all ${mood === m.id ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-secondary border-border text-muted-foreground hover:border-[#3f3f46]'}`}>
               {m.label}
             </button>
           ))}
@@ -95,11 +95,11 @@ export function MusicPage() {
       </div>
 
       {/* Genre preferences */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-[#a1a1aa]">Genre Preferences (pick 3-5)</h2>
+      <div className="bg-background border border-border p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground">Genre Preferences (pick 3-5)</h2>
         <div className="flex flex-wrap gap-2">
           {ALL_GENRES.map(g => (
-            <button key={g} onClick={() => toggleGenre(g)} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${genres.includes(g) ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-[#18181b] border-[#1c1c20] text-[#71717a] hover:border-[#3f3f46]'}`}>
+            <button key={g} onClick={() => toggleGenre(g)} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${genres.includes(g) ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-secondary border-border text-muted-foreground hover:border-[#3f3f46]'}`}>
               {g}
             </button>
           ))}
@@ -107,7 +107,7 @@ export function MusicPage() {
       </div>
 
       {/* Get recommendations */}
-      <button onClick={getSuggestions} disabled={!mood || loading} className="w-full py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-500 disabled:opacity-50 transition-colors">
+      <button onClick={getSuggestions} disabled={!mood || loading} className="w-full py-3 bg-purple-600 text-white font-semibold hover:bg-purple-500 disabled:opacity-50 transition-colors">
         {loading ? '✨ Finding songs...' : '✨ Get Recommendations'}
       </button>
       {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -115,22 +115,22 @@ export function MusicPage() {
       {/* Songs */}
       {songs.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-[#a1a1aa]">Recommendations for {MOODS.find(m2 => m2.id === mood)?.label}</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground">Recommendations for {MOODS.find(m2 => m2.id === mood)?.label}</h2>
           {songs.map((song, i) => (
-            <div key={i} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-2">
+            <div key={i} className="bg-background border border-border p-4 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <div className="font-semibold text-[#e4e4e7]">{song.song}</div>
-                  <div className="text-sm text-[#71717a]">{song.artist}</div>
+                  <div className="font-semibold text-foreground">{song.song}</div>
+                  <div className="text-sm text-muted-foreground">{song.artist}</div>
                 </div>
-                <button onClick={() => likeSong(song)} title="Like" className={`text-lg ${likes.some(s => s.song === song.song) ? 'text-red-400' : 'text-[#52525b] hover:text-red-400'}`}>
+                <button onClick={() => likeSong(song)} title="Like" className={`text-lg ${likes.some(s => s.song === song.song) ? 'text-red-400' : 'text-muted-foreground/80 hover:text-red-400'}`}>
                   ♥
                 </button>
               </div>
-              {song.reason && <p className="text-xs text-[#71717a] leading-relaxed">{song.reason}</p>}
+              {song.reason && <p className="text-xs text-muted-foreground leading-relaxed">{song.reason}</p>}
               <div className="flex gap-2">
-                <a href={searchUrl('youtube', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-red-600/20 text-red-400 rounded-lg text-xs hover:bg-red-600/30">▶ YouTube Music</a>
-                <a href={searchUrl('spotify', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-600/20 text-green-400 rounded-lg text-xs hover:bg-green-600/30">▶ Spotify</a>
+                <a href={searchUrl('youtube', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-red-600/20 text-red-400 text-xs hover:bg-red-600/30">▶ YouTube Music</a>
+                <a href={searchUrl('spotify', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-600/20 text-green-400 text-xs hover:bg-green-600/30">▶ Spotify</a>
               </div>
             </div>
           ))}
@@ -139,24 +139,24 @@ export function MusicPage() {
 
       {/* Raw AI output if parsing failed */}
       {rawText && songs.length === 0 && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4">
-          <pre className="text-sm text-[#a1a1aa] whitespace-pre-wrap">{rawText}</pre>
+        <div className="bg-background border border-border p-4">
+          <pre className="text-sm text-muted-foreground whitespace-pre-wrap">{rawText}</pre>
         </div>
       )}
 
       {/* Liked songs */}
       {likes.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-[#a1a1aa]">❤️ Liked Songs ({likes.length})</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground">❤️ Liked Songs ({likes.length})</h2>
           {likes.map(song => (
-            <div key={song.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3 flex items-center justify-between gap-3">
+            <div key={song.id} className="bg-background border border-border p-3 flex items-center justify-between gap-3">
               <div>
-                <div className="text-sm font-medium text-[#e4e4e7]">{song.song}</div>
-                <div className="text-xs text-[#71717a]">{song.artist} · {song.mood}</div>
+                <div className="text-sm font-medium text-foreground">{song.song}</div>
+                <div className="text-xs text-muted-foreground">{song.artist} · {song.mood}</div>
               </div>
               <div className="flex gap-2">
                 <a href={searchUrl('spotify', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="text-xs text-green-400 hover:text-green-300">Spotify</a>
-                <button onClick={() => setLikes(p => p.filter(s => s.id !== song.id))} className="text-[#52525b] hover:text-red-400 text-xs">✕</button>
+                <button onClick={() => setLikes(p => p.filter(s => s.id !== song.id))} className="text-muted-foreground/80 hover:text-red-400 text-xs">✕</button>
               </div>
             </div>
           ))}

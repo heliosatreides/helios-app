@@ -21,29 +21,29 @@ export function AddAccountModal({ account, onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-[#e4e4e7] text-lg font-semibold mb-5">
+      <div className="bg-background border border-border p-6 w-full max-w-md">
+        <h2 className="text-foreground text-lg font-semibold mb-5">
           {account ? 'Edit Account' : 'Add Account'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="account-name" className="block text-[#71717a] text-sm mb-1">Name</label>
+            <label htmlFor="account-name" className="block text-muted-foreground text-sm mb-1">Name</label>
             <input
               id="account-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
             />
           </div>
           <div>
-            <label htmlFor="account-type" className="block text-[#71717a] text-sm mb-1">Type</label>
+            <label htmlFor="account-type" className="block text-muted-foreground text-sm mb-1">Type</label>
             <select
               id="account-type"
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
             >
               {ACCOUNT_TYPES.map((t) => (
                 <option key={t} value={t}>{t}</option>
@@ -51,27 +51,27 @@ export function AddAccountModal({ account, onSave, onClose }) {
             </select>
           </div>
           <div>
-            <label htmlFor="account-balance" className="block text-[#71717a] text-sm mb-1">Balance</label>
+            <label htmlFor="account-balance" className="block text-muted-foreground text-sm mb-1">Balance</label>
             <input
               id="account-balance"
               type="number"
               step="0.01"
               value={balance}
               onChange={(e) => setBalance(e.target.value)}
-              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
             />
           </div>
           <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[#1c1c20] rounded-lg text-[#71717a] hover:text-[#e4e4e7] transition-colors"
+              className="flex-1 px-4 py-2 border border-border text-muted-foreground hover:text-foreground transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all shadow-sm shadow-amber-500/10"
+              className="flex-1 px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all shadow-sm shadow-amber-500/10"
             >
               Save
             </button>

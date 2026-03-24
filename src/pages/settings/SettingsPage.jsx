@@ -257,7 +257,7 @@ export function SettingsPage() {
     showExportFlash('trips');
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-2.5 text-[#e4e4e7] text-sm placeholder-[#3f3f46] focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all w-full';
+  const inputCls = 'bg-background border border-border px-4 py-2.5 text-foreground text-sm placeholder-[#3f3f46] focus:outline-none focus:ring-1 focus:ring-ring transition-all w-full';
 
   // Developer settings
   const [githubUsername, setGithubUsername] = useState(() => localStorage.getItem('settings-github-username') || '');
@@ -292,20 +292,20 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">Settings</h1>
-        <p className="text-[#71717a] text-sm mt-1">Configure your Helios preferences</p>
+        <h1 className="text-lg font-semibold text-foreground">Settings</h1>
+        <p className="text-muted-foreground text-sm mt-1">Configure your Helios preferences</p>
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 border-b border-[#1c1c20]">
+      <div className="flex gap-1 border-b border-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2.5 text-sm font-medium rounded-t-xl transition-all ${
               activeTab === tab.id
-                ? 'text-amber-400 border-b-2 border-amber-400 -mb-px'
-                : 'text-[#52525b] hover:text-[#a1a1aa]'
+                ? 'text-foreground border-b-2 border-foreground -mb-px'
+                : 'text-muted-foreground/80 hover:text-muted-foreground'
             }`}
           >
             {tab.label}
@@ -315,24 +315,24 @@ export function SettingsPage() {
 
       {/* AI Integration Tab */}
       {activeTab === 'ai' && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-4">
+        <div className="bg-background border border-border p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">✨</span>
-            <h2 className="text-[#e4e4e7] font-semibold">AI Integration</h2>
+            <h2 className="text-foreground font-semibold">AI Integration</h2>
           </div>
-          <p className="text-[#71717a] text-sm">
+          <p className="text-muted-foreground text-sm">
             Add your Gemini API key to unlock AI-powered insights across the app.
             Your key is stored locally and only sent to Google's servers.
           </p>
 
           {needsReauth && (
             <form onSubmit={handleReAuth} className="space-y-2">
-              <p className="text-xs text-amber-400/80 px-3 py-2 rounded-lg border border-amber-400/20 bg-amber-400/5">
+              <p className="text-xs text-amber-400/80 px-3 py-2 border border-amber-400/20 bg-amber-400/5">
                 Your session was restored after a page refresh. Re-enter your password to access your encrypted API key.
               </p>
               <div className="flex gap-2">
                 <input
-                  className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] flex-1"
+                  className="bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:ring-1 focus:ring-ring flex-1"
                   type="password"
                   placeholder="Password"
                   value={reAuthPwd}
@@ -341,7 +341,7 @@ export function SettingsPage() {
                 />
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
+                  className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
                 >
                   Unlock
                 </button>
@@ -353,13 +353,13 @@ export function SettingsPage() {
           )}
 
           {!needsReauth && decryptError && (
-            <div className="text-xs px-3 py-2 rounded-lg border text-red-400 bg-red-400/10 border-red-400/20">
+            <div className="text-xs px-3 py-2 border text-red-400 bg-red-400/10 border-red-400/20">
               Could not decrypt key — please re-enter
             </div>
           )}
 
           <div>
-            <label className="block text-[#71717a] text-xs mb-1.5">Gemini API Key</label>
+            <label className="block text-muted-foreground text-xs mb-1.5">Gemini API Key</label>
             <div className="relative">
               <input
                 className={inputCls + ' pr-20'}
@@ -371,7 +371,7 @@ export function SettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowKey((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#71717a] hover:text-[#e4e4e7] text-xs transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs transition-colors"
               >
                 {showKey ? '🙈 Hide' : '👁 Show'}
               </button>
@@ -379,7 +379,7 @@ export function SettingsPage() {
           </div>
 
           {testResult && (
-            <div className={`text-xs px-3 py-2 rounded-lg border ${
+            <div className={`text-xs px-3 py-2 border ${
               testResult === 'ok'
                 ? 'text-green-400 bg-green-400/10 border-green-400/20'
                 : 'text-red-400 bg-red-400/10 border-red-400/20'
@@ -391,14 +391,14 @@ export function SettingsPage() {
           <div className="flex gap-3">
             <button
               onClick={handleSave}
-              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
+              className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
             >
               {saved ? '✓ Saved' : 'Save Key'}
             </button>
             <button
               onClick={handleTest}
               disabled={testing || !apiKey.trim()}
-              className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm transition-colors"
+              className="border border-border text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 text-sm transition-colors"
             >
               {testing ? '⏳ Testing…' : 'Test Connection'}
             </button>
@@ -410,21 +410,21 @@ export function SettingsPage() {
                   localStorage.removeItem('helios-gemini-key');
                   setTestResult(null);
                 }}
-                className="border border-[#1c1c20] text-red-400/70 hover:text-red-400 px-4 py-2 rounded-lg text-sm transition-colors"
+                className="border border-border text-red-400/70 hover:text-red-400 px-4 py-2 text-sm transition-colors"
               >
                 Remove Key
               </button>
             )}
           </div>
 
-          <div className="pt-2 border-t border-[#1c1c20]">
-            <p className="text-[#52525b] text-xs">
+          <div className="pt-2 border-t border-border">
+            <p className="text-muted-foreground/80 text-xs">
               Get a free key at{' '}
               <a
                 href="https://aistudio.google.com/app/apikey"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-amber-400/70 hover:text-amber-400 underline"
+                className="text-muted-foreground hover:text-foreground underline"
               >
                 aistudio.google.com
               </a>
@@ -436,48 +436,48 @@ export function SettingsPage() {
 
       {/* Export Data Tab */}
       {activeTab === 'export' && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-6">
+        <div className="bg-background border border-border p-6 space-y-6">
           <div>
-            <h2 className="text-[#e4e4e7] font-semibold text-lg">Export Your Data</h2>
-            <p className="text-[#71717a] text-sm mt-1">
+            <h2 className="text-foreground font-semibold text-lg">Export Your Data</h2>
+            <p className="text-muted-foreground text-sm mt-1">
               Download your Helios data as JSON or CSV. Your data never leaves your device.
             </p>
           </div>
 
           {/* Success flash */}
           {exportFlash && (
-            <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+            <div className="text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
               ✅ Exported!
             </div>
           )}
 
           {/* Import flash */}
           {importFlash && (
-            <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+            <div className="text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
               ✅ Imported: {importFlash}
             </div>
           )}
 
           {/* Full JSON export */}
           <div className="space-y-3">
-            <h3 className="text-[#a1a1aa] text-sm font-medium">Full Export</h3>
+            <h3 className="text-muted-foreground text-sm font-medium">Full Export</h3>
             <button
               onClick={handleExportJSON}
-              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
+              className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
             >
               ⬇️ Export All Data (JSON)
             </button>
-            <p className="text-[#52525b] text-xs">
+            <p className="text-muted-foreground/80 text-xs">
               Exports all trips, finance, investments, and sports data in a single structured JSON file.
             </p>
           </div>
 
-          <div className="border-t border-[#1c1c20]" />
+          <div className="border-t border-border" />
 
           {/* Full JSON import */}
           <div className="space-y-3">
-            <h3 className="text-[#a1a1aa] text-sm font-medium">Full Import</h3>
-            <div className="px-3 py-2 rounded-lg border border-amber-400/30 bg-amber-400/5 text-amber-300 text-xs">
+            <h3 className="text-muted-foreground text-sm font-medium">Full Import</h3>
+            <div className="px-3 py-2 border border-amber-400/30 bg-amber-400/5 text-amber-300 text-xs">
               ⚠️ Importing will merge with existing data. Duplicates (by id) are skipped.
             </div>
             <ImportButton
@@ -485,32 +485,32 @@ export function SettingsPage() {
               label="📥 Import All Data (JSON)"
               onImport={handleImportAllJSON}
             />
-            <p className="text-[#52525b] text-xs">
+            <p className="text-muted-foreground/80 text-xs">
               Accepts a full Helios export JSON. All modules are merged at once. No data is deleted.
             </p>
           </div>
 
-          <div className="border-t border-[#1c1c20]" />
+          <div className="border-t border-border" />
 
           {/* Per-module CSV exports */}
           <div className="space-y-3">
-            <h3 className="text-[#a1a1aa] text-sm font-medium">Per-Module CSV</h3>
+            <h3 className="text-muted-foreground text-sm font-medium">Per-Module CSV</h3>
             <div className="flex flex-col gap-2">
               <button
                 onClick={handleExportTransactions}
-                className="border border-[#1c1c20] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+                className="border border-border text-foreground hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 text-sm transition-colors text-left"
               >
                 📋 Export Transactions (CSV)
               </button>
               <button
                 onClick={handleExportPortfolio}
-                className="border border-[#1c1c20] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+                className="border border-border text-foreground hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 text-sm transition-colors text-left"
               >
                 📋 Export Portfolio (CSV)
               </button>
               <button
                 onClick={handleExportTrips}
-                className="border border-[#1c1c20] text-[#e4e4e7] hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 rounded-lg text-sm transition-colors text-left"
+                className="border border-border text-foreground hover:border-amber-400/50 hover:text-amber-400 px-4 py-2 text-sm transition-colors text-left"
               >
                 📋 Export Trips (CSV)
               </button>
@@ -521,14 +521,14 @@ export function SettingsPage() {
 
       {/* Developer Tab */}
       {activeTab === 'developer' && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-4">
+        <div className="bg-background border border-border p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">🛠️</span>
-            <h2 className="text-[#e4e4e7] font-semibold">Developer Settings</h2>
+            <h2 className="text-foreground font-semibold">Developer Settings</h2>
           </div>
-          <p className="text-[#71717a] text-sm">Settings used by the Dev Tools widget on the dashboard.</p>
+          <p className="text-muted-foreground text-sm">Settings used by the Dev Tools widget on the dashboard.</p>
           <div>
-            <label className="block text-[#71717a] text-xs mb-1.5">GitHub Username</label>
+            <label className="block text-muted-foreground text-xs mb-1.5">GitHub Username</label>
             <input
               className={inputCls}
               type="text"
@@ -537,11 +537,11 @@ export function SettingsPage() {
               onChange={(e) => setGithubUsername(e.target.value)}
               data-testid="settings-github-username"
             />
-            <p className="text-[#52525b] text-xs mt-1">Used to display your GitHub contribution graph on the Dev Tools tab.</p>
+            <p className="text-muted-foreground/80 text-xs mt-1">Used to display your GitHub contribution graph on the Dev Tools tab.</p>
           </div>
           <button
             onClick={handleSaveGithub}
-            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
+            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
           >
             {ghSaved ? '✓ Saved' : 'Save'}
           </button>
@@ -550,14 +550,14 @@ export function SettingsPage() {
 
       {/* Health Tab */}
       {activeTab === 'health' && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 space-y-4">
+        <div className="bg-background border border-border p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">💚</span>
-            <h2 className="text-[#e4e4e7] font-semibold">Health Settings</h2>
+            <h2 className="text-foreground font-semibold">Health Settings</h2>
           </div>
-          <p className="text-[#71717a] text-sm">Configure your health & wellness goals.</p>
+          <p className="text-muted-foreground text-sm">Configure your health & wellness goals.</p>
           <div>
-            <label className="block text-[#71717a] text-xs mb-1.5">Daily Water Goal (glasses)</label>
+            <label className="block text-muted-foreground text-xs mb-1.5">Daily Water Goal (glasses)</label>
             <input
               className={inputCls}
               type="number"
@@ -567,11 +567,11 @@ export function SettingsPage() {
               onChange={(e) => setWaterGoal(e.target.value)}
               data-testid="settings-water-goal"
             />
-            <p className="text-[#52525b] text-xs mt-1">Default is 8 glasses per day.</p>
+            <p className="text-muted-foreground/80 text-xs mt-1">Default is 8 glasses per day.</p>
           </div>
           <button
             onClick={handleSaveWater}
-            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
+            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
           >
             {waterSaved ? '✓ Saved' : 'Save'}
           </button>
@@ -579,24 +579,24 @@ export function SettingsPage() {
       )}
 
       {/* App info */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6">
-        <h2 className="text-[#e4e4e7] font-semibold mb-3">About</h2>
+      <div className="bg-background border border-border p-6">
+        <h2 className="text-foreground font-semibold mb-3">About</h2>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-[#71717a]">App</span>
-            <span className="text-[#e4e4e7]">Helios ☀️</span>
+            <span className="text-muted-foreground">App</span>
+            <span className="text-foreground">Helios ☀️</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[#71717a]">Storage</span>
-            <span className="text-[#e4e4e7]">Local device (IndexedDB + localStorage)</span>
+            <span className="text-muted-foreground">Storage</span>
+            <span className="text-foreground">Local device (IndexedDB + localStorage)</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[#71717a]">Auth</span>
-            <span className="text-[#e4e4e7]">Local-only, bcrypt hashed</span>
+            <span className="text-muted-foreground">Auth</span>
+            <span className="text-foreground">Local-only, bcrypt hashed</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[#71717a]">API Key Storage</span>
-            <span className="text-[#e4e4e7]">AES-256-GCM encrypted</span>
+            <span className="text-muted-foreground">API Key Storage</span>
+            <span className="text-foreground">AES-256-GCM encrypted</span>
           </div>
         </div>
       </div>

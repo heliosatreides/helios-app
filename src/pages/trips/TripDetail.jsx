@@ -28,9 +28,9 @@ export function TripDetail({ trips, onUpdate }) {
 
   if (!trip) {
     return (
-      <div className="text-center py-16 text-[#71717a]">
+      <div className="text-center py-16 text-muted-foreground">
         <p>Trip not found</p>
-        <Link to="/trips" className="text-[#f59e0b] hover:underline mt-2 inline-block">Back to trips</Link>
+        <Link to="/trips" className="text-foreground hover:underline mt-2 inline-block">Back to trips</Link>
       </div>
     );
   }
@@ -159,9 +159,9 @@ export function TripDetail({ trips, onUpdate }) {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <Link to="/trips" className="text-[#71717a] text-sm hover:text-[#f59e0b] mb-2 inline-block">← Back to trips</Link>
-          <h2 className="text-2xl font-bold text-[#e4e4e7]">{trip.name}</h2>
-          <p className="text-[#71717a] mt-1">{trip.destination} · {trip.startDate} → {trip.endDate}</p>
+          <Link to="/trips" className="text-muted-foreground text-sm hover:text-foreground mb-2 inline-block">← Back to trips</Link>
+          <h2 className="text-lg font-semibold text-foreground">{trip.name}</h2>
+          <p className="text-muted-foreground mt-1">{trip.destination} · {trip.startDate} → {trip.endDate}</p>
         </div>
         <select
           value={trip.status}
@@ -169,7 +169,7 @@ export function TripDetail({ trips, onUpdate }) {
           className={`px-3 py-1.5 rounded-full text-xs font-medium border-0 cursor-pointer ${STATUS_COLORS[trip.status]}`}
         >
           {STATUS_OPTIONS.map((s) => (
-            <option key={s} value={s} className="bg-[#111113] text-[#e4e4e7]">{s}</option>
+            <option key={s} value={s} className="bg-secondary text-foreground">{s}</option>
           ))}
         </select>
       </div>
@@ -181,7 +181,7 @@ export function TripDetail({ trips, onUpdate }) {
             type="button"
             onClick={handleBuildItinerary}
             disabled={itineraryAi.loading}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            className="border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 text-sm font-semibold px-4 py-2 transition-colors disabled:opacity-50"
             data-testid="build-itinerary-btn"
           >
             {itineraryAi.loading ? '⏳ Building…' : '✨ Build Full Itinerary'}
@@ -190,18 +190,18 @@ export function TripDetail({ trips, onUpdate }) {
             <p className="text-red-400 text-xs mt-2">❌ {itineraryAi.error}</p>
           )}
           {itineraryAi.result && (
-            <div className="mt-3 border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5">
+            <div className="mt-3 border border-border bg-secondary/50 p-5">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-amber-400 text-xs font-semibold">✨ AI Itinerary Generated</span>
+                <span className="text-foreground text-xs font-medium">✨ AI Itinerary Generated</span>
                 <button
                   type="button"
                   onClick={() => setItineraryAi({ loading: false, result: null, error: null })}
-                  className="text-[#52525b] hover:text-[#e4e4e7] text-xs"
+                  className="text-muted-foreground/80 hover:text-foreground text-xs"
                 >
                   Dismiss
                 </button>
               </div>
-              <p className="text-[#a1a1aa] text-xs">Activities have been added to your itinerary below.</p>
+              <p className="text-muted-foreground text-xs">Activities have been added to your itinerary below.</p>
             </div>
           )}
         </div>
@@ -209,19 +209,19 @@ export function TripDetail({ trips, onUpdate }) {
 
       {/* Budget Tracker */}
       {trip.budget > 0 && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6">
-          <h3 className="text-[#e4e4e7] font-semibold mb-4">Budget Tracker</h3>
+        <div className="bg-background border border-border p-6">
+          <h3 className="text-foreground font-semibold mb-4">Budget Tracker</h3>
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div>
-              <p className="text-[#71717a] text-xs mb-1">Planned</p>
-              <p className="text-[#e4e4e7] text-xl font-bold">${trip.budget.toLocaleString()}</p>
+              <p className="text-muted-foreground text-xs mb-1">Planned</p>
+              <p className="text-foreground text-xl font-bold">${trip.budget.toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-[#71717a] text-xs mb-1">Spent</p>
+              <p className="text-muted-foreground text-xs mb-1">Spent</p>
               <p className="text-red-400 text-xl font-bold">${totalSpent.toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-[#71717a] text-xs mb-1">Remaining</p>
+              <p className="text-muted-foreground text-xs mb-1">Remaining</p>
               <p className={`text-xl font-bold ${budgetRemaining >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 ${budgetRemaining.toLocaleString()}
               </p>
@@ -235,12 +235,12 @@ export function TripDetail({ trips, onUpdate }) {
             return (
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[#52525b] text-xs">Budget used</span>
+                  <span className="text-muted-foreground/80 text-xs">Budget used</span>
                   <span className={`text-xs font-semibold ${pct >= 90 ? 'text-red-400' : pct >= 70 ? 'text-amber-400' : 'text-green-400'}`}>
                     {pctLabel}
                   </span>
                 </div>
-                <div className="w-full bg-[#27272a] rounded-full h-2">
+                <div className="w-full bg-secondary rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all ${barColor}`}
                     style={{ width: `${Math.min(pct, 100)}%` }}
@@ -257,16 +257,16 @@ export function TripDetail({ trips, onUpdate }) {
               placeholder="Description"
               value={newExpense.description}
               onChange={(e) => setNewExpense((p) => ({ ...p, description: e.target.value }))}
-              className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+              className="flex-1 bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
             />
             <input
               type="number"
               placeholder="Amount"
               value={newExpense.amount}
               onChange={(e) => setNewExpense((p) => ({ ...p, amount: e.target.value }))}
-              className="w-28 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+              className="w-28 bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
             />
-            <button type="submit" className="bg-[#f59e0b] hover:bg-[#d97706] text-black text-sm font-semibold px-4 py-2 rounded-lg">
+            <button type="submit" className="bg-foreground hover:bg-[#d97706] text-black text-sm font-semibold px-4 py-2">
               Add
             </button>
           </form>
@@ -276,8 +276,8 @@ export function TripDetail({ trips, onUpdate }) {
             <div className="mt-3 space-y-1">
               {trip.expenses.map((exp) => (
                 <div key={exp.id} className="flex justify-between text-sm">
-                  <span className="text-[#a1a1aa]">{exp.description}</span>
-                  <span className="text-[#e4e4e7]">${exp.amount}</span>
+                  <span className="text-muted-foreground">{exp.description}</span>
+                  <span className="text-foreground">${exp.amount}</span>
                 </div>
               ))}
             </div>
@@ -286,11 +286,11 @@ export function TripDetail({ trips, onUpdate }) {
       )}
 
       {/* Itinerary */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6">
-        <h3 className="text-[#e4e4e7] font-semibold mb-4">Itinerary</h3>
+      <div className="bg-background border border-border p-6">
+        <h3 className="text-foreground font-semibold mb-4">Itinerary</h3>
 
         {days.length === 0 ? (
-          <p className="text-[#71717a] text-sm">Set start and end dates to generate the itinerary.</p>
+          <p className="text-muted-foreground text-sm">Set start and end dates to generate the itinerary.</p>
         ) : (
           <div className="space-y-6">
             {days.map(({ date, label }) => {
@@ -302,13 +302,13 @@ export function TripDetail({ trips, onUpdate }) {
                 <div key={date}>
                   {/* Day header */}
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-[#f59e0b] font-semibold text-sm">{label}</h4>
+                    <h4 className="text-foreground font-semibold text-sm">{label}</h4>
                     {hasKey && (
                       <button
                         type="button"
                         onClick={() => handleAiSuggest(date, label)}
                         disabled={aiSuggestions[date]?.loading}
-                        className="text-xs text-amber-400/70 hover:text-amber-400 disabled:opacity-40 transition-colors"
+                        className="text-xs text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
                       >
                         {aiSuggestions[date]?.loading ? '⏳' : '✨ Suggest activities'}
                       </button>
@@ -328,16 +328,16 @@ export function TripDetail({ trips, onUpdate }) {
                       {acts.map((a) => (
                         <div key={a.id} className="flex items-start gap-3 group text-sm">
                           {a.time && (
-                            <span className="text-[#52525b] w-12 shrink-0 pt-0.5">{a.time}</span>
+                            <span className="text-muted-foreground/80 w-12 shrink-0 pt-0.5">{a.time}</span>
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="text-[#e4e4e7] font-medium">{a.title}</p>
-                            {a.notes && <p className="text-[#71717a] text-xs mt-0.5">{a.notes}</p>}
+                            <p className="text-foreground font-medium">{a.title}</p>
+                            {a.notes && <p className="text-muted-foreground text-xs mt-0.5">{a.notes}</p>}
                           </div>
                           <button
                             onClick={() => handleRemoveActivity(a.id)}
                             aria-label="Remove activity"
-                            className="opacity-0 group-hover:opacity-100 text-[#52525b] hover:text-red-400 transition-opacity shrink-0"
+                            className="opacity-0 group-hover:opacity-100 text-muted-foreground/80 hover:text-red-400 transition-opacity shrink-0"
                           >
                             ✕
                           </button>
@@ -353,7 +353,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.time}
                       onChange={(e) => handleActivityChange(date, 'time', e.target.value)}
                       aria-label="Activity time"
-                      className="w-28 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+                      className="w-28 bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none focus:border-[#f59e0b]"
                     />
                     <input
                       type="text"
@@ -361,7 +361,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.title}
                       onChange={(e) => handleActivityChange(date, 'title', e.target.value)}
                       aria-label="Activity title"
-                      className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                     />
                     <input
                       type="text"
@@ -369,11 +369,11 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.notes}
                       onChange={(e) => handleActivityChange(date, 'notes', e.target.value)}
                       aria-label="Activity notes"
-                      className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                     />
                     <button
                       type="submit"
-                      className="bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] text-xs font-semibold px-3 py-1.5 rounded-lg"
+                      className="bg-secondary hover:bg-[#3f3f46] text-foreground text-xs font-semibold px-3 py-1.5"
                     >
                       + Add
                     </button>
@@ -386,15 +386,15 @@ export function TripDetail({ trips, onUpdate }) {
       </div>
 
       {/* Notes */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6">
-        <h3 className="text-[#e4e4e7] font-semibold mb-4">Notes</h3>
+      <div className="bg-background border border-border p-6">
+        <h3 className="text-foreground font-semibold mb-4">Notes</h3>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           onBlur={handleNotesBlur}
           placeholder="Add any notes about this trip..."
           rows={5}
-          className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
+          className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
         />
       </div>
     </div>

@@ -33,23 +33,23 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-[#e4e4e7] font-semibold">Your Decks</h2>
+        <h2 className="text-foreground font-semibold">Your Decks</h2>
         <button
           type="button"
           onClick={() => setShowCreate((s) => !s)}
-          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-1.5 rounded-lg text-sm"
+          className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-1.5 text-sm"
         >
           + New deck
         </button>
       </div>
 
       {showCreate && (
-        <form onSubmit={handleCreate} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleCreate} className="bg-background border border-border p-4 space-y-3">
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Deck name *</label>
+            <label className="text-muted-foreground text-xs block mb-1">Deck name *</label>
             <input
               autoFocus
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="e.g. Spanish Vocabulary"
@@ -57,16 +57,16 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
             />
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Description</label>
+            <label className="text-muted-foreground text-xs block mb-1">Description</label>
             <input
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               placeholder="Optional description"
             />
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Color</label>
+            <label className="text-muted-foreground text-xs block mb-1">Color</label>
             <div className="flex gap-2">
               {DECK_COLORS.map((color) => (
                 <button
@@ -80,16 +80,16 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
             </div>
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-1.5 rounded-lg text-sm">Create</button>
-            <button type="button" onClick={() => setShowCreate(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="submit" className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-1.5 text-sm">Create</button>
+            <button type="button" onClick={() => setShowCreate(false)} className="border border-border text-muted-foreground hover:text-foreground px-3 py-1.5 text-sm">Cancel</button>
           </div>
         </form>
       )}
 
       {decks.length === 0 && !showCreate && (
         <div className="text-center py-10">
-          <p className="text-[#52525b] text-sm">No decks yet.</p>
-          <p className="text-[#3f3f46] text-xs mt-1">Create a deck to start studying.</p>
+          <p className="text-muted-foreground/80 text-sm">No decks yet.</p>
+          <p className="text-muted-foreground/60 text-xs mt-1">Create a deck to start studying.</p>
         </div>
       )}
 
@@ -100,25 +100,25 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
           return (
             <div
               key={deck.id}
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 cursor-pointer hover:border-amber-500/40 transition-colors group"
+              className="bg-background border border-border p-4 cursor-pointer hover:border-amber-500/40 transition-colors group"
               onClick={() => onSelect(deck.id)}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: deck.color }} />
-                  <h3 className="text-[#e4e4e7] font-medium text-sm group-hover:text-amber-400 transition-colors">{deck.name}</h3>
+                  <h3 className="text-foreground font-medium text-sm group-hover:text-amber-400 transition-colors">{deck.name}</h3>
                 </div>
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); onDelete(deck.id); }}
-                  className="text-[#3f3f46] hover:text-red-400 text-xs transition-colors"
+                  className="text-muted-foreground/60 hover:text-red-400 text-xs transition-colors"
                 >
                   ×
                 </button>
               </div>
-              {deck.description && <p className="text-[#52525b] text-xs mb-3 truncate">{deck.description}</p>}
+              {deck.description && <p className="text-muted-foreground/80 text-xs mb-3 truncate">{deck.description}</p>}
               <div className="flex gap-4 text-xs">
-                <span className="text-[#71717a]">{deck.cards?.length || 0} cards</span>
+                <span className="text-muted-foreground">{deck.cards?.length || 0} cards</span>
                 {due > 0 && <span className="text-amber-400">{due} due</span>}
                 {mastered > 0 && <span className="text-green-400">{mastered} mastered</span>}
               </div>
@@ -190,16 +190,16 @@ function CardManager({ deck, onUpdate, onBack }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <button type="button" onClick={onBack} className="text-[#52525b] hover:text-[#e4e4e7] text-sm transition-colors">← Back</button>
+        <button type="button" onClick={onBack} className="text-muted-foreground/80 hover:text-foreground text-sm transition-colors">← Back</button>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: deck.color }} />
-          <h2 className="text-[#e4e4e7] font-semibold">{deck.name}</h2>
+          <h2 className="text-foreground font-semibold">{deck.name}</h2>
         </div>
       </div>
 
       {/* Stats */}
       <div className="flex gap-4 text-sm">
-        <span className="text-[#71717a]">{deck.cards?.length || 0} total</span>
+        <span className="text-muted-foreground">{deck.cards?.length || 0} total</span>
         {due.length > 0 && <span className="text-amber-400">{due.length} due today</span>}
         <span className="text-green-400">{getMasteredCount(deck.cards, today)} mastered</span>
       </div>
@@ -209,13 +209,13 @@ function CardManager({ deck, onUpdate, onBack }) {
         <button
           type="button"
           onClick={() => setStudying(true)}
-          className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 py-3 rounded-xl text-sm transition-colors"
+          className="w-full bg-foreground hover:bg-foreground/90 text-background font-medium py-3 text-sm transition-colors"
         >
           🎓 Study {due.length} due card{due.length !== 1 ? 's' : ''}
         </button>
       )}
       {due.length === 0 && (deck.cards?.length || 0) > 0 && (
-        <div className="bg-green-950/20 border border-green-500/30 rounded-xl p-3 text-center">
+        <div className="bg-green-950/20 border border-green-500/30 p-3 text-center">
           <p className="text-green-400 text-sm">✅ All caught up! No cards due today.</p>
         </div>
       )}
@@ -225,18 +225,18 @@ function CardManager({ deck, onUpdate, onBack }) {
         <button
           type="button"
           onClick={() => setShowAdd((s) => !s)}
-          className="bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+          className="bg-secondary hover:bg-[#3f3f46] text-foreground px-3 py-1.5 text-sm font-medium transition-colors"
         >
           + Add card
         </button>
       </div>
 
       {showAdd && (
-        <form onSubmit={handleAddCard} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAddCard} className="bg-background border border-border p-4 space-y-3">
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Front (question) *</label>
+            <label className="text-muted-foreground text-xs block mb-1">Front (question) *</label>
             <textarea
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
               rows={2}
               value={form.front}
               onChange={(e) => setForm((f) => ({ ...f, front: e.target.value }))}
@@ -245,9 +245,9 @@ function CardManager({ deck, onUpdate, onBack }) {
             />
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Back (answer) *</label>
+            <label className="text-muted-foreground text-xs block mb-1">Back (answer) *</label>
             <textarea
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
               rows={2}
               value={form.back}
               onChange={(e) => setForm((f) => ({ ...f, back: e.target.value }))}
@@ -256,27 +256,27 @@ function CardManager({ deck, onUpdate, onBack }) {
             />
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Tags (comma-separated)</label>
+            <label className="text-muted-foreground text-xs block mb-1">Tags (comma-separated)</label>
             <input
-              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               value={form.tags}
               onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))}
               placeholder="e.g. vocab, verbs"
             />
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-1.5 rounded-lg text-sm">Add</button>
-            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="submit" className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-1.5 text-sm">Add</button>
+            <button type="button" onClick={() => setShowAdd(false)} className="border border-border text-muted-foreground hover:text-foreground px-3 py-1.5 text-sm">Cancel</button>
           </div>
         </form>
       )}
 
       {/* AI generate */}
       {hasKey && (
-        <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
-          <p className="text-amber-400 text-xs font-semibold">✨ Generate flashcards with AI</p>
+        <div className="bg-background border border-border p-4 space-y-3">
+          <p className="text-foreground text-xs font-medium">✨ Generate flashcards with AI</p>
           <textarea
-            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
             rows={3}
             value={aiText}
             onChange={(e) => setAiText(e.target.value)}
@@ -287,7 +287,7 @@ function CardManager({ deck, onUpdate, onBack }) {
             type="button"
             onClick={handleGenerateAI}
             disabled={aiLoading || !aiText.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
           >
             {aiLoading ? '⏳ Generating…' : '✨ Generate 5 flashcards'}
           </button>
@@ -296,19 +296,19 @@ function CardManager({ deck, onUpdate, onBack }) {
 
       {/* Card list */}
       {(deck.cards || []).length === 0 && (
-        <p className="text-[#52525b] text-sm text-center py-6">No cards yet. Add some to get started!</p>
+        <p className="text-muted-foreground/80 text-sm text-center py-6">No cards yet. Add some to get started!</p>
       )}
       <div className="space-y-2">
         {(deck.cards || []).map((card) => (
-          <div key={card.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3">
+          <div key={card.id} className="bg-background border border-border p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
-                <p className="text-[#e4e4e7] text-sm font-medium truncate">{card.front}</p>
-                <p className="text-[#71717a] text-xs mt-0.5 truncate">{card.back}</p>
+                <p className="text-foreground text-sm font-medium truncate">{card.front}</p>
+                <p className="text-muted-foreground text-xs mt-0.5 truncate">{card.back}</p>
                 {card.tags?.length > 0 && (
                   <div className="flex gap-1 mt-1 flex-wrap">
                     {card.tags.map((tag) => (
-                      <span key={tag} className="bg-[#27272a] text-[#71717a] text-xs px-1.5 py-0.5 rounded">
+                      <span key={tag} className="bg-secondary text-muted-foreground text-xs px-1.5 py-0.5 rounded">
                         {tag}
                       </span>
                     ))}
@@ -316,11 +316,11 @@ function CardManager({ deck, onUpdate, onBack }) {
                 )}
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[#3f3f46] text-xs">Due: {card.nextReview}</span>
+                <span className="text-muted-foreground/60 text-xs">Due: {card.nextReview}</span>
                 <button
                   type="button"
                   onClick={() => deleteCard(card.id)}
-                  className="text-[#3f3f46] hover:text-red-400 text-xs transition-colors"
+                  className="text-muted-foreground/60 hover:text-red-400 text-xs transition-colors"
                 >
                   ×
                 </button>
@@ -365,12 +365,12 @@ function StudyMode({ deck, dueCards, onUpdate, onExit }) {
     return (
       <div className="text-center py-16 space-y-4">
         <p className="text-4xl">🎉</p>
-        <p className="text-[#e4e4e7] text-lg font-semibold">Session complete!</p>
-        <p className="text-[#71717a] text-sm">You reviewed {dueCards.length} card{dueCards.length !== 1 ? 's' : ''}.</p>
+        <p className="text-foreground text-lg font-semibold">Session complete!</p>
+        <p className="text-muted-foreground text-sm">You reviewed {dueCards.length} card{dueCards.length !== 1 ? 's' : ''}.</p>
         <button
           type="button"
           onClick={onExit}
-          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-6 py-2 rounded-xl text-sm transition-colors"
+          className="bg-foreground hover:bg-foreground/90 text-background font-medium px-6 py-2 text-sm transition-colors"
         >
           Back to deck
         </button>
@@ -381,23 +381,23 @@ function StudyMode({ deck, dueCards, onUpdate, onExit }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <button type="button" onClick={onExit} className="text-[#52525b] hover:text-[#e4e4e7] text-sm">← Exit study</button>
-        <span className="text-[#52525b] text-xs">{idx + 1} / {dueCards.length}</span>
+        <button type="button" onClick={onExit} className="text-muted-foreground/80 hover:text-foreground text-sm">← Exit study</button>
+        <span className="text-muted-foreground/80 text-xs">{idx + 1} / {dueCards.length}</span>
       </div>
 
       {/* Card */}
       <div
-        className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center cursor-pointer hover:border-amber-500/30 transition-colors"
+        className="bg-background border border-border p-8 min-h-[200px] flex flex-col items-center justify-center cursor-pointer hover:border-amber-500/30 transition-colors"
         onClick={() => setFlipped((f) => !f)}
       >
         {!flipped ? (
           <div className="text-center">
-            <p className="text-[#52525b] text-xs mb-3">Question — click to reveal answer</p>
-            <p className="text-[#e4e4e7] text-lg font-medium">{card.front}</p>
+            <p className="text-muted-foreground/80 text-xs mb-3">Question — click to reveal answer</p>
+            <p className="text-foreground text-lg font-medium">{card.front}</p>
           </div>
         ) : (
           <div className="text-center">
-            <p className="text-[#52525b] text-xs mb-3">Answer</p>
+            <p className="text-muted-foreground/80 text-xs mb-3">Answer</p>
             <p className="text-amber-400 text-lg font-medium">{card.back}</p>
           </div>
         )}
@@ -416,7 +416,7 @@ function StudyMode({ deck, dueCards, onUpdate, onExit }) {
               key={label}
               type="button"
               onClick={() => handleRate(label)}
-              className={`border rounded-xl py-2.5 text-sm font-semibold transition-colors ${cls}`}
+              className={`border py-2.5 text-sm font-semibold transition-colors ${cls}`}
             >
               {label}
               <span className="block text-xs opacity-60 font-normal">{sub}</span>
@@ -426,7 +426,7 @@ function StudyMode({ deck, dueCards, onUpdate, onExit }) {
       )}
 
       {!flipped && (
-        <p className="text-center text-[#3f3f46] text-xs">Click the card to flip it</p>
+        <p className="text-center text-muted-foreground/60 text-xs">Click the card to flip it</p>
       )}
     </div>
   );
@@ -458,8 +458,8 @@ export function FlashcardsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">🃏 Flashcards</h1>
-        <p className="text-[#71717a] text-sm mt-0.5">Spaced repetition for better learning</p>
+        <h1 className="text-lg font-semibold text-foreground">Flashcards</h1>
+        <p className="text-muted-foreground text-sm mt-0.5">Spaced repetition for better learning</p>
       </div>
 
       {selectedDeck ? (

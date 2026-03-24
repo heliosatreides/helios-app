@@ -86,35 +86,35 @@ function CurrencyConverter() {
     }
   };
 
-  const selectCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]';
+  const selectCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]';
 
   return (
     <div className="space-y-5">
-      {ratesLoading && <p className="text-[#71717a] text-sm">Loading exchange rates…</p>}
+      {ratesLoading && <p className="text-muted-foreground text-sm">Loading exchange rates…</p>}
       {ratesError && <p className="text-red-400 text-xs">❌ {ratesError}</p>}
 
       {/* Converter input */}
-      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+      <div className="bg-background border border-border p-4 space-y-3">
         <div className="grid grid-cols-3 gap-3 items-end">
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Amount</label>
+            <label className="text-muted-foreground text-xs block mb-1">Amount</label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               placeholder="100"
               min="0"
             />
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">From</label>
+            <label className="text-muted-foreground text-xs block mb-1">From</label>
             <select value={from} onChange={(e) => setFrom(e.target.value)} className={selectCls + ' w-full'}>
               {currencies.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">To</label>
+            <label className="text-muted-foreground text-xs block mb-1">To</label>
             <select value={to} onChange={(e) => setTo(e.target.value)} className={selectCls + ' w-full'}>
               {currencies.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -122,17 +122,17 @@ function CurrencyConverter() {
         </div>
 
         {result !== null && !isNaN(result) && (
-          <div className="text-center py-3 border-t border-[#1c1c20]">
-            <p className="text-[#71717a] text-xs">{amount} {from} =</p>
+          <div className="text-center py-3 border-t border-border">
+            <p className="text-muted-foreground text-xs">{amount} {from} =</p>
             <p className="text-3xl font-bold text-amber-400 mt-1">
               {result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
-              <span className="text-lg ml-2 text-[#a1a1aa]">{to}</span>
+              <span className="text-lg ml-2 text-muted-foreground">{to}</span>
             </p>
           </div>
         )}
 
         <div className="flex gap-2 flex-wrap">
-          <button type="button" onClick={addFavorite} className="text-xs text-[#71717a] hover:text-amber-400 transition-colors">
+          <button type="button" onClick={addFavorite} className="text-xs text-muted-foreground hover:text-amber-400 transition-colors">
             ⭐ Save pair
           </button>
           {hasKey && (
@@ -140,7 +140,7 @@ function CurrencyConverter() {
               type="button"
               onClick={handleTrend}
               disabled={aiLoading}
-              className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+              className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
             >
               {aiLoading ? '⏳ Thinking…' : '✨ What\'s the exchange trend?'}
             </button>
@@ -149,23 +149,23 @@ function CurrencyConverter() {
 
         {aiError && <p className="text-red-400 text-xs">❌ {aiError}</p>}
         {aiResult && (
-          <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-4">
-            <p className="text-amber-400 text-xs font-semibold mb-1">✨ Exchange Context</p>
-            <p className="text-[#e4e4e7] text-sm whitespace-pre-wrap">{aiResult}</p>
+          <div className="border border-border bg-secondary/50 p-4">
+            <p className="text-foreground text-xs font-medium mb-1">✨ Exchange Context</p>
+            <p className="text-foreground text-sm whitespace-pre-wrap">{aiResult}</p>
           </div>
         )}
       </div>
 
       {/* Popular pairs */}
       <div>
-        <p className="text-[#52525b] text-xs uppercase tracking-widest mb-2">Popular pairs</p>
+        <p className="text-muted-foreground/80 text-xs uppercase tracking-widest mb-2">Popular pairs</p>
         <div className="flex gap-2 flex-wrap">
           {POPULAR_PAIRS.map((p) => (
             <button
               key={`${p.from}/${p.to}`}
               type="button"
               onClick={() => applyPair(p.from, p.to)}
-              className="bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-[#e4e4e7] text-xs px-3 py-1.5 rounded-lg transition-colors"
+              className="bg-secondary hover:bg-[#3f3f46] text-muted-foreground hover:text-foreground text-xs px-3 py-1.5 transition-colors"
             >
               {p.from}/{p.to}
             </button>
@@ -176,12 +176,12 @@ function CurrencyConverter() {
       {/* Favorites */}
       {favorites.length > 0 && (
         <div>
-          <p className="text-[#52525b] text-xs uppercase tracking-widest mb-2">Favorites</p>
+          <p className="text-muted-foreground/80 text-xs uppercase tracking-widest mb-2">Favorites</p>
           <div className="flex gap-2 flex-wrap">
             {favorites.map((pair) => {
               const [f, t] = pair.split('/');
               return (
-                <div key={pair} className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 rounded-lg px-2 py-1">
+                <div key={pair} className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1">
                   <button
                     type="button"
                     onClick={() => applyPair(f, t)}
@@ -192,7 +192,7 @@ function CurrencyConverter() {
                   <button
                     type="button"
                     onClick={() => removeFavorite(pair)}
-                    className="text-[#52525b] hover:text-red-400 text-xs ml-1"
+                    className="text-muted-foreground/80 hover:text-red-400 text-xs ml-1"
                   >
                     ×
                   </button>
@@ -234,7 +234,7 @@ function UnitConverter() {
     return unit;
   };
 
-  const selectCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full';
+  const selectCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
@@ -245,10 +245,10 @@ function UnitConverter() {
             key={cat}
             type="button"
             onClick={() => setActiveCategory(cat)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
               activeCategory === cat
                 ? 'bg-amber-500 text-black'
-                : 'bg-[#27272a] text-[#71717a] hover:text-[#e4e4e7]'
+                : 'bg-secondary text-muted-foreground hover:text-foreground'
             }`}
           >
             {cat}
@@ -256,25 +256,25 @@ function UnitConverter() {
         ))}
       </div>
 
-      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+      <div className="bg-background border border-border p-4 space-y-3">
         <div className="grid grid-cols-3 gap-3 items-end">
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Value</label>
+            <label className="text-muted-foreground text-xs block mb-1">Value</label>
             <input
               type="number"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
             />
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">From</label>
+            <label className="text-muted-foreground text-xs block mb-1">From</label>
             <select value={numericFrom} onChange={(e) => setFrom(e.target.value)} className={selectCls}>
               {units.map((u) => <option key={u} value={u}>{getLabel(u)}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">To</label>
+            <label className="text-muted-foreground text-xs block mb-1">To</label>
             <select value={numericTo} onChange={(e) => setTo(e.target.value)} className={selectCls}>
               {units.map((u) => <option key={u} value={u}>{getLabel(u)}</option>)}
             </select>
@@ -282,11 +282,11 @@ function UnitConverter() {
         </div>
 
         {result !== null && !isNaN(result) && (
-          <div className="text-center py-3 border-t border-[#1c1c20]">
-            <p className="text-[#71717a] text-xs">{value} {getLabel(numericFrom)} =</p>
+          <div className="text-center py-3 border-t border-border">
+            <p className="text-muted-foreground text-xs">{value} {getLabel(numericFrom)} =</p>
             <p className="text-3xl font-bold text-amber-400 mt-1">
               {result % 1 === 0 ? result.toLocaleString() : parseFloat(result.toPrecision(6)).toLocaleString()}
-              <span className="text-lg ml-2 text-[#a1a1aa]">{getLabel(numericTo)}</span>
+              <span className="text-lg ml-2 text-muted-foreground">{getLabel(numericTo)}</span>
             </p>
           </div>
         )}
@@ -303,8 +303,8 @@ export function ConverterPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-[#e4e4e7]">🔄 Converter</h1>
-        <p className="text-[#71717a] text-sm mt-0.5">Currency and unit conversion</p>
+        <h1 className="text-lg font-semibold text-foreground">Converter</h1>
+        <p className="text-muted-foreground text-sm mt-0.5">Currency and unit conversion</p>
       </div>
 
       {/* Mode toggle */}
@@ -317,10 +317,10 @@ export function ConverterPage() {
             key={id}
             type="button"
             onClick={() => setMode(id)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+            className={`px-4 py-2 text-sm font-semibold transition-colors ${
               mode === id
                 ? 'bg-amber-500 text-black'
-                : 'bg-[#27272a] text-[#71717a] hover:text-[#e4e4e7]'
+                : 'bg-secondary text-muted-foreground hover:text-foreground'
             }`}
           >
             {label}

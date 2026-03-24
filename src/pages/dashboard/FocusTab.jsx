@@ -19,17 +19,17 @@ const { IDLE, RUNNING, PAUSED, BREAK } = POMODORO_STATES;
 function AiResultCard({ title, content, onDismiss }) {
   if (!content) return null;
   return (
-    <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5 relative">
+    <div className="border border-border bg-secondary/50 p-5 relative">
       <button
         type="button"
         onClick={onDismiss}
-        className="absolute top-3 right-3 text-[#52525b] hover:text-[#e4e4e7] text-sm leading-none"
+        className="absolute top-3 right-3 text-muted-foreground/80 hover:text-foreground text-sm leading-none"
         aria-label="Dismiss"
       >
         ×
       </button>
       <span className="text-amber-400 text-sm font-semibold">✨ {title}</span>
-      <p className="text-[#e4e4e7] text-sm mt-2 whitespace-pre-wrap pr-4">{content}</p>
+      <p className="text-foreground text-sm mt-2 whitespace-pre-wrap pr-4">{content}</p>
     </div>
   );
 }
@@ -39,14 +39,14 @@ function AiResultCard({ title, content, onDismiss }) {
 function CollapsibleCard({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
+    <div className="bg-background border border-border overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#0a0a0b] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-background transition-colors"
       >
-        <span className="text-[#e4e4e7] font-semibold">{title}</span>
-        <span className="text-[#52525b] text-xs">{open ? '▲' : '▼'}</span>
+        <span className="text-foreground font-semibold">{title}</span>
+        <span className="text-muted-foreground/80 text-xs">{open ? '▲' : '▼'}</span>
       </button>
       {open && <div className="px-5 pb-5">{children}</div>}
     </div>
@@ -135,38 +135,38 @@ function PomodoroTimer() {
     <div className="space-y-4">
       {/* Timer display */}
       <div className="text-center">
-        <div className={`text-6xl font-mono font-bold tabular-nums ${isBreak ? 'text-green-400' : timerState === RUNNING ? 'text-amber-400' : 'text-[#e4e4e7]'}`}>
+        <div className={`text-6xl font-mono font-bold tabular-nums ${isBreak ? 'text-green-400' : timerState === RUNNING ? 'text-amber-400' : 'text-foreground'}`}>
           {mins}:{secs}
         </div>
-        <p className="text-[#71717a] text-sm mt-1">
+        <p className="text-muted-foreground text-sm mt-1">
           {isBreak ? '☕ Break time' : timerState === PAUSED ? '⏸ Paused' : timerState === RUNNING ? '🔥 Focus' : '⏱ Ready'}
         </p>
         {sessionCount > 0 && (
-          <p className="text-[#52525b] text-xs mt-1">🍅 {sessionCount} session{sessionCount !== 1 ? 's' : ''} today</p>
+          <p className="text-muted-foreground/80 text-xs mt-1">🍅 {sessionCount} session{sessionCount !== 1 ? 's' : ''} today</p>
         )}
       </div>
 
       {/* Current task */}
       {currentTask && (
-        <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-2.5 text-sm">
-          <p className="text-[#52525b] text-xs mb-0.5">Current task</p>
-          <p className="text-[#e4e4e7] font-medium">{currentTask.title}</p>
+        <div className="bg-background border border-border px-4 py-2.5 text-sm">
+          <p className="text-muted-foreground/80 text-xs mb-0.5">Current task</p>
+          <p className="text-foreground font-medium">{currentTask.title}</p>
           {todayTasks.length > 1 && (
             <div className="flex gap-2 mt-1">
               <button
                 type="button"
                 onClick={() => setCurrentTaskIdx((i) => Math.max(0, i - 1))}
                 disabled={currentTaskIdx === 0}
-                className="text-[#52525b] hover:text-[#a1a1aa] text-xs disabled:opacity-30"
+                className="text-muted-foreground/80 hover:text-muted-foreground text-xs disabled:opacity-30"
               >
                 ← prev
               </button>
-              <span className="text-[#3f3f46] text-xs">{currentTaskIdx + 1}/{todayTasks.length}</span>
+              <span className="text-muted-foreground/60 text-xs">{currentTaskIdx + 1}/{todayTasks.length}</span>
               <button
                 type="button"
                 onClick={() => setCurrentTaskIdx((i) => Math.min(todayTasks.length - 1, i + 1))}
                 disabled={currentTaskIdx >= todayTasks.length - 1}
-                className="text-[#52525b] hover:text-[#a1a1aa] text-xs disabled:opacity-30"
+                className="text-muted-foreground/80 hover:text-muted-foreground text-xs disabled:opacity-30"
               >
                 next →
               </button>
@@ -181,7 +181,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handleStart}
-            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-5 py-2 rounded-lg text-sm transition-colors"
+            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-5 py-2 text-sm transition-colors"
           >
             ▶ Start
           </button>
@@ -190,7 +190,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handlePause}
-            className="bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] font-semibold px-5 py-2 rounded-lg text-sm transition-colors"
+            className="bg-secondary hover:bg-[#3f3f46] text-foreground font-semibold px-5 py-2 text-sm transition-colors"
           >
             ⏸ Pause
           </button>
@@ -199,7 +199,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handleStart}
-            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-5 py-2 rounded-lg text-sm transition-colors"
+            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-5 py-2 text-sm transition-colors"
           >
             ▶ Resume
           </button>
@@ -208,7 +208,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handleReset}
-            className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 text-green-400 font-semibold px-5 py-2 rounded-lg text-sm transition-colors"
+            className="bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 text-green-400 font-semibold px-5 py-2 text-sm transition-colors"
           >
             Skip break
           </button>
@@ -217,7 +217,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handleReset}
-            className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-4 py-2 rounded-lg text-sm transition-colors"
+            className="border border-border text-muted-foreground hover:text-foreground px-4 py-2 text-sm transition-colors"
           >
             Reset
           </button>
@@ -225,7 +225,7 @@ function PomodoroTimer() {
       </div>
 
       {/* Duration settings */}
-      <div className="flex gap-4 text-xs text-[#71717a]">
+      <div className="flex gap-4 text-xs text-muted-foreground">
         <label className="flex items-center gap-2">
           Work:
           <input
@@ -234,7 +234,7 @@ function PomodoroTimer() {
             max="60"
             value={workMins}
             onChange={(e) => { const v = Number(e.target.value); setWorkMins(v); if (timerState === IDLE) setSecondsLeft(v * 60); }}
-            className="w-12 bg-[#0a0a0b] border border-[#1c1c20] rounded px-2 py-1 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            className="w-12 bg-background border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:border-[#f59e0b]"
           />
           min
         </label>
@@ -246,7 +246,7 @@ function PomodoroTimer() {
             max="30"
             value={breakMins}
             onChange={(e) => setBreakMins(Number(e.target.value))}
-            className="w-12 bg-[#0a0a0b] border border-[#1c1c20] rounded px-2 py-1 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            className="w-12 bg-background border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:border-[#f59e0b]"
           />
           min
         </label>
@@ -299,13 +299,13 @@ function HabitTracker() {
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
       {/* Habit list */}
       {(!habits || habits.length === 0) ? (
-        <p className="text-[#71717a] text-sm">No habits yet. Add one to start tracking.</p>
+        <p className="text-muted-foreground text-sm">No habits yet. Add one to start tracking.</p>
       ) : (
         <div className="space-y-3">
           {habits.map((habit) => {
@@ -313,7 +313,7 @@ function HabitTracker() {
             const streak = calculateStreak(completions);
             const doneToday = completions.includes(today);
             return (
-              <div key={habit.id} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4">
+              <div key={habit.id} className="bg-background border border-border p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
                     <button
@@ -326,14 +326,14 @@ function HabitTracker() {
                       {doneToday && <span className="text-white text-xs">✓</span>}
                     </button>
                     <div>
-                      <p className={`text-sm font-medium ${doneToday ? 'text-[#71717a] line-through' : 'text-[#e4e4e7]'}`}>{habit.name}</p>
-                      <p className="text-[#52525b] text-xs">{habit.frequency} · 🔥 {streak} day streak</p>
+                      <p className={`text-sm font-medium ${doneToday ? 'text-muted-foreground line-through' : 'text-foreground'}`}>{habit.name}</p>
+                      <p className="text-muted-foreground/80 text-xs">{habit.frequency} · 🔥 {streak} day streak</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleDelete(habit.id)}
-                    className="text-[#3f3f46] hover:text-red-400 text-xs transition-colors"
+                    className="text-muted-foreground/60 hover:text-red-400 text-xs transition-colors"
                   >
                     ✕
                   </button>
@@ -361,21 +361,21 @@ function HabitTracker() {
 
       {/* Add habit form */}
       {showAdd && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-background border border-border p-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
-              <label className="text-[#71717a] text-xs block mb-1">Habit name *</label>
+              <label className="text-muted-foreground text-xs block mb-1">Habit name *</label>
               <input className={inputCls} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Exercise, Read, Meditate…" required />
             </div>
             <div>
-              <label className="text-[#71717a] text-xs block mb-1">Frequency</label>
+              <label className="text-muted-foreground text-xs block mb-1">Frequency</label>
               <select className={inputCls} value={form.frequency} onChange={(e) => setForm((f) => ({ ...f, frequency: e.target.value }))}>
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
               </select>
             </div>
             <div>
-              <label className="text-[#71717a] text-xs block mb-1">Color</label>
+              <label className="text-muted-foreground text-xs block mb-1">Color</label>
               <div className="flex gap-2 flex-wrap mt-1">
                 {['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444', '#ec4899'].map((c) => (
                   <button
@@ -390,8 +390,8 @@ function HabitTracker() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-1.5 rounded-lg text-sm">Add Habit</button>
-            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="submit" className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-1.5 text-sm">Add Habit</button>
+            <button type="button" onClick={() => setShowAdd(false)} className="border border-border text-muted-foreground hover:text-foreground px-3 py-1.5 text-sm">Cancel</button>
           </div>
         </form>
       )}
@@ -400,7 +400,7 @@ function HabitTracker() {
         <button
           type="button"
           onClick={() => setShowAdd((s) => !s)}
-          className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm transition-colors"
+          className="border border-border text-muted-foreground hover:text-foreground px-3 py-1.5 text-sm transition-colors"
         >
           + Add habit
         </button>
@@ -408,7 +408,7 @@ function HabitTracker() {
           <button
             type="button"
             onClick={() => setShowGoalsInput((s) => !s)}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors"
           >
             ✨ Suggest habits
           </button>
@@ -422,13 +422,13 @@ function HabitTracker() {
             value={goalsInput}
             onChange={(e) => setGoalsInput(e.target.value)}
             placeholder="What are your main goals? (e.g. get fit, read more, learn coding)"
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
           />
           <button
             type="button"
             onClick={handleSuggest}
             disabled={aiLoading || !goalsInput.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
           >
             {aiLoading ? '⏳ Thinking…' : '✨ Suggest for me'}
           </button>
@@ -485,21 +485,21 @@ function QuickNotes({ onAddTasks }) {
         onChange={(e) => setNotes(e.target.value)}
         placeholder="Start writing… (auto-saved)"
         rows={8}
-        className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none font-mono"
+        className="w-full bg-background border border-border px-4 py-3 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none font-mono"
       />
 
       {/* Markdown-ish preview */}
       {notes && notes.trim() && (
-        <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-sm space-y-1 max-h-32 overflow-y-auto">
-          <p className="text-[#3f3f46] text-xs mb-2">Preview</p>
+        <div className="bg-background border border-border px-4 py-3 text-sm space-y-1 max-h-32 overflow-y-auto">
+          <p className="text-muted-foreground/60 text-xs mb-2">Preview</p>
           {parsed.map((line, i) => (
             line.type === 'bullet' ? (
               <div key={i} className="flex gap-2">
-                <span className="text-[#52525b] shrink-0">•</span>
-                <span className="text-[#a1a1aa]" dangerouslySetInnerHTML={{ __html: line.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#e4e4e7]">$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') }} />
+                <span className="text-muted-foreground/80 shrink-0">•</span>
+                <span className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: line.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') }} />
               </div>
             ) : (
-              <p key={i} className="text-[#a1a1aa]" dangerouslySetInnerHTML={{ __html: line.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#e4e4e7]">$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') }} />
+              <p key={i} className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: line.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') }} />
             )
           ))}
         </div>
@@ -511,7 +511,7 @@ function QuickNotes({ onAddTasks }) {
             type="button"
             onClick={handleSummarize}
             disabled={aiLoading || !notes?.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
           >
             {aiLoading ? '⏳…' : '✨ Summarize'}
           </button>
@@ -519,7 +519,7 @@ function QuickNotes({ onAddTasks }) {
             type="button"
             onClick={handleCreateTasks}
             disabled={aiLoading || !notes?.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
           >
             {aiLoading ? '⏳…' : '✨ Create tasks from notes'}
           </button>

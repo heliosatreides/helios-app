@@ -31,14 +31,14 @@ function getThisYearStart() {
 function Card({ title, children }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
+    <div className="bg-background border border-border overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#0a0a0b] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-background transition-colors"
       >
-        <span className="text-[#e4e4e7] font-semibold">{title}</span>
-        <span className="text-[#52525b] text-xs">{open ? '▲' : '▼'}</span>
+        <span className="text-foreground font-semibold">{title}</span>
+        <span className="text-muted-foreground/80 text-xs">{open ? '▲' : '▼'}</span>
       </button>
       {open && <div className="px-5 pb-5">{children}</div>}
     </div>
@@ -101,19 +101,19 @@ export function ReadingList() {
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
       {/* Filter tabs */}
-      <div className="flex gap-1 border-b border-[#1c1c20]">
+      <div className="flex gap-1 border-b border-border">
         {STATUS_FILTER_TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setFilter(tab)}
             data-testid={`reading-filter-${tab.toLowerCase().replace(/ /g, '-')}`}
             className={`px-3 py-1.5 text-xs font-medium rounded-t-lg transition-colors ${
-              filter === tab ? 'text-amber-400 border-b-2 border-amber-400' : 'text-[#71717a] hover:text-[#e4e4e7]'
+              filter === tab ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {tab}
@@ -124,54 +124,54 @@ export function ReadingList() {
       {/* Add button */}
       <button
         onClick={() => setShowForm((v) => !v)}
-        className="text-sm px-3 py-1.5 rounded-lg bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] transition-colors"
+        className="text-sm px-3 py-1.5 bg-secondary hover:bg-[#3f3f46] text-foreground transition-colors"
       >
         + Add Item
       </button>
 
       {/* Add form */}
       {showForm && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-background border border-border p-4 space-y-3">
           <input className={inputCls} placeholder="Title *" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} autoFocus />
           <input className={inputCls} placeholder="Author / Source" value={form.author} onChange={(e) => setForm((p) => ({ ...p, author: e.target.value }))} />
           <input className={inputCls} placeholder="URL (optional)" value={form.url} onChange={(e) => setForm((p) => ({ ...p, url: e.target.value }))} />
           <div className="flex gap-2">
-            <select value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none flex-1">
+            <select value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))} className="bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none flex-1">
               {ITEM_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
-            <select value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none flex-1">
+            <select value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))} className="bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none flex-1">
               {ITEM_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-1.5 text-sm bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg">Add</button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] rounded-lg">Cancel</button>
+            <button type="submit" className="px-4 py-1.5 text-sm bg-foreground hover:bg-foreground/90 text-background font-medium">Add</button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">Cancel</button>
           </div>
         </form>
       )}
 
       {/* List */}
       {filtered.length === 0 ? (
-        <p className="text-[#52525b] text-sm text-center py-6">No items{filter !== 'All' ? ` in "${filter}"` : ''}.</p>
+        <p className="text-muted-foreground/80 text-sm text-center py-6">No items{filter !== 'All' ? ` in "${filter}"` : ''}.</p>
       ) : (
         <div className="space-y-2">
           {filtered.map((item) => (
-            <div key={item.id} data-testid={`reading-item-${item.id}`} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3 flex items-start gap-3">
+            <div key={item.id} data-testid={`reading-item-${item.id}`} className="bg-background border border-border px-4 py-3 flex items-start gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <p className={`text-sm font-medium ${item.status === 'Done' ? 'text-[#52525b] line-through' : 'text-[#e4e4e7]'}`}>{item.title}</p>
-                  <span className="text-xs text-[#52525b] bg-[#18181b] px-1.5 py-0.5 rounded">{item.type}</span>
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${item.status === 'Done' ? 'text-green-400 bg-green-400/10' : item.status === 'Reading' ? 'text-amber-400 bg-amber-400/10' : 'text-[#71717a] bg-[#27272a]'}`}>{item.status}</span>
+                  <p className={`text-sm font-medium ${item.status === 'Done' ? 'text-muted-foreground/80 line-through' : 'text-foreground'}`}>{item.title}</p>
+                  <span className="text-xs text-muted-foreground/80 bg-secondary px-1.5 py-0.5 rounded">{item.type}</span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${item.status === 'Done' ? 'text-green-400 bg-green-400/10' : item.status === 'Reading' ? 'text-amber-400 bg-amber-400/10' : 'text-muted-foreground bg-secondary'}`}>{item.status}</span>
                 </div>
-                {item.author && <p className="text-xs text-[#71717a] mt-0.5">{item.author}</p>}
-                {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-amber-400/70 hover:text-amber-400 mt-0.5 block truncate">{item.url}</a>}
+                {item.author && <p className="text-xs text-muted-foreground mt-0.5">{item.author}</p>}
+                {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-foreground mt-0.5 block truncate">{item.url}</a>}
               </div>
               <div className="flex gap-1 shrink-0">
                 {item.status !== 'Done' && (
-                  <button onClick={() => handleMarkDone(item.id)} data-testid={`reading-done-${item.id}`} className="text-xs text-[#52525b] hover:text-green-400 transition-colors" title="Mark done">✓</button>
+                  <button onClick={() => handleMarkDone(item.id)} data-testid={`reading-done-${item.id}`} className="text-xs text-muted-foreground/80 hover:text-green-400 transition-colors" title="Mark done">✓</button>
                 )}
-                <button onClick={() => handleArchive(item.id)} data-testid={`reading-archive-${item.id}`} className="text-xs text-[#52525b] hover:text-amber-400 transition-colors ml-1" title="Archive">📥</button>
-                <button onClick={() => handleDelete(item.id)} data-testid={`reading-delete-${item.id}`} className="text-xs text-[#52525b] hover:text-red-400 transition-colors ml-1" title="Delete">×</button>
+                <button onClick={() => handleArchive(item.id)} data-testid={`reading-archive-${item.id}`} className="text-xs text-muted-foreground/80 hover:text-amber-400 transition-colors ml-1" title="Archive">📥</button>
+                <button onClick={() => handleDelete(item.id)} data-testid={`reading-delete-${item.id}`} className="text-xs text-muted-foreground/80 hover:text-red-400 transition-colors ml-1" title="Delete">×</button>
               </div>
             </div>
           ))}
@@ -180,8 +180,8 @@ export function ReadingList() {
 
       {/* Should I read this? */}
       {hasKey && (
-        <div className="space-y-2 pt-2 border-t border-[#1c1c20]">
-          <p className="text-[#71717a] text-xs">✨ Should I read/watch this?</p>
+        <div className="space-y-2 pt-2 border-t border-border">
+          <p className="text-muted-foreground text-xs">✨ Should I read/watch this?</p>
           <div className="flex gap-2">
             <input
               value={aiQuery}
@@ -193,16 +193,16 @@ export function ReadingList() {
             <button
               onClick={handleShouldIRead}
               disabled={aiLoading || !aiQuery.trim()}
-              className="px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
+              className="px-3 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium transition-colors disabled:opacity-50 whitespace-nowrap"
               data-testid="reading-ai-btn"
             >
               {aiLoading ? '⏳' : '✨ Ask'}
             </button>
           </div>
           {aiResult && (
-            <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-4">
-              <p className="text-[#e4e4e7] text-sm">{aiResult}</p>
-              <button onClick={() => setAiResult(null)} className="text-[#52525b] text-xs mt-1 hover:text-[#e4e4e7]">Dismiss</button>
+            <div className="border border-border bg-secondary/50 p-4">
+              <p className="text-foreground text-sm">{aiResult}</p>
+              <button onClick={() => setAiResult(null)} className="text-muted-foreground/80 text-xs mt-1 hover:text-foreground">Dismiss</button>
             </div>
           )}
           {aiError && <p className="text-red-400 text-xs">❌ {aiError}</p>}
@@ -266,7 +266,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
@@ -275,7 +275,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
         <div className="flex gap-1.5 flex-wrap">
           <button
             onClick={() => setTagFilter('')}
-            className={`px-2 py-1 rounded-lg text-xs transition-colors ${!tagFilter ? 'bg-amber-500/20 text-amber-400' : 'bg-[#27272a] text-[#71717a] hover:text-[#e4e4e7]'}`}
+            className={`px-2 py-1 text-xs transition-colors ${!tagFilter ? 'bg-amber-500/20 text-amber-400' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}
           >
             All
           </button>
@@ -284,7 +284,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
               key={tag}
               onClick={() => setTagFilter(tagFilter === tag ? '' : tag)}
               data-testid={`til-tag-${tag}`}
-              className={`px-2 py-1 rounded-lg text-xs transition-colors ${tagFilter === tag ? 'bg-amber-500/20 text-amber-400' : 'bg-[#27272a] text-[#71717a] hover:text-[#e4e4e7]'}`}
+              className={`px-2 py-1 text-xs transition-colors ${tagFilter === tag ? 'bg-amber-500/20 text-amber-400' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}
             >
               #{tag}
             </button>
@@ -294,16 +294,16 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
 
       <button
         onClick={() => setShowForm((v) => !v)}
-        className="text-sm px-3 py-1.5 rounded-lg bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] transition-colors"
+        className="text-sm px-3 py-1.5 bg-secondary hover:bg-[#3f3f46] text-foreground transition-colors"
       >
         + Add TIL
       </button>
 
       {showForm && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-background border border-border p-4 space-y-3">
           <input className={inputCls} placeholder="What did you learn? *" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} autoFocus />
           <textarea
-            className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none w-full resize-none"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none w-full resize-none"
             placeholder="Brief note (optional)…"
             value={form.note}
             onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))}
@@ -311,8 +311,8 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
           />
           <input className={inputCls} placeholder="Tags (comma-separated)" value={form.tags} onChange={(e) => setForm((p) => ({ ...p, tags: e.target.value }))} />
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-1.5 text-sm bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg">Add</button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] rounded-lg">Cancel</button>
+            <button type="submit" className="px-4 py-1.5 text-sm bg-foreground hover:bg-foreground/90 text-background font-medium">Add</button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">Cancel</button>
           </div>
         </form>
       )}
@@ -321,19 +321,19 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
       {hasKey && entries && entries.length >= 2 && (
         <div className="space-y-2">
           {connectResult ? (
-            <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5">
+            <div className="border border-border bg-secondary/50 p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-amber-400 text-sm font-semibold">✨ Connect the Dots</span>
-                <button onClick={() => setConnectResult(null)} className="text-[#52525b] hover:text-[#e4e4e7] text-xs">Dismiss</button>
+                <button onClick={() => setConnectResult(null)} className="text-muted-foreground/80 hover:text-foreground text-xs">Dismiss</button>
               </div>
-              <p className="text-[#e4e4e7] text-sm">{connectResult}</p>
+              <p className="text-foreground text-sm">{connectResult}</p>
             </div>
           ) : (
             <button
               onClick={handleConnectDots}
               disabled={aiLoading}
               data-testid="til-connect-btn"
-              className="text-xs px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 transition-colors disabled:opacity-50"
+              className="text-xs px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors disabled:opacity-50"
             >
               {aiLoading ? '⏳ Thinking…' : '✨ Connect the Dots'}
             </button>
@@ -344,23 +344,23 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
 
       {/* Timeline */}
       {filtered.length === 0 ? (
-        <p className="text-[#52525b] text-sm text-center py-6">No TIL entries{tagFilter ? ` tagged #${tagFilter}` : ''}.</p>
+        <p className="text-muted-foreground/80 text-sm text-center py-6">No TIL entries{tagFilter ? ` tagged #${tagFilter}` : ''}.</p>
       ) : (
         <div className="space-y-2">
           {filtered.map((entry) => (
-            <div key={entry.id} data-testid={`til-entry-${entry.id}`} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3">
+            <div key={entry.id} data-testid={`til-entry-${entry.id}`} className="bg-background border border-border px-4 py-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#e4e4e7]">{entry.title}</p>
-                  {entry.note && <p className="text-xs text-[#71717a] mt-0.5">{entry.note}</p>}
+                  <p className="text-sm font-medium text-foreground">{entry.title}</p>
+                  {entry.note && <p className="text-xs text-muted-foreground mt-0.5">{entry.note}</p>}
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[#52525b] text-xs">{entry.date}</span>
+                    <span className="text-muted-foreground/80 text-xs">{entry.date}</span>
                     {(entry.tags || []).map((tag) => (
-                      <span key={tag} className="text-xs bg-[#18181b] text-[#71717a] px-1.5 py-0.5 rounded">#{tag}</span>
+                      <span key={tag} className="text-xs bg-secondary text-muted-foreground px-1.5 py-0.5 rounded">#{tag}</span>
                     ))}
                   </div>
                 </div>
-                <button onClick={() => handleDelete(entry.id)} className="text-[#3f3f46] hover:text-red-400 text-sm transition-colors shrink-0">×</button>
+                <button onClick={() => handleDelete(entry.id)} className="text-muted-foreground/60 hover:text-red-400 text-sm transition-colors shrink-0">×</button>
               </div>
             </div>
           ))}
@@ -395,9 +395,9 @@ function KnowledgeStats({ readingItems, tilEntries }) {
   return (
     <div className="grid grid-cols-2 gap-3">
       {stats.map((s) => (
-        <div key={s.label} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3">
-          <p className="text-[#71717a] text-xs">{s.icon} {s.label}</p>
-          <p className="text-2xl font-bold text-[#f59e0b] mt-1">{s.value}</p>
+        <div key={s.label} className="bg-background border border-border px-4 py-3">
+          <p className="text-muted-foreground text-xs">{s.icon} {s.label}</p>
+          <p className="text-lg font-semibold text-foreground mt-1">{s.value}</p>
         </div>
       ))}
     </div>

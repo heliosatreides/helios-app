@@ -12,23 +12,23 @@ function DayPanel({ dateStr, onClose }) {
   const dayTasks = tasks.filter((t) => t.dueDate === dateStr);
 
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-4">
+    <div className="bg-background border border-border p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-[#e4e4e7] font-semibold text-sm">{dateStr}</h4>
-        <button onClick={onClose} className="text-[#52525b] hover:text-[#e4e4e7] text-sm">✕</button>
+        <h4 className="text-foreground font-semibold text-sm">{dateStr}</h4>
+        <button onClick={onClose} className="text-muted-foreground/80 hover:text-foreground text-sm">✕</button>
       </div>
 
       {/* Tasks */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-[#52525b] mb-2">Tasks</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 mb-2">Tasks</p>
         {dayTasks.length === 0 ? (
-          <p className="text-[#3f3f46] text-xs">No tasks</p>
+          <p className="text-muted-foreground/60 text-xs">No tasks</p>
         ) : (
           <div className="space-y-1">
             {dayTasks.map((t) => (
               <div key={t.id} className="flex items-center gap-2 text-xs">
                 <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.completed ? 'bg-[#3f3f46]' : t.priority === 'High' ? 'bg-red-400' : t.priority === 'Medium' ? 'bg-amber-400' : 'bg-zinc-400'}`} />
-                <span className={t.completed ? 'line-through text-[#52525b]' : 'text-[#a1a1aa]'}>{t.title}</span>
+                <span className={t.completed ? 'line-through text-muted-foreground/80' : 'text-muted-foreground'}>{t.title}</span>
               </div>
             ))}
           </div>
@@ -37,15 +37,15 @@ function DayPanel({ dateStr, onClose }) {
 
       {/* Schedule */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-[#52525b] mb-2">Schedule</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 mb-2">Schedule</p>
         {schedule.length === 0 ? (
-          <p className="text-[#3f3f46] text-xs">No events</p>
+          <p className="text-muted-foreground/60 text-xs">No events</p>
         ) : (
           <div className="space-y-1">
             {schedule.map((e) => (
               <div key={e.id} className="flex items-center gap-2 text-xs">
-                <span className="text-[#52525b] w-12 shrink-0">{e.slotTime}</span>
-                <span className="text-[#a1a1aa]">{e.title}</span>
+                <span className="text-muted-foreground/80 w-12 shrink-0">{e.slotTime}</span>
+                <span className="text-muted-foreground">{e.title}</span>
               </div>
             ))}
           </div>
@@ -98,22 +98,22 @@ export function CalendarTab() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => handleNav(-1)}
-          className="text-[#71717a] hover:text-[#e4e4e7] px-2 py-1 rounded-lg hover:bg-[#27272a] transition-colors"
+          className="text-muted-foreground hover:text-foreground px-2 py-1 hover:bg-secondary transition-colors"
         >
           ←
         </button>
         <div className="flex items-center gap-3">
-          <h3 className="text-[#e4e4e7] font-semibold">{formatMonthYear(viewYear, viewMonth)}</h3>
+          <h3 className="text-foreground font-semibold">{formatMonthYear(viewYear, viewMonth)}</h3>
           <button
             onClick={handleToday}
-            className="text-xs px-2 py-1 rounded-lg bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] transition-colors"
+            className="text-xs px-2 py-1 bg-secondary hover:bg-[#3f3f46] text-muted-foreground transition-colors"
           >
             Today
           </button>
         </div>
         <button
           onClick={() => handleNav(1)}
-          className="text-[#71717a] hover:text-[#e4e4e7] px-2 py-1 rounded-lg hover:bg-[#27272a] transition-colors"
+          className="text-muted-foreground hover:text-foreground px-2 py-1 hover:bg-secondary transition-colors"
         >
           →
         </button>
@@ -122,7 +122,7 @@ export function CalendarTab() {
       {/* Day of week headers */}
       <div className="grid grid-cols-7 gap-1">
         {DAYS_OF_WEEK.map((d) => (
-          <div key={d} className="text-center text-[#52525b] text-xs font-medium py-1">
+          <div key={d} className="text-center text-muted-foreground/80 text-xs font-medium py-1">
             {d}
           </div>
         ))}
@@ -143,12 +143,12 @@ export function CalendarTab() {
             <button
               key={cell.dateStr}
               onClick={() => handleDayClick(cell.dateStr)}
-              className={`aspect-square flex flex-col items-center justify-center rounded-lg text-sm relative transition-colors ${
+              className={`aspect-square flex flex-col items-center justify-center text-sm relative transition-colors ${
                 isSelected
-                  ? 'bg-[#f59e0b] text-black font-bold'
+                  ? 'bg-foreground text-black font-bold'
                   : isToday
                   ? 'bg-amber-500/20 text-amber-400 font-semibold ring-2 ring-amber-400 ring-offset-1 ring-offset-[#09090b]'
-                  : 'text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#e4e4e7]'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
               }`}
             >
               {cell.day}

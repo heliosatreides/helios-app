@@ -21,14 +21,14 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className={`border rounded-xl px-3 py-2.5 ${task.completed ? 'bg-[#0a0a0b] border-[#1a1a1c]' : 'bg-[#111113] border-[#1c1c20]'}`}>
+    <div className={`border px-3 py-2.5 ${task.completed ? 'bg-background border-[#1a1a1c]' : 'bg-secondary border-border'}`}>
       <div className="flex items-start gap-3">
         {/* Checkbox */}
         <button
           onClick={() => onToggle(task.id)}
           className={`mt-0.5 w-4 h-4 rounded border shrink-0 flex items-center justify-center transition-colors ${
             task.completed
-              ? 'bg-[#f59e0b] border-[#f59e0b] text-black'
+              ? 'bg-foreground border-[#f59e0b] text-black'
               : 'border-[#3f3f46] hover:border-[#f59e0b]'
           }`}
           aria-label={task.completed ? 'Mark incomplete' : 'Mark complete'}
@@ -39,26 +39,26 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`text-sm font-medium ${task.completed ? 'text-[#52525b] line-through' : 'text-[#e4e4e7]'}`}>
+            <span className={`text-sm font-medium ${task.completed ? 'text-muted-foreground/80 line-through' : 'text-foreground'}`}>
               {task.title}
             </span>
             <span className={`text-xs font-medium ${PRIORITY_COLORS[task.priority]}`}>
               {task.priority}
             </span>
             {task.recurring !== 'None' && (
-              <span className="text-xs text-[#52525b] bg-[#18181b] px-1.5 py-0.5 rounded">
+              <span className="text-xs text-muted-foreground/80 bg-secondary px-1.5 py-0.5 rounded">
                 🔄 {task.recurring}
               </span>
             )}
             {task.parentId && (
-              <span className="text-xs text-[#52525b]">↳ subtask</span>
+              <span className="text-xs text-muted-foreground/80">↳ subtask</span>
             )}
           </div>
           {task.dueDate && (
-            <p className="text-xs text-[#52525b] mt-0.5">Due: {task.dueDate}</p>
+            <p className="text-xs text-muted-foreground/80 mt-0.5">Due: {task.dueDate}</p>
           )}
           {task.notes && (
-            <p className="text-xs text-[#71717a] mt-0.5 truncate">{task.notes}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 truncate">{task.notes}</p>
           )}
         </div>
 
@@ -67,7 +67,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
           <div className="flex gap-1 shrink-0">
             <button
               onClick={() => setExpanded((v) => !v)}
-              className="text-[#3f3f46] hover:text-[#71717a] text-xs px-1"
+              className="text-muted-foreground/60 hover:text-muted-foreground text-xs px-1"
               title="Edit"
             >
               ✎
@@ -75,7 +75,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
             {hasKey && (
               <button
                 onClick={() => onBreakDown(task)}
-                className="text-[#3f3f46] hover:text-amber-400 text-xs px-1"
+                className="text-muted-foreground/60 hover:text-amber-400 text-xs px-1"
                 title="Break down with AI"
               >
                 ✨
@@ -83,7 +83,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
             )}
             <button
               onClick={() => onDelete(task.id)}
-              className="text-[#3f3f46] hover:text-red-400 text-xs px-1"
+              className="text-muted-foreground/60 hover:text-red-400 text-xs px-1"
               title="Delete"
             >
               ✕
@@ -94,18 +94,18 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
 
       {/* Inline edit */}
       {expanded && (
-        <div className="mt-2 pt-2 border-t border-[#1c1c20] space-y-2">
+        <div className="mt-2 pt-2 border-t border-border space-y-2">
           <input
             type="text"
             value={task.title}
             onChange={(e) => onUpdate(task.id, { title: e.target.value })}
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-sm text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-[#f59e0b]"
           />
           <div className="flex gap-2 flex-wrap">
             <select
               value={task.priority}
               onChange={(e) => onUpdate(task.id, { priority: e.target.value })}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-background border border-border px-2 py-1 text-xs text-foreground focus:outline-none"
             >
               {['High', 'Medium', 'Low'].map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
@@ -113,12 +113,12 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
               type="date"
               value={task.dueDate || ''}
               onChange={(e) => onUpdate(task.id, { dueDate: e.target.value || null })}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-background border border-border px-2 py-1 text-xs text-foreground focus:outline-none"
             />
             <select
               value={task.recurring}
               onChange={(e) => onUpdate(task.id, { recurring: e.target.value })}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-background border border-border px-2 py-1 text-xs text-foreground focus:outline-none"
             >
               {RECURRING_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
@@ -128,11 +128,11 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
             onChange={(e) => onUpdate(task.id, { notes: e.target.value })}
             placeholder="Notes…"
             rows={2}
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-background border border-border px-2 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none resize-none"
           />
           <button
             onClick={() => setExpanded(false)}
-            className="text-xs text-[#71717a] hover:text-[#e4e4e7]"
+            className="text-xs text-muted-foreground hover:text-foreground"
           >
             Done
           </button>
@@ -146,7 +146,7 @@ function TaskGroup({ title, tasks, onToggle, onDelete, onUpdate, onBreakDown, ha
   if (tasks.length === 0) return null;
   return (
     <div>
-      <h4 className={`text-xs font-semibold uppercase tracking-wider mb-2 ${accent || 'text-[#71717a]'}`}>
+      <h4 className={`text-xs font-semibold uppercase tracking-wider mb-2 ${accent || 'text-muted-foreground'}`}>
         {title} ({tasks.length})
       </h4>
       <div className="space-y-2">
@@ -220,13 +220,13 @@ export function TasksTab() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-[#e4e4e7] font-semibold">Tasks</h3>
+        <h3 className="text-foreground font-semibold">Tasks</h3>
         <div className="flex gap-2">
           {hasKey && (
             <button
               onClick={handlePrioritize}
               disabled={aiLoading}
-              className="text-sm px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors disabled:opacity-40"
+              className="text-sm px-3 py-1.5 bg-secondary text-foreground hover:bg-amber-500/20 transition-colors disabled:opacity-40"
             >
               {aiLoading ? '⏳' : '✨ Prioritize for Me'}
             </button>
@@ -236,20 +236,20 @@ export function TasksTab() {
 
       {/* Add form */}
       {showAddForm && (
-        <form onSubmit={handleAdd} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-background border border-border p-4 space-y-3">
           <input
             type="text"
             placeholder="Task title…"
             value={newTask.title}
             onChange={(e) => setNewTask((p) => ({ ...p, title: e.target.value }))}
             autoFocus
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
           />
           <div className="flex gap-2 flex-wrap">
             <select
               value={newTask.priority}
               onChange={(e) => setNewTask((p) => ({ ...p, priority: e.target.value }))}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none"
             >
               {['High', 'Medium', 'Low'].map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
@@ -257,12 +257,12 @@ export function TasksTab() {
               type="date"
               value={newTask.dueDate}
               onChange={(e) => setNewTask((p) => ({ ...p, dueDate: e.target.value }))}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none"
             />
             <select
               value={newTask.recurring}
               onChange={(e) => setNewTask((p) => ({ ...p, recurring: e.target.value }))}
-              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none"
             >
               {RECURRING_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
@@ -272,13 +272,13 @@ export function TasksTab() {
             value={newTask.notes}
             onChange={(e) => setNewTask((p) => ({ ...p, notes: e.target.value }))}
             rows={2}
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none resize-none"
           />
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-1.5 text-sm bg-[#f59e0b] hover:bg-[#d97706] text-black font-semibold rounded-lg">
+            <button type="submit" className="px-4 py-1.5 text-sm bg-foreground hover:bg-[#d97706] text-black font-semibold">
               Add Task
             </button>
-            <button type="button" onClick={() => setShowAddForm(false)} className="px-3 py-1.5 text-sm bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] rounded-lg">
+            <button type="button" onClick={() => setShowAddForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">
               Cancel
             </button>
           </div>
@@ -287,16 +287,16 @@ export function TasksTab() {
 
       {/* AI Priority Suggestion */}
       {aiPrioritySuggestion && (
-        <div className="bg-[#111113] border border-amber-500/30 rounded-xl p-4 space-y-2">
-          <p className="text-[#e4e4e7] text-sm font-medium">✨ AI Suggested Priority Order</p>
+        <div className="bg-secondary border border-amber-500/30 p-4 space-y-2">
+          <p className="text-foreground text-sm font-medium">✨ AI Suggested Priority Order</p>
           {aiPrioritySuggestion.reasoning?.map((r, i) => (
-            <p key={i} className="text-xs text-[#71717a]">• {r}</p>
+            <p key={i} className="text-xs text-muted-foreground">• {r}</p>
           ))}
           <div className="flex gap-2">
-            <button onClick={handleApplyPriority} className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-lg">
+            <button onClick={handleApplyPriority} className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-black font-semibold">
               Apply Order
             </button>
-            <button onClick={() => setAiPrioritySuggestion(null)} className="px-3 py-1.5 text-sm bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] rounded-lg">
+            <button onClick={() => setAiPrioritySuggestion(null)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">
               Dismiss
             </button>
           </div>
@@ -305,7 +305,7 @@ export function TasksTab() {
 
       {/* Task groups */}
       {tasks.length === 0 ? (
-        <p className="text-[#52525b] text-sm text-center py-8">No tasks yet. Tap + to add one.</p>
+        <p className="text-muted-foreground/80 text-sm text-center py-8">No tasks yet. Tap + to add one.</p>
       ) : (
         <div className="space-y-6">
           <TaskGroup title="🔴 Overdue" tasks={grouped.overdue} accent="text-red-400" {...commonProps} />
@@ -314,7 +314,7 @@ export function TasksTab() {
           <TaskGroup title="🗂️ No Due Date" tasks={grouped.noDate} {...commonProps} />
           {grouped.completed.length > 0 && (
             <details>
-              <summary className="text-xs font-semibold uppercase tracking-wider text-[#3f3f46] cursor-pointer hover:text-[#52525b]">
+              <summary className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 cursor-pointer hover:text-muted-foreground/80">
                 ✅ Completed ({grouped.completed.length})
               </summary>
               <div className="mt-2 space-y-2">
@@ -332,7 +332,7 @@ export function TasksTab() {
         <button
           onClick={() => setShowAddForm(true)}
           data-testid="tasks-fab"
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#f59e0b] hover:bg-[#d97706] text-black text-2xl font-bold shadow-lg shadow-amber-500/30 transition-colors flex items-center justify-center"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-foreground hover:bg-[#d97706] text-black text-2xl font-bold shadow-lg shadow-amber-500/30 transition-colors flex items-center justify-center"
           aria-label="Add Task"
         >
           +

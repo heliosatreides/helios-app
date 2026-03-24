@@ -37,10 +37,10 @@ export function PasswordGenerator() {
   };
 
   const toggleCls = (active) =>
-    `px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+    `px-3 py-1.5 text-xs font-semibold transition-colors ${
       active
         ? 'bg-amber-500/20 border border-amber-500/40 text-amber-400'
-        : 'bg-[#0a0a0b] border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7]'
+        : 'bg-background border border-border text-muted-foreground hover:text-foreground'
     }`;
 
   return (
@@ -48,8 +48,8 @@ export function PasswordGenerator() {
       {/* Length slider */}
       <div>
         <div className="flex items-center justify-between mb-1">
-          <label className="text-[#71717a] text-xs">Length</label>
-          <span className="text-amber-400 text-xs font-semibold">{length}</span>
+          <label className="text-muted-foreground text-xs">Length</label>
+          <span className="text-foreground text-xs font-medium">{length}</span>
         </div>
         <input
           type="range"
@@ -59,7 +59,7 @@ export function PasswordGenerator() {
           onChange={(e) => setLength(Number(e.target.value))}
           className="w-full accent-amber-500"
         />
-        <div className="flex justify-between text-[#3f3f46] text-xs mt-0.5">
+        <div className="flex justify-between text-muted-foreground/60 text-xs mt-0.5">
           <span>8</span>
           <span>64</span>
         </div>
@@ -80,7 +80,7 @@ export function PasswordGenerator() {
       <button
         type="button"
         onClick={handleGenerate}
-        className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 py-2.5 rounded-xl text-sm transition-colors"
+        className="w-full bg-foreground hover:bg-foreground/90 text-background font-medium py-2.5 text-sm transition-colors"
       >
         Generate Password
       </button>
@@ -88,12 +88,12 @@ export function PasswordGenerator() {
       {/* Password display */}
       {password && (
         <div className="space-y-2">
-          <div className="flex items-center gap-2 bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2 bg-background border border-border px-4 py-3">
             <code className="flex-1 text-amber-400 font-mono text-sm break-all">{password}</code>
             <button
               type="button"
               onClick={() => handleCopy()}
-              className="text-[#52525b] hover:text-amber-400 text-sm transition-colors shrink-0"
+              className="text-muted-foreground/80 hover:text-amber-400 text-sm transition-colors shrink-0"
               title="Copy"
             >
               {copied ? '✓' : '📋'}
@@ -103,10 +103,10 @@ export function PasswordGenerator() {
           {/* Strength meter */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[#52525b] text-xs">Strength</span>
+              <span className="text-muted-foreground/80 text-xs">Strength</span>
               <span className={`text-xs font-semibold capitalize ${STRENGTH_COLORS[strength]}`}>{strength}</span>
             </div>
-            <div className="h-1.5 bg-[#27272a] rounded-full overflow-hidden">
+            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all ${STRENGTH_BAR_COLORS[strength]}`}
                 style={{ width: STRENGTH_BAR_WIDTH[strength] }}
@@ -119,15 +119,15 @@ export function PasswordGenerator() {
       {/* History */}
       {history.length > 0 && (
         <div>
-          <p className="text-[#52525b] text-xs uppercase tracking-widest mb-2">Recent (session only)</p>
+          <p className="text-muted-foreground/80 text-xs uppercase tracking-widest mb-2">Recent (session only)</p>
           <div className="space-y-1.5">
             {history.map((pw, i) => (
-              <div key={i} className="flex items-center gap-2 bg-[#0a0a0b] rounded-lg px-3 py-1.5">
-                <code className="flex-1 text-[#71717a] font-mono text-xs break-all">{pw}</code>
+              <div key={i} className="flex items-center gap-2 bg-background px-3 py-1.5">
+                <code className="flex-1 text-muted-foreground font-mono text-xs break-all">{pw}</code>
                 <button
                   type="button"
                   onClick={() => handleCopy(pw)}
-                  className="text-[#3f3f46] hover:text-amber-400 text-xs transition-colors shrink-0"
+                  className="text-muted-foreground/60 hover:text-amber-400 text-xs transition-colors shrink-0"
                 >
                   📋
                 </button>

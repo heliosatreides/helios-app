@@ -124,12 +124,12 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-[#e4e4e7] font-semibold">Today's Schedule</h3>
+        <h3 className="text-foreground font-semibold">Today's Schedule</h3>
         {hasKey && (
           <button
             onClick={handlePlanMyDay}
             disabled={aiLoading}
-            className="text-sm px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-colors disabled:opacity-40"
+            className="text-sm px-3 py-1.5 bg-secondary text-foreground hover:bg-amber-500/20 transition-colors disabled:opacity-40"
           >
             {aiLoading ? '⏳ Planning…' : '✨ Plan My Day'}
           </button>
@@ -138,11 +138,11 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
 
       {/* AI Confirm modal */}
       {showConfirm && aiSuggestion && (
-        <div className="bg-[#111113] border border-amber-500/30 rounded-xl p-4 space-y-3">
-          <p className="text-[#e4e4e7] text-sm font-medium">Apply AI schedule? ({aiSuggestion.length} blocks)</p>
+        <div className="bg-secondary border border-amber-500/30 p-4 space-y-3">
+          <p className="text-foreground text-sm font-medium">Apply AI schedule? ({aiSuggestion.length} blocks)</p>
           <div className="max-h-40 overflow-y-auto space-y-1">
             {aiSuggestion.map((e, i) => (
-              <div key={i} className="text-xs text-[#a1a1aa]">
+              <div key={i} className="text-xs text-muted-foreground">
                 <span className="text-amber-400">{e.slotTime}</span> — {e.title} ({e.duration}min)
               </div>
             ))}
@@ -150,13 +150,13 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
           <div className="flex gap-2">
             <button
               onClick={handleApplyAI}
-              className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-lg"
+              className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-black font-semibold"
             >
               Apply
             </button>
             <button
               onClick={() => { setShowConfirm(false); setAiSuggestion(null); }}
-              className="px-3 py-1.5 text-sm bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] rounded-lg"
+              className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-foreground"
             >
               Dismiss
             </button>
@@ -173,11 +173,11 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
           return (
             <div key={time}>
               <div
-                className={`flex gap-3 group min-h-[36px] ${isHour ? 'bg-[#0d0d0f]' : 'bg-[#0a0a0b]'} rounded-lg px-3 py-1 hover:bg-[#18181b] cursor-pointer transition-colors`}
+                className={`flex gap-3 group min-h-[36px] ${isHour ? 'bg-[#0d0d0f]' : 'bg-background'} px-3 py-1 hover:bg-secondary cursor-pointer transition-colors`}
                 onClick={() => events.length === 0 && handleSlotClick(time, null)}
               >
                 {/* Time label */}
-                <span className={`text-xs w-16 shrink-0 pt-1.5 ${isHour ? 'text-[#52525b]' : 'text-[#3f3f46]'}`}>
+                <span className={`text-xs w-16 shrink-0 pt-1.5 ${isHour ? 'text-muted-foreground/80' : 'text-muted-foreground/60'}`}>
                   {label}
                 </span>
 
@@ -195,7 +195,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     </div>
                   ))}
                   {events.length === 0 && !isActive && (
-                    <div className="h-5 opacity-0 group-hover:opacity-100 text-[#3f3f46] text-xs pt-0.5 transition-opacity">
+                    <div className="h-5 opacity-0 group-hover:opacity-100 text-muted-foreground/60 text-xs pt-0.5 transition-opacity">
                       + Add event
                     </div>
                   )}
@@ -206,7 +206,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
               {isActive && (
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3 mx-1 my-1 space-y-3"
+                  className="bg-background border border-border p-3 mx-1 my-1 space-y-3"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <input
@@ -215,14 +215,14 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     value={formData.title}
                     onChange={(e) => setFormData((p) => ({ ...p, title: e.target.value }))}
                     autoFocus
-                    className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                    className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                   />
                   <div className="flex gap-2 flex-wrap">
                     {/* Duration */}
                     <select
                       value={formData.duration}
                       onChange={(e) => setFormData((p) => ({ ...p, duration: Number(e.target.value) }))}
-                      className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+                      className="bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none"
                     >
                       {DURATION_OPTIONS.map((d) => (
                         <option key={d} value={d}>{d === 30 ? '30min' : d === 60 ? '1hr' : '2hr'}</option>
@@ -243,14 +243,14 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button type="submit" className="px-3 py-1.5 text-xs bg-[#f59e0b] hover:bg-[#d97706] text-black font-semibold rounded-lg">
+                    <button type="submit" className="px-3 py-1.5 text-xs bg-foreground hover:bg-[#d97706] text-black font-semibold">
                       {editMode === 'add' ? 'Add' : 'Save'}
                     </button>
                     {editMode === 'edit' && formData.editingId && (
                       <button
                         type="button"
                         onClick={() => handleDelete(formData.editingId)}
-                        className="px-3 py-1.5 text-xs bg-red-900/40 hover:bg-red-900/60 text-red-400 rounded-lg"
+                        className="px-3 py-1.5 text-xs bg-red-900/40 hover:bg-red-900/60 text-red-400"
                       >
                         Delete
                       </button>
@@ -258,7 +258,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     <button
                       type="button"
                       onClick={() => { setActiveSlot(null); setEditMode(null); }}
-                      className="px-3 py-1.5 text-xs bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] rounded-lg"
+                      className="px-3 py-1.5 text-xs bg-secondary hover:bg-[#3f3f46] text-muted-foreground"
                     >
                       Cancel
                     </button>

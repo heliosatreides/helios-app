@@ -11,17 +11,17 @@ const GITHUB_USERNAME_KEY = 'devtools-github-username';
 function AiResultCard({ title, content, onDismiss }) {
   if (!content) return null;
   return (
-    <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5 relative animate-fadeIn">
+    <div className="border border-border bg-secondary/50 p-5 relative animate-fadeIn">
       <button
         type="button"
         onClick={onDismiss}
-        className="absolute top-4 right-4 text-[#3f3f46] hover:text-[#71717a] text-xs transition-colors"
+        className="absolute top-4 right-4 text-muted-foreground/60 hover:text-muted-foreground text-xs transition-colors"
         aria-label="Dismiss"
       >
         Dismiss
       </button>
-      <span className="text-amber-400 text-xs font-semibold">✨ {title}</span>
-      <p className="text-[#a1a1aa] text-sm mt-2 whitespace-pre-wrap pr-8 leading-relaxed">{content}</p>
+      <span className="text-foreground text-xs font-medium">✨ {title}</span>
+      <p className="text-muted-foreground text-sm mt-2 whitespace-pre-wrap pr-8 leading-relaxed">{content}</p>
     </div>
   );
 }
@@ -31,14 +31,14 @@ function AiResultCard({ title, content, onDismiss }) {
 function CollapsibleCard({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
+    <div className="bg-background border border-border overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#0a0a0b] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-background transition-colors"
       >
-        <span className="text-[#e4e4e7] font-semibold">{title}</span>
-        <span className="text-[#52525b] text-xs">{open ? '▲' : '▼'}</span>
+        <span className="text-foreground font-semibold">{title}</span>
+        <span className="text-muted-foreground/80 text-xs">{open ? '▲' : '▼'}</span>
       </button>
       {open && <div className="px-5 pb-5">{children}</div>}
     </div>
@@ -113,17 +113,17 @@ function GitHubActivity() {
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
           placeholder="GitHub username"
-          className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
         />
         <button
           type="submit"
-          className="bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
+          className="bg-secondary hover:bg-[#3f3f46] text-foreground px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap"
         >
           Load
         </button>
       </form>
 
-      {fetchLoading && <p className="text-[#71717a] text-sm">Loading events…</p>}
+      {fetchLoading && <p className="text-muted-foreground text-sm">Loading events…</p>}
       {fetchError && <p className="text-red-400 text-xs">❌ {fetchError}</p>}
 
       {events.length > 0 && (
@@ -133,12 +133,12 @@ function GitHubActivity() {
             const repo = event.repo?.name || 'unknown';
             const ts = event.created_at ? new Date(event.created_at).toLocaleDateString() : '';
             return (
-              <div key={event.id} className="flex items-center gap-3 py-1.5 border-b border-[#1c1c20]/40 last:border-0">
+              <div key={event.id} className="flex items-center gap-3 py-1.5 border-b border-border/40 last:border-0">
                 <span className={`px-2 py-0.5 rounded text-xs font-semibold shrink-0 ${eventTypeBadgeClass(event.type)}`}>
                   {type}
                 </span>
-                <span className="text-[#a1a1aa] text-sm truncate flex-1">{repo}</span>
-                <span className="text-[#52525b] text-xs shrink-0">{ts}</span>
+                <span className="text-muted-foreground text-sm truncate flex-1">{repo}</span>
+                <span className="text-muted-foreground/80 text-xs shrink-0">{ts}</span>
               </div>
             );
           })}
@@ -152,7 +152,7 @@ function GitHubActivity() {
             type="button"
             onClick={handleSummarize}
             disabled={aiLoading}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
           >
             {aiLoading ? '⏳ Analyzing…' : '✨ Summarize my week'}
           </button>
@@ -209,7 +209,7 @@ function SnippetManager() {
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
@@ -220,13 +220,13 @@ function SnippetManager() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search snippets…"
-          className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
         />
         {languages.length > 0 && (
           <select
             value={langFilter}
             onChange={(e) => setLangFilter(e.target.value)}
-            className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
           >
             <option value="">All languages</option>
             {languages.map((l) => <option key={l} value={l}>{l}</option>)}
@@ -235,7 +235,7 @@ function SnippetManager() {
         <button
           type="button"
           onClick={() => setShowAdd((s) => !s)}
-          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-2 rounded-lg text-sm whitespace-nowrap"
+          className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-2 text-sm whitespace-nowrap"
         >
           + Add
         </button>
@@ -243,19 +243,19 @@ function SnippetManager() {
 
       {/* Add form */}
       {showAdd && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-background border border-border p-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-[#71717a] text-xs block mb-1">Title *</label>
+              <label className="text-muted-foreground text-xs block mb-1">Title *</label>
               <input className={inputCls} value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="My snippet" required />
             </div>
             <div>
-              <label className="text-[#71717a] text-xs block mb-1">Language</label>
+              <label className="text-muted-foreground text-xs block mb-1">Language</label>
               <input className={inputCls} value={form.language} onChange={(e) => setForm((f) => ({ ...f, language: e.target.value }))} placeholder="javascript" />
             </div>
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Code *</label>
+            <label className="text-muted-foreground text-xs block mb-1">Code *</label>
             <textarea
               className={inputCls + ' font-mono resize-none'}
               rows={4}
@@ -266,37 +266,37 @@ function SnippetManager() {
             />
           </div>
           <div>
-            <label className="text-[#71717a] text-xs block mb-1">Notes</label>
+            <label className="text-muted-foreground text-xs block mb-1">Notes</label>
             <input className={inputCls} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} placeholder="Optional notes" />
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-1.5 rounded-lg text-sm">Save</button>
-            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="submit" className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-1.5 text-sm">Save</button>
+            <button type="button" onClick={() => setShowAdd(false)} className="border border-border text-muted-foreground hover:text-foreground px-3 py-1.5 text-sm">Cancel</button>
           </div>
         </form>
       )}
 
       {/* Snippet list */}
       {filtered.length === 0 ? (
-        <p className="text-[#71717a] text-sm">No snippets yet. Add one to get started.</p>
+        <p className="text-muted-foreground text-sm">No snippets yet. Add one to get started.</p>
       ) : (
         <div className="space-y-3">
           {filtered.map((s) => {
             const ai = aiResults[s.id];
             return (
-              <div key={s.id} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4">
+              <div key={s.id} className="bg-background border border-border p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-[#e4e4e7] font-medium truncate">{s.title}</span>
+                    <span className="text-foreground font-medium truncate">{s.title}</span>
                     {s.language && (
-                      <span className="text-xs bg-[#27272a] text-[#a1a1aa] px-2 py-0.5 rounded shrink-0">{s.language}</span>
+                      <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded shrink-0">{s.language}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleCopy(s.id, s.code)}
-                      className="text-[#52525b] hover:text-amber-400 text-xs transition-colors"
+                      className="text-muted-foreground/80 hover:text-amber-400 text-xs transition-colors"
                       title="Copy code"
                     >
                       {copied === s.id ? '✓' : '📋'}
@@ -304,20 +304,20 @@ function SnippetManager() {
                     <button
                       type="button"
                       onClick={() => handleDelete(s.id)}
-                      className="text-[#52525b] hover:text-red-400 text-xs transition-colors"
+                      className="text-muted-foreground/80 hover:text-red-400 text-xs transition-colors"
                     >
                       ✕
                     </button>
                   </div>
                 </div>
-                <pre className="text-[#a1a1aa] text-xs font-mono bg-[#111113] rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all">{s.code}</pre>
-                {s.notes && <p className="text-[#52525b] text-xs mt-2">{s.notes}</p>}
+                <pre className="text-muted-foreground text-xs font-mono bg-secondary p-3 overflow-x-auto whitespace-pre-wrap break-all">{s.code}</pre>
+                {s.notes && <p className="text-muted-foreground/80 text-xs mt-2">{s.notes}</p>}
                 {hasKey && (
                   <button
                     type="button"
                     onClick={() => handleExplain(s)}
                     disabled={aiLoading || ai?.loading}
-                    className="mt-2 text-amber-400/70 hover:text-amber-400 text-xs transition-colors disabled:opacity-50"
+                    className="mt-2 text-muted-foreground hover:text-foreground text-xs transition-colors disabled:opacity-50"
                   >
                     {ai?.loading ? '⏳ Explaining…' : '✨ Explain this snippet'}
                   </button>
@@ -365,13 +365,13 @@ function DevLog() {
 
   return (
     <div className="space-y-3">
-      <p className="text-[#52525b] text-xs">Today — {today}</p>
+      <p className="text-muted-foreground/80 text-xs">Today — {today}</p>
       <textarea
         value={todayLog}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="What did you ship today? What are you stuck on?"
         rows={5}
-        className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
+        className="w-full bg-background border border-border px-4 py-3 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
       />
       <div className="flex gap-2 flex-wrap">
         {hasKey && (
@@ -379,7 +379,7 @@ function DevLog() {
             type="button"
             onClick={handleStandup}
             disabled={aiLoading || !todayLog.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
           >
             {aiLoading ? '⏳ Writing…' : '✨ Write standup'}
           </button>

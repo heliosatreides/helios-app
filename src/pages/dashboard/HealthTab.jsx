@@ -24,7 +24,7 @@ export function calcSleepHours(bedtime, wakeTime) {
 }
 
 export function sleepColor(hours) {
-  if (hours === null) return 'text-[#71717a]';
+  if (hours === null) return 'text-muted-foreground';
   if (hours >= 7) return 'text-green-400';
   if (hours >= 6) return 'text-amber-400';
   return 'text-red-400';
@@ -66,14 +66,14 @@ const MOOD_COLORS = {
 function Card({ title, children }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
+    <div className="bg-background border border-border overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#0a0a0b] transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-background transition-colors"
       >
-        <span className="text-[#e4e4e7] font-semibold">{title}</span>
-        <span className="text-[#52525b] text-xs">{open ? '▲' : '▼'}</span>
+        <span className="text-foreground font-semibold">{title}</span>
+        <span className="text-muted-foreground/80 text-xs">{open ? '▲' : '▼'}</span>
       </button>
       {open && <div className="px-5 pb-5">{children}</div>}
     </div>
@@ -125,15 +125,15 @@ export function WaterTracker({ goal = 8 }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[#e4e4e7] text-2xl font-bold">{glasses} <span className="text-[#71717a] text-base font-normal">/ {goal} glasses</span></p>
-          <p className="text-[#71717a] text-xs mt-0.5">{Math.round(pct * 100)}% of daily goal</p>
+          <p className="text-foreground text-2xl font-bold">{glasses} <span className="text-muted-foreground text-base font-normal">/ {goal} glasses</span></p>
+          <p className="text-muted-foreground text-xs mt-0.5">{Math.round(pct * 100)}% of daily goal</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={decrement}
             data-testid="water-decrement"
             disabled={glasses === 0}
-            className="w-8 h-8 rounded-full bg-[#27272a] hover:bg-[#3f3f46] text-[#e4e4e7] font-bold disabled:opacity-30 transition-colors"
+            className="w-8 h-8 rounded-full bg-secondary hover:bg-[#3f3f46] text-foreground font-bold disabled:opacity-30 transition-colors"
           >
             −
           </button>
@@ -199,17 +199,17 @@ export function MoodJournal() {
     <div className="space-y-4">
       {/* Mood picker */}
       <div>
-        <p className="text-[#71717a] text-xs mb-2">How are you feeling today?</p>
+        <p className="text-muted-foreground text-xs mb-2">How are you feeling today?</p>
         <div className="flex gap-2 flex-wrap">
           {MOOD_OPTIONS.map((m) => (
             <button
               key={m.value}
               onClick={() => setSelectedMood(m.value)}
               data-testid={`mood-option-${m.value}`}
-              className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
+              className={`px-3 py-1.5 text-sm border transition-colors ${
                 selectedMood === m.value
                   ? 'border-amber-500 bg-amber-500/20 text-amber-300'
-                  : 'border-[#1c1c20] text-[#a1a1aa] hover:border-[#3f3f46]'
+                  : 'border-border text-muted-foreground hover:border-[#3f3f46]'
               }`}
             >
               {m.label}
@@ -225,12 +225,12 @@ export function MoodJournal() {
             onChange={(e) => setNote(e.target.value)}
             placeholder="Optional note (1-2 sentences)…"
             rows={2}
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none resize-none"
           />
           <button
             onClick={handleSave}
             data-testid="mood-save"
-            className="px-4 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg text-sm transition-colors"
+            className="px-4 py-1.5 bg-foreground hover:bg-foreground/90 text-background font-medium text-sm transition-colors"
           >
             {saved ? '✓ Saved' : 'Save Mood'}
           </button>
@@ -239,21 +239,21 @@ export function MoodJournal() {
 
       {/* 14-day history */}
       <div>
-        <p className="text-[#52525b] text-xs uppercase tracking-wider mb-2">14-Day History</p>
+        <p className="text-muted-foreground/80 text-xs uppercase tracking-wider mb-2">14-Day History</p>
         <div className="flex gap-1.5 flex-wrap">
           {history.map(({ dateStr, entry }) => (
             <div key={dateStr} className="flex flex-col items-center gap-0.5" title={entry ? `${dateStr}: ${entry.mood}${entry.note ? ' — ' + entry.note : ''}` : dateStr}>
               <div
                 data-testid={`mood-dot-${dateStr}`}
-                className={`w-3 h-3 rounded-full ${entry ? MOOD_COLORS[entry.mood] || 'bg-zinc-500' : 'bg-[#27272a]'}`}
+                className={`w-3 h-3 rounded-full ${entry ? MOOD_COLORS[entry.mood] || 'bg-zinc-500' : 'bg-secondary'}`}
               />
-              <span className="text-[#3f3f46] text-[9px]">{dateStr.slice(8)}</span>
+              <span className="text-muted-foreground/60 text-[9px]">{dateStr.slice(8)}</span>
             </div>
           ))}
         </div>
         <div className="flex gap-3 flex-wrap mt-2">
           {MOOD_OPTIONS.map((m) => (
-            <span key={m.value} className="flex items-center gap-1 text-xs text-[#52525b]">
+            <span key={m.value} className="flex items-center gap-1 text-xs text-muted-foreground/80">
               <span className={`w-2 h-2 rounded-full ${m.color}`} />
               {m.label}
             </span>
@@ -297,23 +297,23 @@ export function SleepTracker() {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-[#71717a] text-xs mb-1">Bedtime</label>
+          <label className="block text-muted-foreground text-xs mb-1">Bedtime</label>
           <input
             type="time"
             value={bedtime}
             onChange={(e) => setBedtime(e.target.value)}
             data-testid="sleep-bedtime"
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] focus:outline-none"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-[#71717a] text-xs mb-1">Wake Time</label>
+          <label className="block text-muted-foreground text-xs mb-1">Wake Time</label>
           <input
             type="time"
             value={wakeTime}
             onChange={(e) => setWakeTime(e.target.value)}
             data-testid="sleep-waketime"
-            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] focus:outline-none"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground focus:outline-none"
           />
         </div>
       </div>
@@ -321,7 +321,7 @@ export function SleepTracker() {
       {hours !== null && (
         <p className={`text-2xl font-bold ${color}`} data-testid="sleep-hours">
           {hours}h
-          <span className="text-sm font-normal text-[#71717a] ml-2">
+          <span className="text-sm font-normal text-muted-foreground ml-2">
             {hours >= 7 ? '✓ Good sleep' : hours >= 6 ? '⚠ A bit short' : '⚠ Too little'}
           </span>
         </p>
@@ -330,14 +330,14 @@ export function SleepTracker() {
       <button
         onClick={handleSave}
         data-testid="sleep-save"
-        className="px-4 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg text-sm transition-colors"
+        className="px-4 py-1.5 bg-foreground hover:bg-foreground/90 text-background font-medium text-sm transition-colors"
       >
         {saved ? '✓ Saved' : 'Log Sleep'}
       </button>
 
       {weeklyAvg !== null && (
-        <div className="bg-[#0a0a0b] rounded-lg px-4 py-3">
-          <p className="text-[#71717a] text-xs">7-Day Average</p>
+        <div className="bg-background px-4 py-3">
+          <p className="text-muted-foreground text-xs">7-Day Average</p>
           <p className={`text-xl font-bold mt-0.5 ${sleepColor(weeklyAvg)}`} data-testid="sleep-weekly-avg">{weeklyAvg}h</p>
         </div>
       )}
@@ -406,12 +406,12 @@ Be encouraging and specific.`;
       {hasKey && (
         <div>
           {digest ? (
-            <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5">
+            <div className="border border-border bg-secondary/50 p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-amber-400 text-sm font-semibold">✨ Weekly Health Digest</span>
-                <button type="button" onClick={() => setDigest(null)} className="text-[#52525b] hover:text-[#e4e4e7] text-xs">Dismiss</button>
+                <button type="button" onClick={() => setDigest(null)} className="text-muted-foreground/80 hover:text-foreground text-xs">Dismiss</button>
               </div>
-              <p className="text-[#e4e4e7] text-sm">{digest}</p>
+              <p className="text-foreground text-sm">{digest}</p>
             </div>
           ) : (
             <button
@@ -419,7 +419,7 @@ Be encouraging and specific.`;
               onClick={handleWeeklyDigest}
               disabled={aiLoading}
               data-testid="health-digest-btn"
-              className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+              className="border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 text-sm font-semibold px-4 py-2 transition-colors disabled:opacity-50"
             >
               {aiLoading ? '⏳ Generating…' : '✨ Weekly Health Digest'}
             </button>
