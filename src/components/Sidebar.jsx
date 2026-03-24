@@ -23,6 +23,7 @@ const navGroups = [
   {
     label: 'Tools',
     items: [
+      { to: '/chat', label: 'Chat', icon: '💬' },
       { to: '/devtools', label: 'Dev Tools', icon: '💻' },
       { to: '/focus', label: 'Focus', icon: '🔥' },
       { to: '/health', label: 'Health', icon: '🏥' },

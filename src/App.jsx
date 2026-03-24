@@ -29,6 +29,7 @@ import { MusicPage } from './pages/music/MusicPage';
 import { PackingPage } from './pages/packing/PackingPage';
 import { RegexPage } from './pages/regex/RegexPage';
 import { CalculatorPage } from './pages/calculator/CalculatorPage';
+import { ChatPage } from './pages/chat/ChatPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
@@ -131,6 +132,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<RootRoute />} />
+          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
           <Route path="/*" element={<AppShell />} />
         </Routes>
       </AuthProvider>
