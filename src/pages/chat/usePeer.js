@@ -49,33 +49,37 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         // instead of Trystero's random 75+ relay list
         const relayRedundancy = 5; // connect to ALL relays so host+guest always share at least one
 
-        // ICE config with STUN + free TURN servers for NAT traversal
-        // TURN is required for mobile (carrier NAT) and strict firewalls
-        const rtcConfig = {
-          iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            {
-              urls: 'turn:openrelay.metered.ca:80',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
-            },
-            {
-              urls: 'turn:openrelay.metered.ca:443',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
-            },
-            {
-              urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-              username: 'openrelayproject',
-              credential: 'openrelayproject',
-            },
-          ],
-        };
+        // Trystero uses `turnConfig` array specifically for TURN servers
+        // TURN is essential for cross-device connections behind strict NAT/carrier networks
+        const turnConfig = [
+          {
+            urls: 'turn:openrelay.metered.ca:80',
+            username: 'openrelayproject',
+            credential: 'openrelayproject',
+          },
+          {
+            urls: 'turn:openrelay.metered.ca:443',
+            username: 'openrelayproject',
+            credential: 'openrelayproject',
+          },
+          {
+            urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+            username: 'openrelayproject',
+            credential: 'openrelayproject',
+          },
+          {
+            urls: 'turn:relay1.expressturn.com:3478',
+            username: 'efIGKFN0G6FR9K7OFO',
+            credential: 'GBEjqnBbbcUEd4Zl',
+          },
+        ];
+
+        const rtcConfig = {}; // extra peer connection options (not ICE)
 
         const room = joinRoom({
           appId,
           rtcConfig,
+          turnConfig,
           relayRedundancy,
           relayUrls: [
             'wss://relay.damus.io',
