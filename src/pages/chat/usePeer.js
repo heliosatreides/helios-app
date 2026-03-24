@@ -75,6 +75,12 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
     let cancelled = false;
 
+    // Defer by one macrotask so React StrictMode's synchronous cleanup+remount
+    // cycle completes before we touch trystero. The phantom first mount's timeout
+    // is cancelled before it fires, so joinRoom (and trystero's didInit singleton)
+    // is only ever touched by the surviving second mount.
+    const tid = setTimeout(() => { if (!cancelled) setup(); }, 0);
+
     async function setup() {
       try {
         addDebug('Fetching TURN config...');
@@ -156,10 +162,9 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
       }
     }
 
-    setup();
-
     return () => {
       cancelled = true;
+      clearTimeout(tid);
       clearInterval(intervalRef.current);
       if (roomRef.current) { roomRef.current.leave(); roomRef.current = null; }
     };
