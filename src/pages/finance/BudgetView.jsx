@@ -75,7 +75,7 @@ export function BudgetView({ budgets, transactions, month }) {
       )}
 
       {savingsResult && (
-        <div className="border border-amber-500/30 bg-amber-950/20 rounded-xl p-4" data-testid="savings-card">
+        <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5" data-testid="savings-card">
           <div className="flex items-center justify-between mb-2">
             <span className="text-amber-400 text-sm font-semibold">✨ Savings Suggestions</span>
             <button

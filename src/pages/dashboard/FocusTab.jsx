@@ -19,7 +19,7 @@ const { IDLE, RUNNING, PAUSED, BREAK } = POMODORO_STATES;
 function AiResultCard({ title, content, onDismiss }) {
   if (!content) return null;
   return (
-    <div className="border border-amber-500/30 bg-amber-950/20 rounded-xl p-4 relative">
+    <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5 relative">
       <button
         type="button"
         onClick={onDismiss}

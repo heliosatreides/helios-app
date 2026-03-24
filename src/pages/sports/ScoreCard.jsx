@@ -100,7 +100,7 @@ export function ScoreCard({ game }) {
             {aiLoading && showPreview ? '⏳ Loading…' : '✨ Game Preview'}
           </button>
           {showPreview && (
-            <div className="mt-2 border border-amber-500/30 bg-amber-950/20 rounded-xl p-3" data-testid="game-preview-card">
+            <div className="mt-2 border border-amber-500/20 bg-amber-500/5 rounded-2xl p-4" data-testid="game-preview-card">
               {aiLoading && <p className="text-amber-400 text-xs">Generating preview…</p>}
               {previewError && <p className="text-red-400 text-xs">❌ {previewError}</p>}
               {preview && !aiLoading && (

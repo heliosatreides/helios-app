@@ -11,17 +11,17 @@ const GITHUB_USERNAME_KEY = 'devtools-github-username';
 function AiResultCard({ title, content, onDismiss }) {
   if (!content) return null;
   return (
-    <div className="border border-amber-500/30 bg-amber-950/20 rounded-xl p-4 relative">
+    <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5 relative animate-fadeIn">
       <button
         type="button"
         onClick={onDismiss}
-        className="absolute top-3 right-3 text-[#52525b] hover:text-[#e4e4e7] text-sm leading-none"
+        className="absolute top-4 right-4 text-[#3f3f46] hover:text-[#71717a] text-xs transition-colors"
         aria-label="Dismiss"
       >
-        ×
+        Dismiss
       </button>
-      <span className="text-amber-400 text-sm font-semibold">✨ {title}</span>
-      <p className="text-[#e4e4e7] text-sm mt-2 whitespace-pre-wrap pr-4">{content}</p>
+      <span className="text-amber-400 text-xs font-semibold">✨ {title}</span>
+      <p className="text-[#a1a1aa] text-sm mt-2 whitespace-pre-wrap pr-8 leading-relaxed">{content}</p>
     </div>
   );
 }

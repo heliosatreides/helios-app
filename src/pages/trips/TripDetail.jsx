@@ -190,7 +190,7 @@ export function TripDetail({ trips, onUpdate }) {
             <p className="text-red-400 text-xs mt-2">❌ {itineraryAi.error}</p>
           )}
           {itineraryAi.result && (
-            <div className="mt-3 border border-amber-500/30 bg-amber-950/20 rounded-xl p-4">
+            <div className="mt-3 border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-amber-400 text-xs font-semibold">✨ AI Itinerary Generated</span>
                 <button

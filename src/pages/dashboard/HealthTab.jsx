@@ -406,7 +406,7 @@ Be encouraging and specific.`;
       {hasKey && (
         <div>
           {digest ? (
-            <div className="border border-amber-500/30 bg-amber-950/20 rounded-xl p-4">
+            <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-amber-400 text-sm font-semibold">✨ Weekly Health Digest</span>
                 <button type="button" onClick={() => setDigest(null)} className="text-[#52525b] hover:text-[#e4e4e7] text-xs">Dismiss</button>

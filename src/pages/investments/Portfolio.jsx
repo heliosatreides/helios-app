@@ -343,7 +343,7 @@ export function Portfolio() {
           </button>
           {riskError && <p className="text-red-400 text-xs mt-2">❌ {riskError}</p>}
           {riskResult && (
-            <div className="mt-3 border border-amber-500/30 bg-amber-950/20 rounded-xl p-4" data-testid="risk-card">
+            <div className="mt-3 border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5" data-testid="risk-card">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-amber-400 text-sm font-semibold">✨ Risk Assessment</span>
                 <button

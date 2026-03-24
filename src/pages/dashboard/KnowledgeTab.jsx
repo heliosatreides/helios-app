@@ -200,7 +200,7 @@ export function ReadingList() {
             </button>
           </div>
           {aiResult && (
-            <div className="border border-amber-500/30 bg-amber-950/20 rounded-lg p-3">
+            <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-4">
               <p className="text-[#e4e4e7] text-sm">{aiResult}</p>
               <button onClick={() => setAiResult(null)} className="text-[#52525b] text-xs mt-1 hover:text-[#e4e4e7]">Dismiss</button>
             </div>
@@ -321,7 +321,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
       {hasKey && entries && entries.length >= 2 && (
         <div className="space-y-2">
           {connectResult ? (
-            <div className="border border-amber-500/30 bg-amber-950/20 rounded-xl p-4">
+            <div className="border border-amber-500/20 bg-amber-500/5 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-amber-400 text-sm font-semibold">✨ Connect the Dots</span>
                 <button onClick={() => setConnectResult(null)} className="text-[#52525b] hover:text-[#e4e4e7] text-xs">Dismiss</button>
