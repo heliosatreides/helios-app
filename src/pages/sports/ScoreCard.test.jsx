@@ -1,5 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ScoreCard } from './ScoreCard';
+
+vi.mock('../../hooks/useGemini', () => ({
+  useGemini: () => ({
+    generate: vi.fn(),
+    loading: false,
+    error: null,
+    hasKey: false,
+  }),
+}));
 
 const scheduledGame = {
   id: '1',

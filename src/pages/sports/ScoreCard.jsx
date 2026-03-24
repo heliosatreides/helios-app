@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { useGemini } from '../../hooks/useGemini';
+
 /**
  * ScoreCard — renders a single game matchup card.
  */
@@ -6,6 +9,26 @@ export function ScoreCard({ game }) {
   const isLive = status === 'In Progress';
   const isFinal = status === 'Final';
   const isScheduled = !isLive && !isFinal;
+  const { generate, loading: aiLoading, hasKey } = useGemini();
+  const [preview, setPreview] = useState(null);
+  const [previewError, setPreviewError] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
+
+  const handleGamePreview = async () => {
+    setPreviewError(null);
+    setShowPreview(true);
+    if (preview) return; // already fetched
+    const sport = game.sport || game.league || 'sports';
+    const dateStr = date ? new Date(date).toLocaleDateString() : 'today';
+    try {
+      const text = await generate(
+        `Give me a brief 2-3 sentence preview for the ${sport} game: ${awayTeam.displayName} at ${homeTeam.displayName} on ${dateStr}. Include current season context and a prediction.`
+      );
+      setPreview(text);
+    } catch (err) {
+      setPreviewError(err.message);
+    }
+  };
 
   const formatTime = (iso) => {
     try {
@@ -63,6 +86,39 @@ export function ScoreCard({ game }) {
           <span className="text-lg font-bold text-[#e4e4e7]">{homeTeam.score}</span>
         )}
       </div>
+
+      {/* AI Game Preview — only for scheduled games when key is set */}
+      {hasKey && isScheduled && (
+        <div className="mt-2 pt-2 border-t border-[#27272a]">
+          <button
+            type="button"
+            onClick={handleGamePreview}
+            disabled={aiLoading}
+            className="text-xs text-amber-400/70 hover:text-amber-400 disabled:opacity-40 transition-colors"
+            data-testid="game-preview-btn"
+          >
+            {aiLoading && showPreview ? '⏳ Loading…' : '✨ Game Preview'}
+          </button>
+          {showPreview && (
+            <div className="mt-2 border border-amber-500/30 bg-amber-950/20 rounded-xl p-3" data-testid="game-preview-card">
+              {aiLoading && <p className="text-amber-400 text-xs">Generating preview…</p>}
+              {previewError && <p className="text-red-400 text-xs">❌ {previewError}</p>}
+              {preview && !aiLoading && (
+                <div>
+                  <p className="text-[#e4e4e7] text-xs leading-relaxed">{preview}</p>
+                  <button
+                    type="button"
+                    onClick={() => { setShowPreview(false); setPreview(null); }}
+                    className="text-[#52525b] hover:text-[#e4e4e7] text-xs mt-2"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
