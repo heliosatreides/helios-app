@@ -9,6 +9,8 @@ import {
   calculateAssetAllocation,
   createHolding,
 } from './investments.utils';
+import { ImportButton } from '../../components/ImportButton';
+import { mergeById, mergeByTicker, csvRowToHolding } from '../../utils/importData';
 
 const PIE_COLORS = {
   Stocks: '#f59e0b',
@@ -229,6 +231,7 @@ function AddHoldingForm({ onAdd, onCancel }) {
 export function Portfolio() {
   const [holdings, setHoldings] = useIDB('investments-portfolio', []);
   const [showAdd, setShowAdd] = useState(false);
+  const [importMsg, setImportMsg] = useState('');
 
   const addHolding = (h) => {
     setHoldings((prev) => [...prev, h]);
@@ -242,6 +245,31 @@ export function Portfolio() {
       prev.map((h) => (h.id === id ? { ...h, currentPrice: Number(price), lastUpdated: new Date().toISOString() } : h))
     );
   };
+
+  function showImportResult(imported, skipped) {
+    setImportMsg(`Imported ${imported} holding${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
+    setTimeout(() => setImportMsg(''), 4000);
+  }
+
+  function handleImportCSV(rows) {
+    const incoming = rows.map(csvRowToHolding);
+    setHoldings((prev) => {
+      const { merged, imported, skipped } = mergeByTicker(prev, incoming);
+      showImportResult(imported, skipped);
+      return merged;
+    });
+  }
+
+  function handleImportJSON(data) {
+    const incoming = Array.isArray(data)
+      ? data
+      : (data.investments?.portfolio || data.portfolio || []);
+    setHoldings((prev) => {
+      const { merged, imported, skipped } = mergeByTicker(prev, incoming);
+      showImportResult(imported, skipped);
+      return merged;
+    });
+  }
 
   const totals = calculatePortfolioTotals(holdings);
   const allocations = calculateAssetAllocation(holdings);
@@ -281,6 +309,26 @@ export function Portfolio() {
         <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
           <h3 className="text-[#e4e4e7] font-semibold mb-4">Asset Allocation</h3>
           <AssetPieChart allocations={allocations} />
+        </div>
+      )}
+
+      {/* Import buttons */}
+      <div className="flex flex-wrap gap-2">
+        <ImportButton
+          mode="csv"
+          label="📥 Import Portfolio (CSV)"
+          onImport={handleImportCSV}
+        />
+        <ImportButton
+          mode="json"
+          label="📥 Import Portfolio (JSON)"
+          onImport={handleImportJSON}
+        />
+      </div>
+
+      {importMsg && (
+        <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+          ✅ {importMsg}
         </div>
       )}
 

@@ -8,6 +8,8 @@ import { TransactionList } from './TransactionList';
 import { AddTransactionModal } from './AddTransactionModal';
 import { BudgetView } from './BudgetView';
 import { BudgetForm } from './BudgetForm';
+import { ImportButton } from '../../components/ImportButton';
+import { mergeById, csvRowToTransaction } from '../../utils/importData';
 
 function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -34,6 +36,33 @@ export function FinancePage() {
   const [aiInsights, setAiInsights] = useState(null);
   const [aiInsightsLoading, setAiInsightsLoading] = useState(false);
   const [aiInsightsError, setAiInsightsError] = useState(null);
+
+  // Import state
+  const [importMsg, setImportMsg] = useState('');
+
+  function showImportMsg(msg) {
+    setImportMsg(msg);
+    setTimeout(() => setImportMsg(''), 4000);
+  }
+
+  // Import handlers
+  function handleImportTransactionsCSV(rows) {
+    const incoming = rows.map(csvRowToTransaction);
+    setTransactions((prev) => {
+      const { merged, imported, skipped } = mergeById(prev, incoming);
+      showImportMsg(`Imported ${imported} transaction${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
+      return merged;
+    });
+  }
+
+  function handleImportAccountsJSON(data) {
+    const incoming = Array.isArray(data) ? data : (data.finance?.accounts || data.accounts || []);
+    setAccounts((prev) => {
+      const { merged, imported, skipped } = mergeById(prev, incoming);
+      showImportMsg(`Imported ${imported} account${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
+      return merged;
+    });
+  }
 
   // Account operations
   function handleSaveAccount(data) {
@@ -167,17 +196,41 @@ export function FinancePage() {
         ))}
       </div>
 
+      {/* Import flash */}
+      {importMsg && (
+        <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+          ✅ {importMsg}
+        </div>
+      )}
+
       {/* Tab content */}
       {activeTab === 'Accounts' && (
-        <AccountList
-          accounts={accounts}
-          onEdit={handleEditAccount}
-          onDelete={handleDeleteAccount}
-        />
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <ImportButton
+              mode="json"
+              label="📥 Import Accounts (JSON)"
+              onImport={handleImportAccountsJSON}
+            />
+          </div>
+          <AccountList
+            accounts={accounts}
+            onEdit={handleEditAccount}
+            onDelete={handleDeleteAccount}
+          />
+        </div>
       )}
 
       {activeTab === 'Transactions' && (
         <div className="space-y-4">
+          {/* Import */}
+          <div className="flex flex-wrap gap-2">
+            <ImportButton
+              mode="csv"
+              label="📥 Import Transactions (CSV)"
+              onImport={handleImportTransactionsCSV}
+            />
+          </div>
           {/* Filters */}
           <div className="flex gap-3 flex-wrap">
             <select

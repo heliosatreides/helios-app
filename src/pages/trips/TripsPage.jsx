@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { TripList } from './TripList';
 import { CreateTrip } from './CreateTrip';
 import { TripDetail } from './TripDetail';
 import { useIDB } from '../../hooks/useIDB';
+import { ImportButton } from '../../components/ImportButton';
+import { mergeById, csvRowToTrip } from '../../utils/importData';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -11,6 +14,7 @@ function generateId() {
 export function TripsPage() {
   const [trips, setTrips] = useIDB('helios-trips', []);
   const navigate = useNavigate();
+  const [importMsg, setImportMsg] = useState('');
 
   const handleCreate = (tripData) => {
     const newTrip = {
@@ -29,6 +33,27 @@ export function TripsPage() {
     setTrips((prev) => prev.map((t) => (t.id === updatedTrip.id ? updatedTrip : t)));
   };
 
+  const handleImportJSON = (data) => {
+    // Accept full helios export ({ trips: [...] }) or a trips-only array
+    const incoming = Array.isArray(data) ? data : (data.trips || []);
+    setTrips((prev) => {
+      const { merged, imported, skipped } = mergeById(prev, incoming);
+      setImportMsg(`Imported ${imported} trip${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
+      setTimeout(() => setImportMsg(''), 4000);
+      return merged;
+    });
+  };
+
+  const handleImportCSV = (rows) => {
+    const incoming = rows.map(csvRowToTrip);
+    setTrips((prev) => {
+      const { merged, imported, skipped } = mergeById(prev, incoming);
+      setImportMsg(`Imported ${imported} trip${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
+      setTimeout(() => setImportMsg(''), 4000);
+      return merged;
+    });
+  };
+
   return (
     <Routes>
       <Route
@@ -44,6 +69,27 @@ export function TripsPage() {
                 + New Trip
               </Link>
             </div>
+
+            {/* Import buttons */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <ImportButton
+                mode="json"
+                label="📥 Import Trips (JSON)"
+                onImport={handleImportJSON}
+              />
+              <ImportButton
+                mode="csv"
+                label="📥 Import Trips (CSV)"
+                onImport={handleImportCSV}
+              />
+            </div>
+
+            {importMsg && (
+              <div className="mb-4 text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+                ✅ {importMsg}
+              </div>
+            )}
+
             <TripList trips={trips} />
           </div>
         }

@@ -3,6 +3,8 @@ import { useAuth } from '../../auth/AuthContext';
 import { encrypt, decrypt } from '../../auth/crypto';
 import { useIDB } from '../../hooks/useIDB';
 import { exportAllAsJSON, exportAsCSV } from '../../utils/exportData';
+import { ImportButton } from '../../components/ImportButton';
+import { mergeById, mergeByTicker } from '../../utils/importData';
 
 const AI_KEY_ENC_LS = 'helios-gemini-key-enc';
 
@@ -63,16 +65,17 @@ export function SettingsPage() {
   const [testMsg, setTestMsg] = useState('');
   const [saved, setSaved] = useState(false);
 
-  // Export state
+  // Export/Import state
   const [exportFlash, setExportFlash] = useState(null);
+  const [importFlash, setImportFlash] = useState(null);
 
-  // IDB data for export
-  const [trips] = useIDB('helios-trips', []);
-  const [accounts] = useIDB('finance-accounts', []);
-  const [transactions] = useIDB('finance-transactions', []);
-  const [budgets] = useIDB('finance-budgets', []);
-  const [portfolio] = useIDB('investments-portfolio', []);
-  const [watchlist] = useIDB('investments-watchlist', []);
+  // IDB data for export/import
+  const [trips, setTrips] = useIDB('helios-trips', []);
+  const [accounts, setAccounts] = useIDB('finance-accounts', []);
+  const [transactions, setTransactions] = useIDB('finance-transactions', []);
+  const [budgets, setBudgets] = useIDB('finance-budgets', []);
+  const [portfolio, setPortfolio] = useIDB('investments-portfolio', []);
+  const [watchlist, setWatchlist] = useIDB('investments-watchlist', []);
   const [strategyNotes] = useIDB('investments-strategy-notes', '');
   const [favorites] = useIDB('helios-sports-favorites', []);
 
@@ -134,6 +137,56 @@ export function SettingsPage() {
   const showExportFlash = (label) => {
     setExportFlash(label);
     setTimeout(() => setExportFlash(null), 2000);
+  };
+
+  const handleImportAllJSON = (data) => {
+    const messages = [];
+
+    if (data.trips) {
+      setTrips((prev) => {
+        const { merged, imported, skipped } = mergeById(prev, data.trips);
+        messages.push(`${imported} trips (${skipped} skipped)`);
+        return merged;
+      });
+    }
+    if (data.finance?.accounts) {
+      setAccounts((prev) => {
+        const { merged, imported, skipped } = mergeById(prev, data.finance.accounts);
+        messages.push(`${imported} accounts (${skipped} skipped)`);
+        return merged;
+      });
+    }
+    if (data.finance?.transactions) {
+      setTransactions((prev) => {
+        const { merged, imported, skipped } = mergeById(prev, data.finance.transactions);
+        messages.push(`${imported} transactions (${skipped} skipped)`);
+        return merged;
+      });
+    }
+    if (data.finance?.budgets) {
+      setBudgets((prev) => {
+        const { merged, imported, skipped } = mergeById(prev, data.finance.budgets);
+        messages.push(`${imported} budgets (${skipped} skipped)`);
+        return merged;
+      });
+    }
+    if (data.investments?.portfolio) {
+      setPortfolio((prev) => {
+        const { merged, imported, skipped } = mergeByTicker(prev, data.investments.portfolio);
+        messages.push(`${imported} holdings (${skipped} skipped)`);
+        return merged;
+      });
+    }
+    if (data.investments?.watchlist) {
+      setWatchlist((prev) => {
+        const { merged, imported, skipped } = mergeById(prev, data.investments.watchlist);
+        messages.push(`${imported} watchlist items (${skipped} skipped)`);
+        return merged;
+      });
+    }
+
+    setImportFlash(messages.length ? messages.join(', ') : 'Nothing to import');
+    setTimeout(() => setImportFlash(null), 5000);
   };
 
   const handleExportJSON = () => {
@@ -331,6 +384,13 @@ export function SettingsPage() {
             </div>
           )}
 
+          {/* Import flash */}
+          {importFlash && (
+            <div className="text-xs px-3 py-2 rounded-lg border text-green-400 bg-green-400/10 border-green-400/20">
+              ✅ Imported: {importFlash}
+            </div>
+          )}
+
           {/* Full JSON export */}
           <div className="space-y-3">
             <h3 className="text-[#a1a1aa] text-sm font-medium">Full Export</h3>
@@ -342,6 +402,24 @@ export function SettingsPage() {
             </button>
             <p className="text-[#52525b] text-xs">
               Exports all trips, finance, investments, and sports data in a single structured JSON file.
+            </p>
+          </div>
+
+          <div className="border-t border-[#27272a]" />
+
+          {/* Full JSON import */}
+          <div className="space-y-3">
+            <h3 className="text-[#a1a1aa] text-sm font-medium">Full Import</h3>
+            <div className="px-3 py-2 rounded-lg border border-amber-400/30 bg-amber-400/5 text-amber-300 text-xs">
+              ⚠️ Importing will merge with existing data. Duplicates (by id) are skipped.
+            </div>
+            <ImportButton
+              mode="json"
+              label="📥 Import All Data (JSON)"
+              onImport={handleImportAllJSON}
+            />
+            <p className="text-[#52525b] text-xs">
+              Accepts a full Helios export JSON. All modules are merged at once. No data is deleted.
             </p>
           </div>
 
