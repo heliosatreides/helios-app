@@ -87,7 +87,7 @@ export function ChatPage() {
   const roomId = searchParams.get('room');
   const isGuest = Boolean(roomId);
 
-  const { peerId, messages, sendMessage, status } = usePeer({ isGuest, roomId });
+  const { peerId, messages, sendMessage, status, peerCount } = usePeer({ isGuest, roomId });
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
@@ -156,8 +156,17 @@ export function ChatPage() {
     return (
       <FullScreenDark>
         <Spinner />
-        <p className="mt-4 text-zinc-300 text-lg font-semibold">Waiting for someone to join…</p>
-        {chatLink && <CopyLinkBox link={chatLink} />}
+        {isGuest ? (
+          <>
+            <p className="mt-4 text-zinc-300 text-lg font-semibold">Joining chat room…</p>
+            <p className="mt-2 text-zinc-500 text-sm">Waiting for the host to be present</p>
+          </>
+        ) : (
+          <>
+            <p className="mt-4 text-zinc-300 text-lg font-semibold">Waiting for someone to join…</p>
+            {chatLink && <CopyLinkBox link={chatLink} />}
+          </>
+        )}
       </FullScreenDark>
     );
   }

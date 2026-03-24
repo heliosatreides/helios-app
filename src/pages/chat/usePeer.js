@@ -1,117 +1,118 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Peer from 'peerjs';
+
+// Generate a random room code
+export function generateRoomId() {
+  const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+  return Array.from(crypto.getRandomValues(new Uint8Array(8)))
+    .map(b => chars[b % chars.length])
+    .join('');
+}
 
 export function usePeer({ isGuest = false, roomId = null } = {}) {
-  const [peerId, setPeerId] = useState(null);
-  const [connection, setConnection] = useState(null);
+  const [peerId] = useState(() => isGuest ? null : roomId || generateRoomId());
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState('initializing');
+  const [peerCount, setPeerCount] = useState(0);
 
-  const peerRef = useRef(null);
-  const connectionRef = useRef(null);
-  const hasConnectionRef = useRef(false); // track before 'open' fires
+  const roomRef = useRef(null);
+  const sendRef = useRef(null);
+  const hasGuestRef = useRef(false);
 
-  const setupConn = useCallback((conn) => {
-    connectionRef.current = conn;
-    setConnection(conn);
-
-    conn.on('open', () => {
-      setStatus('connected');
-    });
-
-    conn.on('data', (data) => {
-      try {
-        const msg = typeof data === 'string' ? JSON.parse(data) : data;
-        setMessages((prev) => [...prev, { text: msg.text, from: 'them', timestamp: msg.timestamp ?? Date.now() }]);
-      } catch {
-        setMessages((prev) => [...prev, { text: String(data), from: 'them', timestamp: Date.now() }]);
-      }
-    });
-
-    conn.on('close', () => {
-      hasConnectionRef.current = false;
-      setStatus('disconnected');
-      setConnection(null);
-      connectionRef.current = null;
-    });
-
-    conn.on('error', () => {
-      hasConnectionRef.current = false;
-      setStatus('error');
-    });
-  }, []);
+  const actualRoomId = isGuest ? roomId : peerId;
 
   const sendMessage = useCallback((text) => {
-    if (!connectionRef.current || !text.trim()) return;
+    if (!sendRef.current || !text.trim()) return;
     const msg = { text: text.trim(), timestamp: Date.now() };
-    connectionRef.current.send(JSON.stringify(msg));
-    setMessages((prev) => [...prev, { text: text.trim(), from: 'you', timestamp: msg.timestamp }]);
+    sendRef.current(msg);
+    setMessages(prev => [...prev, { text: text.trim(), from: 'you', timestamp: msg.timestamp }]);
   }, []);
 
   useEffect(() => {
-    // Use explicit config with multiple reliable STUN/TURN servers
-    // and a timeout so we fail fast if the signaling server is down
-    const peer = new Peer(undefined, {
-      config: {
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          { urls: 'stun:stun1.l.google.com:19302' },
-          { urls: 'stun:stun2.l.google.com:19302' },
-          { urls: 'stun:global.stun.twilio.com:3478' },
-        ],
-      },
-      debug: 0,
-    });
-    peerRef.current = peer;
-
-    // Timeout if signaling server doesn't respond in 10s
-    const timeout = setTimeout(() => {
-      if (!peerId) {
-        setStatus('error');
-        peer.destroy();
-      }
-    }, 10000);
-
-    peer.on('open', (id) => {
-      clearTimeout(timeout);
-      setPeerId(id);
-
-      if (isGuest && roomId) {
-        // Guest: connect to host
-        const conn = peer.connect(roomId);
-        hasConnectionRef.current = true;
-        setupConn(conn);
-      } else {
-        // Host: wait for incoming connection
-        setStatus('waiting');
-      }
-    });
-
-    // Host: handle incoming connections
-    if (!isGuest) {
-      peer.on('connection', (conn) => {
-        if (hasConnectionRef.current) {
-          // Already connected — reject second attempt
-          conn.close();
-          return;
-        }
-        hasConnectionRef.current = true;
-        setupConn(conn);
-      });
+    if (!actualRoomId) {
+      setStatus('error');
+      return;
     }
 
-    peer.on('error', () => {
-      setStatus('error');
-    });
+    let cancelled = false;
+
+    async function setup() {
+      try {
+        // Dynamic import so it doesn't break SSR/tests
+        const { joinRoom } = await import('trystero/nostr');
+
+        if (cancelled) return;
+
+        const appId = 'helios-p2p-chat-v1';
+        const room = joinRoom({ appId }, actualRoomId);
+        roomRef.current = room;
+
+        // Set up send/receive for messages
+        const [sendMsg, onMsg] = room.makeAction('msg');
+        sendRef.current = sendMsg;
+
+        onMsg((data) => {
+          setMessages(prev => [...prev, {
+            text: data.text,
+            from: 'them',
+            timestamp: data.timestamp ?? Date.now()
+          }]);
+        });
+
+        // Track peer presence
+        room.onPeerJoin((peerId) => {
+          if (isGuest) {
+            // Guest joined — we're connected to host
+            setStatus('connected');
+          } else {
+            // Host — guest joined
+            if (hasGuestRef.current) {
+              // Second guest — kick them out by... we can't kick in Trystero
+              // But we can ignore their messages and show warning
+            } else {
+              hasGuestRef.current = true;
+              setStatus('connected');
+            }
+          }
+          setPeerCount(c => c + 1);
+        });
+
+        room.onPeerLeave(() => {
+          hasGuestRef.current = false;
+          setPeerCount(c => Math.max(0, c - 1));
+          setStatus('disconnected');
+        });
+
+        // For guest: set a timeout — if no peer joins in 15s, room may not exist
+        if (isGuest) {
+          setTimeout(() => {
+            if (!cancelled && status !== 'connected') {
+              // Still waiting — but Trystero doesn't have a "room not found" concept
+              // so we stay waiting (host may just be slow to load)
+            }
+          }, 15000);
+        }
+
+        // Mark as waiting (host) or connecting (guest)
+        setStatus(isGuest ? 'waiting' : 'waiting');
+
+      } catch (err) {
+        if (!cancelled) {
+          console.error('Trystero setup error:', err);
+          setStatus('error');
+        }
+      }
+    }
+
+    setup();
 
     return () => {
-      clearTimeout(timeout);
-      if (peerRef.current) {
-        peerRef.current.destroy();
-        peerRef.current = null;
+      cancelled = true;
+      if (roomRef.current) {
+        roomRef.current.leave();
+        roomRef.current = null;
       }
     };
-  }, [isGuest, roomId, setupConn]);
+  }, [actualRoomId, isGuest]);
 
-  return { peerId, connection, messages, sendMessage, status };
+  return { peerId: actualRoomId, messages, sendMessage, status, peerCount };
 }
