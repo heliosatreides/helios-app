@@ -43,7 +43,32 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         if (cancelled) return;
 
         const appId = 'helios-p2p-chat-v1';
-        const room = joinRoom({ appId }, actualRoomId);
+
+        // ICE config with STUN + free TURN servers for NAT traversal
+        // TURN is required for mobile (carrier NAT) and strict firewalls
+        const rtcConfig = {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            {
+              urls: 'turn:openrelay.metered.ca:80',
+              username: 'openrelayproject',
+              credential: 'openrelayproject',
+            },
+            {
+              urls: 'turn:openrelay.metered.ca:443',
+              username: 'openrelayproject',
+              credential: 'openrelayproject',
+            },
+            {
+              urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+              username: 'openrelayproject',
+              credential: 'openrelayproject',
+            },
+          ],
+        };
+
+        const room = joinRoom({ appId, rtcConfig }, actualRoomId);
         roomRef.current = room;
 
         // Set up send/receive for messages
