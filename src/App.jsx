@@ -132,7 +132,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<RootRoute />} />
-          <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="/*" element={<AppShell />} />
         </Routes>
       </AuthProvider>
