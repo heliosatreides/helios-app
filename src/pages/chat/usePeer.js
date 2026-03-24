@@ -44,6 +44,10 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
         const appId = 'helios-p2p-chat-v1';
 
+        // Pin to a small set of fast, well-known Nostr relays
+        // instead of Trystero's random 75+ relay list
+        const relayRedundancy = 2; // connect to 2 relays for redundancy
+
         // ICE config with STUN + free TURN servers for NAT traversal
         // TURN is required for mobile (carrier NAT) and strict firewalls
         const rtcConfig = {
@@ -68,7 +72,18 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           ],
         };
 
-        const room = joinRoom({ appId, rtcConfig }, actualRoomId);
+        const room = joinRoom({
+          appId,
+          rtcConfig,
+          relayRedundancy,
+          relayUrls: [
+            'wss://relay.damus.io',
+            'wss://nos.lol',
+            'wss://relay.nostr.place',
+            'wss://purplerelay.com',
+            'wss://nostr.data.haus',
+          ],
+        }, actualRoomId);
         roomRef.current = room;
 
         // Set up send/receive for messages
