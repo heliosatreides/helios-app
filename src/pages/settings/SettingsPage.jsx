@@ -53,8 +53,23 @@ export async function callGemini(apiKey, prompt) {
 }
 
 export function SettingsPage() {
-  const { user, password } = useAuth();
+  const { user, password, needsReauth, login } = useAuth();
   const [activeTab, setActiveTab] = useState('ai');
+
+  // Re-auth state — shown when session survived a refresh but password is gone
+  const [reAuthPwd, setReAuthPwd] = useState('');
+  const [reAuthError, setReAuthError] = useState('');
+
+  const handleReAuth = async (e) => {
+    e.preventDefault();
+    try {
+      await login(user.username, reAuthPwd);
+      setReAuthPwd('');
+      setReAuthError('');
+    } catch {
+      setReAuthError('Incorrect password');
+    }
+  };
 
   // AI Integration state
   const [apiKey, setApiKey] = useState('');
@@ -310,7 +325,34 @@ export function SettingsPage() {
             Your key is stored locally and only sent to Google's servers.
           </p>
 
-          {decryptError && (
+          {needsReauth && (
+            <form onSubmit={handleReAuth} className="space-y-2">
+              <p className="text-xs text-amber-400/80 px-3 py-2 rounded-lg border border-amber-400/20 bg-amber-400/5">
+                Your session was restored after a page refresh. Re-enter your password to access your encrypted API key.
+              </p>
+              <div className="flex gap-2">
+                <input
+                  className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] flex-1"
+                  type="password"
+                  placeholder="Password"
+                  value={reAuthPwd}
+                  onChange={(e) => { setReAuthPwd(e.target.value); setReAuthError(''); }}
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+                >
+                  Unlock
+                </button>
+              </div>
+              {reAuthError && (
+                <p className="text-xs text-red-400">{reAuthError}</p>
+              )}
+            </form>
+          )}
+
+          {!needsReauth && decryptError && (
             <div className="text-xs px-3 py-2 rounded-lg border text-red-400 bg-red-400/10 border-red-400/20">
               Could not decrypt key — please re-enter
             </div>

@@ -78,8 +78,12 @@ export function AuthProvider({ children }) {
     setPassword(null);
   }, []);
 
+  // True when a session was restored from sessionStorage but the in-memory
+  // password was lost (e.g. after a page refresh).
+  const needsReauth = user !== null && password === null;
+
   return (
-    <AuthContext.Provider value={{ user, password, login, logout, register }}>
+    <AuthContext.Provider value={{ user, password, needsReauth, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

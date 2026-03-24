@@ -79,7 +79,7 @@ describe('useGemini', () => {
     expect(text).toBe('Activity 1, Activity 2, Activity 3');
     expect(result.current.error).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('gemini-2.0-flash:generateContent'),
+      expect.stringContaining('gemini-2.5-flash:generateContent'),
       expect.objectContaining({ method: 'POST' })
     );
   });
