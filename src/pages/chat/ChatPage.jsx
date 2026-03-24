@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { usePeer } from './usePeer';
 import { ChatMessage } from './ChatMessage';
+import { useAIControl } from './useAIControl';
 
 function CopyButton({ text, label = 'Copy' }) {
   const [copied, setCopied] = useState(false);
@@ -126,6 +127,47 @@ function ChatInput({ onSend }) {
   );
 }
 
+function AIControlToggle({ enabled, onToggle, processing, hasKey }) {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const handleClick = () => {
+    if (!hasKey) {
+      setShowTooltip(true);
+      setTimeout(() => setShowTooltip(false), 3000);
+      return;
+    }
+    onToggle(!enabled);
+  };
+
+  return (
+    <div className="relative flex items-center gap-1.5">
+      {processing && (
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+      )}
+      <button
+        onClick={handleClick}
+        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+          enabled
+            ? 'bg-violet-600/30 border border-violet-500/50 text-violet-300'
+            : 'bg-zinc-800 border border-zinc-700 text-zinc-500 hover:text-zinc-300'
+        }`}
+        title={hasKey ? 'Toggle AI Control Mode' : 'Set your Gemini key in Settings first'}
+      >
+        <span>🤖</span>
+        <span>{enabled ? 'AI On' : 'AI'}</span>
+        <span className={`w-6 h-3 rounded-full relative transition-colors ${enabled ? 'bg-violet-500' : 'bg-zinc-600'}`}>
+          <span className={`absolute top-0.5 w-2 h-2 rounded-full bg-white transition-all ${enabled ? 'left-3.5' : 'left-0.5'}`} />
+        </span>
+      </button>
+      {showTooltip && (
+        <div className="absolute right-0 top-full mt-1.5 w-48 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-xs text-zinc-300 shadow-xl z-50 pointer-events-none">
+          Set your Gemini key in Settings first
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ChatPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -134,6 +176,12 @@ export function ChatPage() {
 
   const { peerId, messages, sendMessage, status, reconnecting, peerCount, leave, debugLog } =
     usePeer({ isGuest, roomId });
+
+  const { aiEnabled, setAiEnabled, aiProcessing, hasKey } = useAIControl({
+    messages,
+    sendMessage,
+    enabled: false,
+  });
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
@@ -210,11 +258,19 @@ export function ChatPage() {
           <div>
             <span className="text-zinc-100 text-sm font-semibold">P2P Chat</span>
             <span className="text-zinc-600 text-xs ml-2">
-              {peerCount > 0 ? '🔒 End-to-end encrypted' : 'waiting…'}
+              {peerCount > 0 ? (aiEnabled ? '🤖 AI Control On' : '🔒 End-to-end encrypted') : 'waiting…'}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {isGuest && (
+            <AIControlToggle
+              enabled={aiEnabled}
+              onToggle={setAiEnabled}
+              processing={aiProcessing}
+              hasKey={hasKey}
+            />
+          )}
           <button
             onClick={handleLeave}
             className="text-zinc-500 hover:text-red-400 text-xs font-medium transition-colors px-2 py-1 rounded-lg hover:bg-red-950/30"
