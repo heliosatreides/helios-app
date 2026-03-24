@@ -62,7 +62,10 @@ export const FEED_TOPICS = [
   {
     id: 'finance',
     label: '📈 Finance',
-    feeds: ['https://feeds.reuters.com/reuters/businessNews'],
+    feeds: [
+      'https://feeds.marketwatch.com/marketwatch/topstories/',
+      'https://www.cnbc.com/id/100003114/device/rss/rss.html',
+    ],
   },
   {
     id: 'crypto',

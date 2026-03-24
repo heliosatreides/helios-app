@@ -105,7 +105,102 @@ function LoginModal({ onSuccess, onCancel }) {
   );
 }
 
-function WaitingHost({ chatLink, debugLog }) {
+/* ─── Chat Lobby ─────────────────────────────────────────────────── */
+
+function ChatLobby({ onCreateRoom, onJoinRoom }) {
+  const [roomCode, setRoomCode] = useState('');
+  const [joinError, setJoinError] = useState('');
+
+  const handleJoin = (e) => {
+    e.preventDefault();
+    const code = roomCode.trim().toLowerCase();
+    if (!code) {
+      setJoinError('Please enter a room code');
+      return;
+    }
+    if (code.length < 4) {
+      setJoinError('Room code is too short');
+      return;
+    }
+    setJoinError('');
+    onJoinRoom(code);
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-[#0a0a0b] px-6">
+      <div className="w-full max-w-md space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/20 mb-5">
+            <span className="text-3xl">💬</span>
+          </div>
+          <h1 className="text-2xl font-bold text-zinc-100 mb-2">P2P Ephemeral Chat</h1>
+          <p className="text-zinc-500 text-sm max-w-sm mx-auto">
+            End-to-end encrypted. No servers. Messages disappear when you leave.
+          </p>
+        </div>
+
+        {/* Create Room */}
+        <div className="space-y-3">
+          <button
+            onClick={onCreateRoom}
+            className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-amber-500 text-[#0a0a0b] font-semibold text-base hover:bg-amber-400 active:scale-[0.98] transition-all shadow-lg shadow-amber-500/10"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Create New Room
+          </button>
+          <p className="text-zinc-600 text-xs text-center">Start a room and share the link with someone</p>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-zinc-800" />
+          <span className="text-zinc-600 text-xs font-medium uppercase tracking-wider">or join existing</span>
+          <div className="flex-1 h-px bg-zinc-800" />
+        </div>
+
+        {/* Join Room */}
+        <form onSubmit={handleJoin} className="space-y-3">
+          <div className="relative">
+            <input
+              type="text"
+              value={roomCode}
+              onChange={(e) => { setRoomCode(e.target.value); setJoinError(''); }}
+              placeholder="Enter room code or paste invite link"
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-2xl px-5 py-4 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition-all"
+              autoFocus
+            />
+          </div>
+          {joinError && <p className="text-red-400 text-xs pl-1">{joinError}</p>}
+          <button
+            type="submit"
+            disabled={!roomCode.trim()}
+            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-zinc-700 text-zinc-200 font-medium hover:border-amber-500/40 hover:text-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>
+            </svg>
+            Join Room
+          </button>
+        </form>
+
+        {/* Info */}
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-zinc-900/50 border border-zinc-800/50">
+          <span className="text-zinc-600 mt-0.5">🔒</span>
+          <p className="text-zinc-600 text-xs leading-relaxed">
+            Messages are sent directly between browsers using WebRTC. Nothing is stored on any server. The chat room is destroyed when both parties leave.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Waiting screens ────────────────────────────────────────────── */
+
+function WaitingHost({ chatLink, debugLog, onBack }) {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6 overflow-y-auto py-8">
       <div className="w-full max-w-sm space-y-4">
@@ -120,16 +215,39 @@ function WaitingHost({ chatLink, debugLog }) {
 
         <div className="text-center">
           <h2 className="text-lg font-semibold text-zinc-100 mb-1">Waiting for someone to join</h2>
-          <p className="text-zinc-500 text-sm">Share the link below</p>
+          <p className="text-zinc-500 text-sm">Share the link or room code below</p>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-          <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Invite Link</p>
-          <div className="flex items-center gap-2">
-            <span className="flex-1 text-zinc-300 text-xs font-mono break-all truncate">{chatLink}</span>
-            <CopyButton text={chatLink} />
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-3">
+          <div>
+            <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Invite Link</p>
+            <div className="flex items-center gap-2">
+              <span className="flex-1 text-zinc-300 text-xs font-mono break-all truncate">{chatLink}</span>
+              <CopyButton text={chatLink} />
+            </div>
           </div>
+          {chatLink && (
+            <div>
+              <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Room Code</p>
+              <div className="flex items-center gap-2">
+                <span className="text-zinc-200 text-sm font-mono tracking-wider">
+                  {new URL(chatLink).searchParams.get('room') || ''}
+                </span>
+                <CopyButton
+                  text={new URL(chatLink).searchParams.get('room') || ''}
+                  label="Copy Code"
+                />
+              </div>
+            </div>
+          )}
         </div>
+
+        <button
+          onClick={onBack}
+          className="w-full py-2.5 rounded-xl border border-zinc-800 text-zinc-500 text-sm hover:text-zinc-300 hover:border-zinc-700 transition-colors"
+        >
+          ← Back to Lobby
+        </button>
 
         <DebugPanel log={debugLog} />
       </div>
@@ -137,16 +255,24 @@ function WaitingHost({ chatLink, debugLog }) {
   );
 }
 
-function WaitingGuest({ debugLog }) {
+function WaitingGuest({ debugLog, onBack }) {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
       <Spinner size={8} />
       <p className="mt-5 text-zinc-200 font-semibold">Connecting…</p>
       <p className="mt-1 text-zinc-600 text-sm">Waiting for the host to be present</p>
+      <button
+        onClick={onBack}
+        className="mt-6 py-2 px-4 rounded-xl border border-zinc-800 text-zinc-500 text-sm hover:text-zinc-300 hover:border-zinc-700 transition-colors"
+      >
+        ← Back
+      </button>
       <DebugPanel log={debugLog} />
     </div>
   );
 }
+
+/* ─── Chat Input ─────────────────────────────────────────────────── */
 
 function ChatInput({ onSend }) {
   const [text, setText] = useState('');
@@ -173,7 +299,7 @@ function ChatInput({ onSend }) {
         value={text}
         onChange={e => setText(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Message…"
+        placeholder="Type a message…"
         rows={1}
         autoFocus
         className="flex-1 bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 resize-none focus:outline-none focus:border-zinc-600 transition-colors"
@@ -192,6 +318,8 @@ function ChatInput({ onSend }) {
     </div>
   );
 }
+
+/* ─── AI Control Toggle ──────────────────────────────────────────── */
 
 function AIControlToggle({ enabled, onToggle, processing, hasKey, onLoginRequired }) {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -241,14 +369,22 @@ function AIControlToggle({ enabled, onToggle, processing, hasKey, onLoginRequire
   );
 }
 
+/* ─── Main ChatPage ──────────────────────────────────────────────── */
+
 export function ChatPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const roomId = searchParams.get('room');
-  const isGuest = Boolean(roomId);
+  const roomParam = searchParams.get('room');
+
+  // State machine: 'lobby' | 'hosting' | 'joining'
+  const [mode, setMode] = useState(() => roomParam ? 'joining' : 'lobby');
+  const [joinRoomId, setJoinRoomId] = useState(roomParam || null);
+
+  const isGuest = mode === 'joining';
+  const activeRoomId = isGuest ? joinRoomId : null;
 
   const { peerId, messages, sendMessage, status, reconnecting, peerCount, leave, debugLog } =
-    usePeer({ isGuest, roomId });
+    usePeer({ isGuest, roomId: activeRoomId, active: mode !== 'lobby' });
 
   const { aiEnabled, setAiEnabled, aiProcessing, hasKey } = useAIControl({
     messages,
@@ -265,10 +401,43 @@ export function ChatPage() {
 
   const chatLink = peerId ? `${window.location.origin}/chat?room=${peerId}` : null;
 
+  const handleCreateRoom = useCallback(() => {
+    setMode('hosting');
+  }, []);
+
+  const handleJoinRoom = useCallback((code) => {
+    // Support pasting full URLs
+    let roomId = code;
+    try {
+      const url = new URL(code);
+      const r = url.searchParams.get('room');
+      if (r) roomId = r;
+    } catch {
+      // not a URL, use as-is
+    }
+    setJoinRoomId(roomId);
+    setMode('joining');
+    setSearchParams({ room: roomId });
+  }, [setSearchParams]);
+
+  const handleBack = useCallback(() => {
+    leave();
+    setMode('lobby');
+    setJoinRoomId(null);
+    setSearchParams({});
+  }, [leave, setSearchParams]);
+
   const handleLeave = useCallback(() => {
     leave();
-    navigate('/chat');
-  }, [leave, navigate]);
+    setMode('lobby');
+    setJoinRoomId(null);
+    setSearchParams({});
+  }, [leave, setSearchParams]);
+
+  // Lobby screen
+  if (mode === 'lobby') {
+    return <ChatLobby onCreateRoom={handleCreateRoom} onJoinRoom={handleJoinRoom} />;
+  }
 
   if (status === 'initializing') {
     return (
@@ -290,25 +459,33 @@ export function ChatPage() {
           <p className="text-zinc-500 text-sm mb-6">
             {isGuest ? 'The host may have left or the link is invalid.' : 'Check your connection and try again.'}
           </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold hover:bg-amber-400 transition-colors"
-          >
-            Try Again
-          </button>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-5 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold hover:bg-amber-400 transition-colors"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={handleBack}
+              className="px-5 py-2.5 rounded-xl border border-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors"
+            >
+              Back
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
-  // Guest waiting for host — only if we've NEVER connected (no messages, not reconnecting)
+  // Guest waiting for host
   if (isGuest && status === 'waiting' && peerCount === 0 && !reconnecting && messages.length === 0) {
-    return <WaitingGuest debugLog={debugLog} />;
+    return <WaitingGuest debugLog={debugLog} onBack={handleBack} />;
   }
 
-  // Host waiting for guest — only if we've never had a peer yet
+  // Host waiting for guest
   if (!isGuest && status === 'waiting' && messages.length === 0 && !reconnecting) {
-    return <WaitingHost chatLink={chatLink} debugLog={debugLog} />;
+    return <WaitingHost chatLink={chatLink} debugLog={debugLog} onBack={handleBack} />;
   }
 
   return (

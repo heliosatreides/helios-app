@@ -18,31 +18,31 @@ const navGroups = [
       { to: '/finance', label: 'Finance', icon: '💰' },
       { to: '/investments', label: 'Investments', icon: '📈' },
       { to: '/sports', label: 'Sports', icon: '🏆' },
+      { to: '/health', label: 'Health', icon: '🏥' },
+      { to: '/meals', label: 'Meals', icon: '🍽️' },
+      { to: '/subscriptions', label: 'Subscriptions', icon: '📋' },
     ],
   },
   {
     label: 'Tools',
     items: [
-      { to: '/chat', label: 'Chat', icon: '💬' },
-      { to: '/devtools', label: 'Dev Tools', icon: '💻' },
+      { to: '/chat', label: 'P2P Chat', icon: '💬' },
       { to: '/focus', label: 'Focus', icon: '🔥' },
-      { to: '/health', label: 'Health', icon: '🏥' },
       { to: '/knowledge', label: 'Knowledge', icon: '📚' },
       { to: '/networking', label: 'Networking', icon: '🤝' },
       { to: '/news', label: 'News', icon: '📰' },
-      { to: '/converter', label: 'Converter', icon: '🔄' },
-      { to: '/worldclock', label: 'World Clock', icon: '🕐' },
       { to: '/flashcards', label: 'Flashcards', icon: '🃏' },
-      { to: '/meals', label: 'Meals', icon: '🍽️' },
-      { to: '/splitter', label: 'Splitter', icon: '💸' },
-      { to: '/subscriptions', label: 'Subscriptions', icon: '📋' },
       { to: '/music', label: 'Music', icon: '🎵' },
+      { to: '/splitter', label: 'Splitter', icon: '💸' },
       { to: '/packing', label: 'Packing', icon: '🧳' },
     ],
   },
   {
     label: 'Developer',
     items: [
+      { to: '/devtools', label: 'Dev Tools', icon: '💻' },
+      { to: '/converter', label: 'Converter', icon: '🔄' },
+      { to: '/worldclock', label: 'World Clock', icon: '🕐' },
       { to: '/apiplayground', label: 'API Playground', icon: '🔌' },
       { to: '/colors', label: 'Colors', icon: '🎨' },
       { to: '/wiki', label: 'Wiki', icon: '📝' },
@@ -62,15 +62,22 @@ export function Sidebar({ onNavClick }) {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="w-56 bg-[#111113] border-r border-[#27272a] flex flex-col h-full shrink-0 overflow-y-auto">
-      <div className="p-5 border-b border-[#27272a] shrink-0">
-        <h1 className="text-xl font-bold text-[#e4e4e7]">Helios <span className="text-amber-400">☀️</span></h1>
+    <aside className="w-60 bg-[#0c0c0e] border-r border-[#1c1c20] flex flex-col h-full shrink-0 overflow-hidden">
+      {/* Logo */}
+      <div className="px-5 py-5 border-b border-[#1c1c20] shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-sm font-bold text-black">
+            H
+          </div>
+          <span className="text-lg font-bold text-[#e4e4e7]">Helios</span>
+        </div>
       </div>
-      <nav className="flex-1 p-3 space-y-4">
-        {navGroups.map((group, gi) => (
+
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-5 scrollbar-hide">
+        {navGroups.map((group) => (
           <div key={group.label}>
-            {gi > 0 && <div className="border-t border-[#27272a]/60 mb-3" />}
-            <p className="text-[#3f3f46] text-[10px] font-semibold uppercase tracking-widest px-3 mb-1">
+            <p className="text-[#3f3f46] text-[10px] font-semibold uppercase tracking-[0.12em] px-3 mb-1.5">
               {group.label}
             </p>
             <div className="space-y-0.5">
@@ -80,14 +87,14 @@ export function Sidebar({ onNavClick }) {
                   to={to}
                   onClick={onNavClick}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative ${
+                    `group flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium transition-all duration-150 ${
                       isActive
-                        ? 'bg-amber-500/10 text-[#f59e0b] border-l-2 border-amber-500 pl-[10px]'
-                        : 'text-[#71717a] hover:text-[#e4e4e7] hover:bg-[#27272a] border-l-2 border-transparent pl-[10px]'
+                        ? 'bg-amber-500/10 text-amber-400'
+                        : 'text-[#71717a] hover:text-[#e4e4e7] hover:bg-[#18181b]'
                     }`
                   }
                 >
-                  <span className="shrink-0">{icon}</span>
+                  <span className="shrink-0 text-base w-5 text-center">{icon}</span>
                   <span className="truncate">{label}</span>
                 </NavLink>
               ))}
@@ -95,21 +102,27 @@ export function Sidebar({ onNavClick }) {
           </div>
         ))}
       </nav>
+
+      {/* User section */}
       {user && (
-        <div className="p-3 border-t border-[#27272a] shrink-0">
-          <div className="flex items-center justify-between px-3 py-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold shrink-0">
+        <div className="px-3 py-3 border-t border-[#1c1c20] shrink-0">
+          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#111113]">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-black flex items-center justify-center text-xs font-bold shrink-0">
                 {user.username[0].toUpperCase()}
               </span>
-              <span className="text-[#a1a1aa] text-xs truncate">{user.username}</span>
+              <span className="text-[#a1a1aa] text-xs font-medium truncate">{user.username}</span>
             </div>
             <button
               onClick={logout}
-              className="text-[#52525b] hover:text-red-400 text-xs ml-2 transition-colors shrink-0"
+              className="text-[#3f3f46] hover:text-red-400 text-xs ml-2 transition-colors shrink-0 p-1 rounded-lg hover:bg-red-950/20"
               title="Sign out"
             >
-              ⏏
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16,17 21,12 16,7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
             </button>
           </div>
         </div>

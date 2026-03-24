@@ -68,16 +68,21 @@ function AppShell() {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar (mobile) */}
-        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[#27272a] bg-[#111113]">
+        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[#1c1c20] bg-[#0c0c0e]">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-[#71717a] hover:text-[#e4e4e7] p-1"
+            className="text-[#71717a] hover:text-[#e4e4e7] p-1.5 rounded-lg hover:bg-[#18181b] transition-colors"
             aria-label="Open menu"
           >
-            ☰
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
           </button>
-          <span className="text-[#e4e4e7] font-bold">Helios ☀️</span>
-          <div className="w-7" />
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-xs font-bold text-black">H</div>
+            <span className="text-[#e4e4e7] font-bold text-sm">Helios</span>
+          </div>
+          <div className="w-8" />
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">

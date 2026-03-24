@@ -34,7 +34,7 @@ async function getIceServers() {
   ];
 }
 
-export function usePeer({ isGuest = false, roomId = null } = {}) {
+export function usePeer({ isGuest = false, roomId = null, active = true } = {}) {
   const [peerId] = useState(() => isGuest ? null : roomId || generateRoomId());
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState('initializing');
@@ -72,6 +72,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   }, []);
 
   useEffect(() => {
+    if (!active) return;
     if (!actualRoomId) { setStatus('error'); return; }
 
     let cancelled = false;
@@ -430,7 +431,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
       if (connRef.current) { connRef.current.close(); connRef.current = null; }
       if (peerRef.current) { peerRef.current.destroy(); peerRef.current = null; }
     };
-  }, [actualRoomId, isGuest]);
+  }, [actualRoomId, isGuest, active]);
 
   return { peerId: effectiveRoomId ?? actualRoomId, messages, sendMessage, status, reconnecting, peerCount, leave, debugLog };
 }
