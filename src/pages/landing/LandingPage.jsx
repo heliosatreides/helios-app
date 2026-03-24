@@ -20,6 +20,10 @@ const ALL_FEATURES = [
   { icon: '🔄', title: 'Currency & Unit Converter', category: 'Developer', desc: 'Live exchange rates, length, weight, temperature, data, and time unit conversions.' },
   { icon: '🕐', title: 'World Clock', category: 'Developer', desc: 'Add cities, see live times, business hours indicator, and meeting planner across timezones.' },
   { icon: '🃏', title: 'Flashcards', category: 'Developer', desc: 'Decks with spaced repetition (Easy/Good/Hard). AI generates flashcards from any text.' },
+  { icon: '📰', title: 'News Aggregator', category: 'Developer', desc: 'General, Tech, Startups, Finance, Crypto, Sports, AI feeds. AI briefings and personalized picks.' },
+  { icon: '🔄', title: 'Currency & Unit Converter', category: 'Developer', desc: 'Live exchange rates, length, weight, temperature, data, and time unit conversions.' },
+  { icon: '🕐', title: 'World Clock', category: 'Developer', desc: 'Live times for 25+ cities, business hours indicator, and a meeting planner across timezones.' },
+  { icon: '🔐', title: 'Password Generator', category: 'Developer', desc: 'Cryptographically secure passwords with strength meter. Adjustable length, character sets, clipboard copy.' },
 ];
 
 const CATEGORIES = ['Personal', 'Productivity', 'Developer'];
