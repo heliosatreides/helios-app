@@ -49,10 +49,31 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   }, []);
 
   useEffect(() => {
-    const peer = new Peer();
+    // Use explicit config with multiple reliable STUN/TURN servers
+    // and a timeout so we fail fast if the signaling server is down
+    const peer = new Peer(undefined, {
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:global.stun.twilio.com:3478' },
+        ],
+      },
+      debug: 0,
+    });
     peerRef.current = peer;
 
+    // Timeout if signaling server doesn't respond in 10s
+    const timeout = setTimeout(() => {
+      if (!peerId) {
+        setStatus('error');
+        peer.destroy();
+      }
+    }, 10000);
+
     peer.on('open', (id) => {
+      clearTimeout(timeout);
       setPeerId(id);
 
       if (isGuest && roomId) {
@@ -84,6 +105,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     });
 
     return () => {
+      clearTimeout(timeout);
       if (peerRef.current) {
         peerRef.current.destroy();
         peerRef.current = null;

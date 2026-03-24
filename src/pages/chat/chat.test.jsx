@@ -113,7 +113,7 @@ describe('ChatMessage component', () => {
 describe('ChatPage — host flow', () => {
   it('shows initializing state before peer opens', () => {
     renderChat();
-    expect(screen.getByText(/connecting to signaling server/i)).toBeInTheDocument();
+    expect(screen.getByText(/setting up secure connection/i)).toBeInTheDocument();
   });
 
   it('host: generates a peer ID on mount and shows waiting state with share link', async () => {

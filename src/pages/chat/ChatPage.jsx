@@ -108,7 +108,8 @@ export function ChatPage() {
     return (
       <FullScreenDark>
         <Spinner />
-        <p className="mt-4 text-zinc-400 text-sm">Connecting to signaling server…</p>
+        <p className="mt-4 text-zinc-400 text-sm">Setting up secure connection…</p>
+        <p className="mt-2 text-zinc-600 text-xs">This usually takes 2-3 seconds</p>
       </FullScreenDark>
     );
   }
@@ -133,7 +134,20 @@ export function ChatPage() {
   if (status === 'error') {
     return (
       <FullScreenDark>
-        <p className="text-red-400">Connection error. Please refresh and try again.</p>
+        <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 max-w-sm w-full text-center">
+          <p className="text-red-400 text-lg font-semibold mb-2">Could not connect</p>
+          <p className="text-zinc-400 text-sm mb-6">
+            {isGuest
+              ? 'The room is unavailable or the host has left.'
+              : 'Could not reach the signaling server. Check your connection and try again.'}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold hover:bg-amber-400 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </FullScreenDark>
     );
   }
