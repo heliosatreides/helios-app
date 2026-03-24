@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
 import { useTodaySchedule } from '../../hooks/useTodaySchedule';
+import { useGemini } from '../../hooks/useGemini';
 
 function TodayFocusCard() {
   const today = getTodayStr();
@@ -48,6 +50,10 @@ function TodayFocusCard() {
 }
 
 export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
+  const { generate, loading: aiLoading, hasKey } = useGemini();
+  const [digest, setDigest] = useState(null);
+  const [digestError, setDigestError] = useState(null);
+
   const upcomingTrips = trips.filter((t) => t.status === 'Upcoming' || t.status === 'Planning');
   const totalBudget = upcomingTrips.reduce((sum, t) => sum + t.budget, 0);
   const recentTrips = [...trips].slice(0, 5);
@@ -77,8 +83,71 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
     return Math.round((within / budgets.length) * 100);
   })();
 
+  const { tasks } = useTasks();
+  const today = getTodayStr();
+  const tasksThisWeek = (() => {
+    try {
+      const d = new Date(today);
+      const end = new Date(d);
+      end.setDate(d.getDate() + 7);
+      const endStr = end.toISOString().slice(0, 10);
+      return (tasks || []).filter((t) => !t.done && t.dueDate >= today && t.dueDate <= endStr).length;
+    } catch { return 0; }
+  })();
+
+  const handleWeeklyDigest = async () => {
+    setDigestError(null);
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    const monthlyExpenses = transactions.filter((t) => t.type === 'expense' && t.date.startsWith(currentMonth));
+    const totalSpend = monthlyExpenses.reduce((s, t) => s + t.amount, 0);
+    const totalBudgetLimit = budgets.reduce((s, b) => s + b.limit, 0);
+    const spendPct = totalBudgetLimit > 0 ? ((totalSpend / totalBudgetLimit) * 100).toFixed(0) : null;
+    const portVal = portfolio.reduce((s, h) => s + h.shares * h.currentPrice, 0);
+    const portCost = portfolio.reduce((s, h) => s + h.shares * h.costBasis, 0);
+    const portPct = portCost > 0 ? (((portVal - portCost) / portCost) * 100).toFixed(1) : null;
+    const prompt = `Give me a brief personalized weekly digest (3-4 sentences) based on these stats: ${upcomingTrips.length} upcoming trips, monthly spending ${spendPct !== null ? spendPct + '% of budget' : 'no budget set'}, portfolio ${portPct !== null ? portPct + '% gain/loss' : 'no investments'}, ${tasksThisWeek} tasks due this week.`;
+    try {
+      const text = await generate(prompt);
+      setDigest(text);
+    } catch (err) {
+      setDigestError(err.message);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Weekly Digest */}
+      {hasKey && (
+        <div>
+          {digest ? (
+            <div className="border border-amber-500/30 bg-amber-950/20 rounded-xl p-4" data-testid="digest-card">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-amber-400 text-sm font-semibold">✨ Weekly Digest</span>
+                <button
+                  type="button"
+                  onClick={() => setDigest(null)}
+                  className="text-[#52525b] hover:text-[#e4e4e7] text-xs"
+                >
+                  Dismiss
+                </button>
+              </div>
+              <p className="text-[#e4e4e7] text-sm">{digest}</p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleWeeklyDigest}
+              disabled={aiLoading}
+              className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+              data-testid="weekly-digest-btn"
+            >
+              {aiLoading ? '⏳ Generating…' : '✨ Weekly Digest'}
+            </button>
+          )}
+          {digestError && <p className="text-red-400 text-xs mt-1">❌ {digestError}</p>}
+        </div>
+      )}
+
       {/* Welcome card */}
       <div className="bg-gradient-to-br from-amber-900/30 to-[#111113] border border-[#27272a] rounded-xl p-6">
         <h2 className="text-2xl font-bold text-[#e4e4e7] mb-1">Welcome back ☀️</h2>

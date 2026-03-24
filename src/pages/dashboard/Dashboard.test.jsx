@@ -1,6 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { Dashboard } from './Dashboard';
+
+vi.mock('../../hooks/useGemini', () => ({
+  useGemini: () => ({
+    generate: vi.fn(),
+    loading: false,
+    error: null,
+    hasKey: false,
+  }),
+}));
 
 const mockTrips = [
   {

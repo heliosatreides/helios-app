@@ -3,6 +3,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { BudgetView } from './BudgetView';
 import { BudgetForm } from './BudgetForm';
 
+vi.mock('../../hooks/useGemini', () => ({
+  useGemini: () => ({
+    generate: vi.fn(),
+    loading: false,
+    error: null,
+    hasKey: false,
+  }),
+}));
+
 const mockBudgets = [
   { category: 'Food', limit: 500 },
   { category: 'Transport', limit: 150 },
