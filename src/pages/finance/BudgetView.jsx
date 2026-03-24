@@ -1,4 +1,11 @@
+import { useState } from 'react';
+import { useGemini } from '../../hooks/useGemini';
+
 export function BudgetView({ budgets, transactions, month }) {
+  const { generate, loading: aiLoading, hasKey } = useGemini();
+  const [savingsResult, setSavingsResult] = useState(null);
+  const [savingsError, setSavingsError] = useState(null);
+
   if (budgets.length === 0) {
     return (
       <div className="text-center py-12 text-[#71717a]">
@@ -13,8 +20,61 @@ export function BudgetView({ budgets, transactions, month }) {
     (t) => t.type === 'expense' && t.date.startsWith(month)
   );
 
+  const handleFindSavings = async () => {
+    setSavingsResult(null);
+    setSavingsError(null);
+    const categories = budgets.map((b) => {
+      const spent = monthlyExpenses
+        .filter((t) => t.category === b.category)
+        .reduce((sum, t) => sum + t.amount, 0);
+      return `${b.category}: $${spent.toFixed(0)}`;
+    }).join(', ');
+    try {
+      const text = await generate(
+        `Here are my monthly spending totals by category: ${categories}. Suggest 3 specific ways I could reduce spending, with estimated savings.`
+      );
+      setSavingsResult(text);
+    } catch (err) {
+      setSavingsError(err.message);
+    }
+  };
+
   return (
     <div className="space-y-3">
+      {hasKey && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={handleFindSavings}
+            disabled={aiLoading}
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            data-testid="find-savings-btn"
+          >
+            {aiLoading ? '⏳ Analyzing…' : '✨ Find Savings'}
+          </button>
+        </div>
+      )}
+
+      {savingsError && (
+        <p className="text-red-400 text-xs">❌ {savingsError}</p>
+      )}
+
+      {savingsResult && (
+        <div className="border border-amber-500/30 bg-amber-950/20 rounded-xl p-4" data-testid="savings-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-amber-400 text-sm font-semibold">✨ Savings Suggestions</span>
+            <button
+              type="button"
+              onClick={() => setSavingsResult(null)}
+              className="text-[#52525b] hover:text-[#e4e4e7] text-xs"
+            >
+              Dismiss
+            </button>
+          </div>
+          <p className="text-[#e4e4e7] text-sm whitespace-pre-wrap">{savingsResult}</p>
+        </div>
+      )}
+
       {budgets.map((budget) => {
         const spent = monthlyExpenses
           .filter((t) => t.category === budget.category)
