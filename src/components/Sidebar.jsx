@@ -28,6 +28,10 @@ const navGroups = [
       { to: '/health', label: 'Health', icon: '🏥' },
       { to: '/knowledge', label: 'Knowledge', icon: '📚' },
       { to: '/networking', label: 'Networking', icon: '🤝' },
+      { to: '/news', label: 'News', icon: '📰' },
+      { to: '/converter', label: 'Converter', icon: '🔄' },
+      { to: '/worldclock', label: 'World Clock', icon: '🕐' },
+      { to: '/flashcards', label: 'Flashcards', icon: '🃏' },
     ],
   },
   {

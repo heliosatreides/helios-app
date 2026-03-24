@@ -15,6 +15,10 @@ import { HealthPage } from './pages/health/HealthPage';
 import { KnowledgePage } from './pages/knowledge/KnowledgePage';
 import { DevToolsPage } from './pages/devtools/DevToolsPage';
 import { FocusPage } from './pages/focus/FocusPage';
+import { NewsPage } from './pages/news/NewsPage';
+import { ConverterPage } from './pages/converter/ConverterPage';
+import { WorldClockPage } from './pages/worldclock/WorldClockPage';
+import { FlashcardsPage } from './pages/flashcards/FlashcardsPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
@@ -82,6 +86,10 @@ function AppShell() {
               <Route path="/knowledge" element={<ProtectedRoute><KnowledgePage /></ProtectedRoute>} />
               <Route path="/devtools" element={<ProtectedRoute><DevToolsPage /></ProtectedRoute>} />
               <Route path="/focus" element={<ProtectedRoute><FocusPage /></ProtectedRoute>} />
+              <Route path="/news" element={<ProtectedRoute><NewsPage /></ProtectedRoute>} />
+              <Route path="/converter" element={<ProtectedRoute><ConverterPage /></ProtectedRoute>} />
+              <Route path="/worldclock" element={<ProtectedRoute><WorldClockPage /></ProtectedRoute>} />
+              <Route path="/flashcards" element={<ProtectedRoute><FlashcardsPage /></ProtectedRoute>} />
             </Routes>
           </div>
         </main>
