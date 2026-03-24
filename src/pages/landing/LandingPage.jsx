@@ -20,6 +20,7 @@ const ALL_FEATURES = [
   { icon: '🔄', title: 'Currency & Unit Converter', category: 'Developer', desc: 'Live exchange rates, length, weight, temperature, data, and time unit conversions.' },
   { icon: '🕐', title: 'World Clock', category: 'Developer', desc: 'Add cities, see live times, business hours indicator, and meeting planner across timezones.' },
   { icon: '🃏', title: 'Flashcards', category: 'Developer', desc: 'Decks with spaced repetition (Easy/Good/Hard). AI generates flashcards from any text.' },
+  { icon: '💬', title: 'P2P Ephemeral Chat', category: 'Tools', desc: 'Share a link, connect peer-to-peer via WebRTC. Messages never touch a server. Chat ends when either party leaves.' },
   { icon: '🔐', title: 'Password Generator', category: 'Developer', desc: 'Cryptographically secure passwords with strength meter. Adjustable length, character sets, clipboard copy.' },
   // New features
   { icon: '💸', title: 'Expense Splitter', category: 'Personal', desc: 'Split bills fairly with friends. Equal or itemized splits, settle-up view, AI recommends fairest split.' },
