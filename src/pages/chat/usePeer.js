@@ -100,8 +100,19 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         if (turnConfig) roomConfig.turnConfig = turnConfig;
 
         addDebug(`Joining room "${actualRoomId}" with redundancy=${RELAY_REDUNDANCY}...`);
-        const room = joinRoom(roomConfig, actualRoomId);
+        const room = joinRoom(roomConfig, actualRoomId, {
+          onJoinError: (err) => addDebug(`JOIN ERROR: ${JSON.stringify(err)}`),
+        });
         addDebug('Room joined (waiting for relays)');
+
+        // Log which relays were selected
+        setTimeout(() => {
+          try {
+            const sockets = getRelaySockets();
+            const urls = Object.keys(sockets).map(u => u.replace('wss://', ''));
+            addDebug(`Relay URLs: ${urls.slice(0, 5).join(', ')}${urls.length > 5 ? '...' : ''}`);
+          } catch {}
+        }, 3000);
 
         roomRef.current = room;
 
