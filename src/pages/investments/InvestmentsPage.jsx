@@ -47,7 +47,7 @@ export function InvestmentsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#111113] border border-[#27272a] rounded-xl p-1">
+      <div className="flex gap-1 bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-1">
         {TABS.map((tab) => (
           <button
             key={tab.id}

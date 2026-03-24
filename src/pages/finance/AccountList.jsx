@@ -21,7 +21,7 @@ export function AccountList({ accounts, onEdit, onDelete }) {
   return (
     <div className="space-y-4">
       {/* Net Worth */}
-      <div className="bg-gradient-to-br from-amber-900/20 to-[#111113] border border-[#27272a] rounded-xl p-5">
+      <div className="bg-gradient-to-br from-amber-900/20 to-[#111113] border border-[#1c1c20] rounded-xl p-5">
         <p className="text-[#71717a] text-sm mb-1">Net Worth</p>
         <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-[#f59e0b]' : 'text-red-400'}`}>
           {netWorth < 0 ? '-' : ''}${Math.abs(netWorth).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -33,7 +33,7 @@ export function AccountList({ accounts, onEdit, onDelete }) {
         {accounts.map((account) => (
           <div
             key={account.id}
-            className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex items-center justify-between"
+            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center justify-between"
           >
             <div>
               <p className="text-[#e4e4e7] font-medium">{account.name}</p>

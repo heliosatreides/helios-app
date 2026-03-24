@@ -18,7 +18,7 @@ export function PageHeader({ title, subtitle, children }) {
 export function Card({ children, className = '', hover = false, ...props }) {
   return (
     <div
-      className={`bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl ${hover ? 'hover:border-[#27272a] transition-colors' : ''} ${className}`}
+      className={`bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl ${hover ? 'hover:border-[#1c1c20] transition-colors' : ''} ${className}`}
       {...props}
     >
       {children}
@@ -79,7 +79,7 @@ export function EmptyState({ icon, title, description, action }) {
 export function ActionButton({ children, variant = 'primary', className = '', ...props }) {
   const variants = {
     primary: 'bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-lg shadow-amber-500/10',
-    secondary: 'bg-[#111113] border border-[#1c1c20] text-[#a1a1aa] hover:text-[#e4e4e7] hover:border-[#27272a]',
+    secondary: 'bg-[#111113] border border-[#1c1c20] text-[#a1a1aa] hover:text-[#e4e4e7] hover:border-[#1c1c20]',
     ghost: 'text-[#52525b] hover:text-[#a1a1aa] hover:bg-[#111113]',
     danger: 'bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/15',
     ai: 'bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400',

@@ -31,7 +31,7 @@ function AiResultCard({ title, content, onDismiss }) {
 function CollapsibleCard({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl overflow-hidden">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -113,7 +113,7 @@ function GitHubActivity() {
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
           placeholder="GitHub username"
-          className="flex-1 bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
         />
         <button
           type="submit"
@@ -133,7 +133,7 @@ function GitHubActivity() {
             const repo = event.repo?.name || 'unknown';
             const ts = event.created_at ? new Date(event.created_at).toLocaleDateString() : '';
             return (
-              <div key={event.id} className="flex items-center gap-3 py-1.5 border-b border-[#27272a]/40 last:border-0">
+              <div key={event.id} className="flex items-center gap-3 py-1.5 border-b border-[#1c1c20]/40 last:border-0">
                 <span className={`px-2 py-0.5 rounded text-xs font-semibold shrink-0 ${eventTypeBadgeClass(event.type)}`}>
                   {type}
                 </span>
@@ -209,7 +209,7 @@ function SnippetManager() {
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
@@ -220,13 +220,13 @@ function SnippetManager() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search snippets…"
-          className="flex-1 bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
         />
         {languages.length > 0 && (
           <select
             value={langFilter}
             onChange={(e) => setLangFilter(e.target.value)}
-            className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+            className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
           >
             <option value="">All languages</option>
             {languages.map((l) => <option key={l} value={l}>{l}</option>)}
@@ -243,7 +243,7 @@ function SnippetManager() {
 
       {/* Add form */}
       {showAdd && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[#71717a] text-xs block mb-1">Title *</label>
@@ -271,7 +271,7 @@ function SnippetManager() {
           </div>
           <div className="flex gap-2">
             <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-3 py-1.5 rounded-lg text-sm">Save</button>
-            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
       )}
@@ -284,7 +284,7 @@ function SnippetManager() {
           {filtered.map((s) => {
             const ai = aiResults[s.id];
             return (
-              <div key={s.id} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4">
+              <div key={s.id} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-[#e4e4e7] font-medium truncate">{s.title}</span>
@@ -371,7 +371,7 @@ function DevLog() {
         onChange={(e) => handleChange(e.target.value)}
         placeholder="What did you ship today? What are you stuck on?"
         rows={5}
-        className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-4 py-3 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
+        className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
       />
       <div className="flex gap-2 flex-wrap">
         {hasKey && (

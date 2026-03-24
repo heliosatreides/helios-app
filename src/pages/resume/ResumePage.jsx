@@ -91,7 +91,7 @@ export function ResumePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#18181b] border border-[#27272a] rounded-xl p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[#18181b] border border-[#1c1c20] rounded-xl p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab}

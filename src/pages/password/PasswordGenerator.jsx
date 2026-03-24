@@ -40,7 +40,7 @@ export function PasswordGenerator() {
     `px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
       active
         ? 'bg-amber-500/20 border border-amber-500/40 text-amber-400'
-        : 'bg-[#0a0a0b] border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7]'
+        : 'bg-[#0a0a0b] border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7]'
     }`;
 
   return (
@@ -88,7 +88,7 @@ export function PasswordGenerator() {
       {/* Password display */}
       {password && (
         <div className="space-y-2">
-          <div className="flex items-center gap-2 bg-[#0a0a0b] border border-[#27272a] rounded-xl px-4 py-3">
+          <div className="flex items-center gap-2 bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3">
             <code className="flex-1 text-amber-400 font-mono text-sm break-all">{password}</code>
             <button
               type="button"

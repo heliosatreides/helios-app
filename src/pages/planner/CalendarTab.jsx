@@ -12,7 +12,7 @@ function DayPanel({ dateStr, onClose }) {
   const dayTasks = tasks.filter((t) => t.dueDate === dateStr);
 
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-4">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="text-[#e4e4e7] font-semibold text-sm">{dateStr}</h4>
         <button onClick={onClose} className="text-[#52525b] hover:text-[#e4e4e7] text-sm">✕</button>

@@ -31,7 +31,7 @@ function getThisYearStart() {
 function Card({ title, children }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl overflow-hidden">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -101,12 +101,12 @@ export function ReadingList() {
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
       {/* Filter tabs */}
-      <div className="flex gap-1 border-b border-[#27272a]">
+      <div className="flex gap-1 border-b border-[#1c1c20]">
         {STATUS_FILTER_TABS.map((tab) => (
           <button
             key={tab}
@@ -131,15 +131,15 @@ export function ReadingList() {
 
       {/* Add form */}
       {showForm && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <input className={inputCls} placeholder="Title *" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} autoFocus />
           <input className={inputCls} placeholder="Author / Source" value={form.author} onChange={(e) => setForm((p) => ({ ...p, author: e.target.value }))} />
           <input className={inputCls} placeholder="URL (optional)" value={form.url} onChange={(e) => setForm((p) => ({ ...p, url: e.target.value }))} />
           <div className="flex gap-2">
-            <select value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))} className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none flex-1">
+            <select value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none flex-1">
               {ITEM_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
-            <select value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))} className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none flex-1">
+            <select value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none flex-1">
               {ITEM_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
@@ -156,7 +156,7 @@ export function ReadingList() {
       ) : (
         <div className="space-y-2">
           {filtered.map((item) => (
-            <div key={item.id} data-testid={`reading-item-${item.id}`} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl px-4 py-3 flex items-start gap-3">
+            <div key={item.id} data-testid={`reading-item-${item.id}`} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3 flex items-start gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className={`text-sm font-medium ${item.status === 'Done' ? 'text-[#52525b] line-through' : 'text-[#e4e4e7]'}`}>{item.title}</p>
@@ -180,7 +180,7 @@ export function ReadingList() {
 
       {/* Should I read this? */}
       {hasKey && (
-        <div className="space-y-2 pt-2 border-t border-[#27272a]">
+        <div className="space-y-2 pt-2 border-t border-[#1c1c20]">
           <p className="text-[#71717a] text-xs">✨ Should I read/watch this?</p>
           <div className="flex gap-2">
             <input
@@ -266,7 +266,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
@@ -300,10 +300,10 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
       </button>
 
       {showForm && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <input className={inputCls} placeholder="What did you learn? *" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} autoFocus />
           <textarea
-            className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none w-full resize-none"
+            className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none w-full resize-none"
             placeholder="Brief note (optional)…"
             value={form.note}
             onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))}
@@ -348,7 +348,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
       ) : (
         <div className="space-y-2">
           {filtered.map((entry) => (
-            <div key={entry.id} data-testid={`til-entry-${entry.id}`} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl px-4 py-3">
+            <div key={entry.id} data-testid={`til-entry-${entry.id}`} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[#e4e4e7]">{entry.title}</p>
@@ -395,7 +395,7 @@ function KnowledgeStats({ readingItems, tilEntries }) {
   return (
     <div className="grid grid-cols-2 gap-3">
       {stats.map((s) => (
-        <div key={s.label} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl px-4 py-3">
+        <div key={s.label} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl px-4 py-3">
           <p className="text-[#71717a] text-xs">{s.icon} {s.label}</p>
           <p className="text-2xl font-bold text-[#f59e0b] mt-1">{s.value}</p>
         </div>

@@ -52,7 +52,7 @@ export function CreateTrip({ onSubmit }) {
     `w-full bg-[#111113] border rounded-lg px-4 py-2.5 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none transition-colors ${
       errors[field]
         ? 'border-red-500 focus:border-red-400'
-        : 'border-[#27272a] focus:border-[#f59e0b]'
+        : 'border-[#1c1c20] focus:border-[#f59e0b]'
     }`;
 
   return (
@@ -150,7 +150,7 @@ export function CreateTrip({ onSubmit }) {
           <button
             type="button"
             onClick={() => navigate('/trips')}
-            className="flex-1 bg-[#111113] border border-[#27272a] hover:border-[#52525b] text-[#a1a1aa] font-medium py-2.5 rounded-lg transition-colors"
+            className="flex-1 bg-[#0c0c0e] border border-[#1c1c20] hover:border-[#52525b] text-[#a1a1aa] font-medium py-2.5 rounded-lg transition-colors"
           >
             Cancel
           </button>

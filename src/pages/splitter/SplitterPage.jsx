@@ -96,7 +96,7 @@ export function SplitterPage() {
       ) : (
         <div className="space-y-3">
           {bills.map(bill => (
-            <div key={bill.id} className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex items-center justify-between gap-4">
+            <div key={bill.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center justify-between gap-4">
               <div>
                 <div className="font-semibold text-[#e4e4e7]">{bill.title}</div>
                 <div className="text-sm text-[#71717a]">{bill.participants.join(', ')} · {fmt(bill.total)}</div>
@@ -118,22 +118,22 @@ export function SplitterPage() {
         <button onClick={() => setView('list')} className="text-[#71717a] hover:text-[#e4e4e7]">← Back</button>
         <h1 className="text-xl font-bold text-[#e4e4e7]">New Bill</h1>
       </div>
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-4">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
         <div>
           <label className="block text-sm text-[#a1a1aa] mb-1">Title</label>
-          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Dinner at Nobu..." className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Dinner at Nobu..." className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
         </div>
         <div>
           <label className="block text-sm text-[#a1a1aa] mb-1">Total Amount ($)</label>
-          <input type="number" value={totalAmt} onChange={e => setTotalAmt(e.target.value)} placeholder="120.00" className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input type="number" value={totalAmt} onChange={e => setTotalAmt(e.target.value)} placeholder="120.00" className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
         </div>
         <div>
           <label className="block text-sm text-[#a1a1aa] mb-1">Participants (comma-separated)</label>
-          <input value={participants} onChange={e => setParticipants(e.target.value)} placeholder="Alice, Bob, Carol" className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input value={participants} onChange={e => setParticipants(e.target.value)} placeholder="Alice, Bob, Carol" className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
         </div>
         <div>
           <label className="block text-sm text-[#a1a1aa] mb-1">Paid By</label>
-          <input value={paidBy} onChange={e => setPaidBy(e.target.value)} placeholder="Alice (leave blank for first participant)" className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input value={paidBy} onChange={e => setPaidBy(e.target.value)} placeholder="Alice (leave blank for first participant)" className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
         </div>
         <button onClick={createBill} className="w-full py-2.5 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-400">Create Bill</button>
       </div>
@@ -154,12 +154,12 @@ export function SplitterPage() {
       </div>
 
       {/* Add item */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
         <h2 className="text-sm font-semibold text-[#a1a1aa]">Add Item</h2>
         <div className="grid grid-cols-3 gap-2">
-          <input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="Item name" className="bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-          <input type="number" value={itemCost} onChange={e => setItemCost(e.target.value)} placeholder="Cost" className="bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-          <select value={itemAssignee} onChange={e => setItemAssignee(e.target.value)} className="bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500">
+          <input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="Item name" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input type="number" value={itemCost} onChange={e => setItemCost(e.target.value)} placeholder="Cost" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <select value={itemAssignee} onChange={e => setItemAssignee(e.target.value)} className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500">
             <option value="shared">Shared</option>
             {activeBill.participants.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
@@ -169,7 +169,7 @@ export function SplitterPage() {
 
       {/* Items list */}
       {activeBill.items.length > 0 && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-2">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-2">
           <h2 className="text-sm font-semibold text-[#a1a1aa] mb-2">Items</h2>
           {activeBill.items.map(item => (
             <div key={item.id} className="flex items-center justify-between text-sm">
@@ -183,7 +183,7 @@ export function SplitterPage() {
       )}
 
       {/* Split type + shares */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-4">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-4">
         <div className="flex items-center gap-3">
           <h2 className="text-sm font-semibold text-[#a1a1aa]">Split Method</h2>
           <div className="flex gap-2 ml-auto">
@@ -200,7 +200,7 @@ export function SplitterPage() {
       </div>
 
       {/* Settle up */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-[#a1a1aa]">Settle Up</h2>
           <button onClick={() => setSettleView(!settleView)} className="text-xs text-amber-400 hover:text-amber-300">{settleView ? 'Hide' : 'Show'}</button>
@@ -220,7 +220,7 @@ export function SplitterPage() {
       </div>
 
       {/* AI suggestion */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
         <h2 className="text-sm font-semibold text-[#a1a1aa]">✨ AI Suggestion</h2>
         <button onClick={suggestSplit} disabled={loading} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
           {loading ? 'Thinking...' : 'Suggest how to split'}

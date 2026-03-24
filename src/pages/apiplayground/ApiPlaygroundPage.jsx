@@ -116,25 +116,25 @@ export function ApiPlaygroundPage() {
         <div className="space-y-4">
           {/* URL bar */}
           <div className="flex gap-2">
-            <select value={method} onChange={e => setMethod(e.target.value)} className={`bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-amber-500 ${METHOD_COLORS[method]}`}>
+            <select value={method} onChange={e => setMethod(e.target.value)} className={`bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm font-bold outline-none focus:border-amber-500 ${METHOD_COLORS[method]}`}>
               {METHODS.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
-            <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendRequest()} placeholder="https://api.example.com/endpoint" className="flex-1 bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+            <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendRequest()} placeholder="https://api.example.com/endpoint" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
             <button onClick={sendRequest} disabled={sending || !url} className="px-4 py-2 bg-amber-500 text-black rounded-lg font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">
               {sending ? '⏳' : 'Send'}
             </button>
           </div>
 
           {/* Headers */}
-          <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-[#a1a1aa]">Headers</h3>
               <button onClick={() => setHeaders(h => [...h, { key: '', value: '' }])} className="text-xs text-amber-400 hover:text-amber-300">+ Add</button>
             </div>
             {headers.map((h, i) => (
               <div key={i} className="flex gap-2">
-                <input value={h.key} onChange={e => setHeaders(hs => hs.map((x, j) => j === i ? { ...x, key: e.target.value } : x))} placeholder="Header name" className="flex-1 bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-                <input value={h.value} onChange={e => setHeaders(hs => hs.map((x, j) => j === i ? { ...x, value: e.target.value } : x))} placeholder="Value" className="flex-1 bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+                <input value={h.key} onChange={e => setHeaders(hs => hs.map((x, j) => j === i ? { ...x, key: e.target.value } : x))} placeholder="Header name" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+                <input value={h.value} onChange={e => setHeaders(hs => hs.map((x, j) => j === i ? { ...x, value: e.target.value } : x))} placeholder="Value" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
                 <button onClick={() => setHeaders(hs => hs.filter((_, j) => j !== i))} className="text-[#52525b] hover:text-red-400 px-2">✕</button>
               </div>
             ))}
@@ -142,15 +142,15 @@ export function ApiPlaygroundPage() {
 
           {/* Body */}
           {['POST', 'PUT', 'PATCH'].includes(method) && (
-            <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+            <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-[#a1a1aa]">Request Body (JSON)</h3>
                 <div className="flex gap-2 items-center">
-                  <input value={aiBodyDesc} onChange={e => setAiBodyDesc(e.target.value)} placeholder="Describe the endpoint..." className="bg-[#18181b] border border-[#27272a] rounded-lg px-2 py-1 text-[#e4e4e7] text-xs outline-none focus:border-amber-500 w-48" />
+                  <input value={aiBodyDesc} onChange={e => setAiBodyDesc(e.target.value)} placeholder="Describe the endpoint..." className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-2 py-1 text-[#e4e4e7] text-xs outline-none focus:border-amber-500 w-48" />
                   <button onClick={generateBody} disabled={aiLoading} className="text-xs text-purple-400 hover:text-purple-300 disabled:opacity-50">✨ Generate</button>
                 </div>
               </div>
-              <textarea value={body} onChange={e => setBody(e.target.value)} rows={6} placeholder='{"key": "value"}' className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 font-mono resize-none" />
+              <textarea value={body} onChange={e => setBody(e.target.value)} rows={6} placeholder='{"key": "value"}' className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 font-mono resize-none" />
             </div>
           )}
 
@@ -159,7 +159,7 @@ export function ApiPlaygroundPage() {
             <button onClick={() => setShowSaveFav(!showSaveFav)} className="px-3 py-1.5 bg-[#27272a] text-[#a1a1aa] rounded-lg text-sm hover:bg-[#3f3f46]">⭐ Save</button>
             {showSaveFav && (
               <>
-                <input value={favName} onChange={e => setFavName(e.target.value)} placeholder="Request name" className="flex-1 bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+                <input value={favName} onChange={e => setFavName(e.target.value)} placeholder="Request name" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
                 <button onClick={saveFavorite} className="px-3 py-1.5 bg-amber-500 text-black rounded-lg text-sm font-semibold">Save</button>
               </>
             )}
@@ -169,7 +169,7 @@ export function ApiPlaygroundPage() {
 
           {/* Response */}
           {response && (
-            <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+            <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
               <div className="flex items-center gap-4">
                 <span className={`font-bold text-sm ${response.status < 300 ? 'text-green-400' : response.status < 400 ? 'text-yellow-400' : 'text-red-400'}`}>
                   {response.status}
@@ -199,7 +199,7 @@ export function ApiPlaygroundPage() {
             <div className="text-center py-16 text-[#52525b]">No requests yet. Send one to see history.</div>
           ) : (
             history.map(entry => (
-              <div key={entry.id} className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex items-center gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => loadFromHistory(entry)}>
+              <div key={entry.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => loadFromHistory(entry)}>
                 <span className={`font-bold text-sm w-16 ${METHOD_COLORS[entry.method]}`}>{entry.method}</span>
                 <span className="text-sm text-[#e4e4e7] flex-1 truncate">{entry.url}</span>
                 <span className={`text-sm font-semibold ${entry.status < 300 ? 'text-green-400' : 'text-red-400'}`}>{entry.status}</span>
@@ -216,7 +216,7 @@ export function ApiPlaygroundPage() {
             <div className="text-center py-16 text-[#52525b]">No saved requests. Save a request to reuse it.</div>
           ) : (
             favorites.map(fav => (
-              <div key={fav.id} className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex items-center gap-4">
+              <div key={fav.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center gap-4">
                 <span className={`font-bold text-sm w-16 ${METHOD_COLORS[fav.method]}`}>{fav.method}</span>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-[#e4e4e7] text-sm">{fav.name}</div>

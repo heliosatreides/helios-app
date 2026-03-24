@@ -86,7 +86,7 @@ function CurrencyConverter() {
     }
   };
 
-  const selectCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]';
+  const selectCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]';
 
   return (
     <div className="space-y-5">
@@ -94,7 +94,7 @@ function CurrencyConverter() {
       {ratesError && <p className="text-red-400 text-xs">❌ {ratesError}</p>}
 
       {/* Converter input */}
-      <div className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-3 gap-3 items-end">
           <div>
             <label className="text-[#71717a] text-xs block mb-1">Amount</label>
@@ -102,7 +102,7 @@ function CurrencyConverter() {
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               placeholder="100"
               min="0"
             />
@@ -122,7 +122,7 @@ function CurrencyConverter() {
         </div>
 
         {result !== null && !isNaN(result) && (
-          <div className="text-center py-3 border-t border-[#27272a]">
+          <div className="text-center py-3 border-t border-[#1c1c20]">
             <p className="text-[#71717a] text-xs">{amount} {from} =</p>
             <p className="text-3xl font-bold text-amber-400 mt-1">
               {result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
@@ -234,7 +234,7 @@ function UnitConverter() {
     return unit;
   };
 
-  const selectCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full';
+  const selectCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
@@ -256,7 +256,7 @@ function UnitConverter() {
         ))}
       </div>
 
-      <div className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-3 gap-3 items-end">
           <div>
             <label className="text-[#71717a] text-xs block mb-1">Value</label>
@@ -264,7 +264,7 @@ function UnitConverter() {
               type="number"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
             />
           </div>
           <div>
@@ -282,7 +282,7 @@ function UnitConverter() {
         </div>
 
         {result !== null && !isNaN(result) && (
-          <div className="text-center py-3 border-t border-[#27272a]">
+          <div className="text-center py-3 border-t border-[#1c1c20]">
             <p className="text-[#71717a] text-xs">{value} {getLabel(numericFrom)} =</p>
             <p className="text-3xl font-bold text-amber-400 mt-1">
               {result % 1 === 0 ? result.toLocaleString() : parseFloat(result.toPrecision(6)).toLocaleString()}

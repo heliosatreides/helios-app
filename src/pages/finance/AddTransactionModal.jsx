@@ -25,7 +25,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 w-full max-w-md">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
         <h2 className="text-[#e4e4e7] text-lg font-semibold mb-5">Add Transaction</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -38,7 +38,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               required
-              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
             />
           </div>
           <div>
@@ -49,7 +49,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
             />
           </div>
           <div>
@@ -58,7 +58,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
               id="tx-category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{c}</option>
@@ -71,7 +71,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
               id="tx-account"
               value={accountId}
               onChange={(e) => setAccountId(e.target.value)}
-              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
             >
               {accounts.map((a) => (
                 <option key={a.id} value={a.id}>{a.name}</option>
@@ -85,7 +85,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
             />
           </div>
           <div>
@@ -94,7 +94,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
               id="tx-type"
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
             >
               <option value="expense">Expense</option>
               <option value="income">Income</option>
@@ -104,7 +104,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-[#27272a] rounded-lg text-[#71717a] hover:text-[#e4e4e7] transition-colors"
+              className="flex-1 px-4 py-2 border border-[#1c1c20] rounded-lg text-[#71717a] hover:text-[#e4e4e7] transition-colors"
             >
               Cancel
             </button>

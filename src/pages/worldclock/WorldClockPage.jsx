@@ -18,7 +18,7 @@ function ClockCard({ city, now, onRemove }) {
   const business = isBusinessHours(city.timezone, now);
 
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4">
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ function MeetingPlanner({ cities, now }) {
   const meetingDate = localTime ? new Date(localTime) : null;
 
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4">
       <h3 className="text-[#e4e4e7] font-semibold text-sm mb-3">🗓️ Meeting Planner</h3>
       <div className="mb-4">
         <label className="text-[#71717a] text-xs block mb-1">Pick a time (your local)</label>
@@ -67,13 +67,13 @@ function MeetingPlanner({ cities, now }) {
           type="datetime-local"
           value={localTime}
           onChange={(e) => setLocalTime(e.target.value)}
-          className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+          className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
         />
       </div>
       {meetingDate && (
         <div className="space-y-2">
           {cities.map((city) => (
-            <div key={city.id} className="flex items-center justify-between py-1.5 border-b border-[#27272a]/40 last:border-0">
+            <div key={city.id} className="flex items-center justify-between py-1.5 border-b border-[#1c1c20]/40 last:border-0">
               <span className="text-[#a1a1aa] text-sm">{city.name}</span>
               <span className="text-amber-400 font-mono text-sm">
                 {formatTimeInZone(city.timezone, meetingDate)}
@@ -139,14 +139,14 @@ export function WorldClockPage() {
 
       {/* City search */}
       {showSearch && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-3 space-y-2">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3 space-y-2">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search cities…"
             autoFocus
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
           />
           {filteredSearch.length > 0 && (
             <div className="max-h-40 overflow-y-auto space-y-0.5">

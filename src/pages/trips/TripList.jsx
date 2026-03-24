@@ -51,7 +51,7 @@ function TripCard({ trip }) {
 
   return (
     <Link to={`/trips/${trip.id}`} className="block">
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 hover:border-amber-500/50 transition-colors cursor-pointer">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 hover:border-amber-500/50 transition-colors cursor-pointer">
         <div className="flex items-start justify-between mb-2 gap-2">
           <h3 className="text-[#e4e4e7] font-semibold text-lg leading-tight">{trip.name}</h3>
           <StatusBadge status={trip.status} />

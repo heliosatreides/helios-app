@@ -5,7 +5,7 @@ const SPORTS = ['NBA', 'NFL', 'MLB', 'NHL', 'MLS'];
 
 function SkeletonCard() {
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 animate-pulse space-y-3">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 animate-pulse space-y-3">
       <div className="h-3 bg-[#27272a] rounded w-16" />
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 bg-[#27272a] rounded-full" />
@@ -34,7 +34,7 @@ function SportContent({ sport }) {
 
   if (error) {
     return (
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 text-center">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6 text-center">
         <p className="text-red-400 mb-2">Failed to load scores</p>
         <p className="text-[#71717a] text-sm mb-4">{error}</p>
         <button

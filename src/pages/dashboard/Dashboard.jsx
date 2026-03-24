@@ -6,7 +6,7 @@ import { useGemini } from '../../hooks/useGemini';
 
 function StatCard({ label, value, color = 'text-[#e4e4e7]', sub, linkTo, linkLabel }) {
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-5 hover:border-[#27272a] transition-colors">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-5 hover:border-[#1c1c20] transition-colors">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[#52525b] text-xs font-medium uppercase tracking-wider">{label}</p>
         {linkTo && (
@@ -30,7 +30,7 @@ function TodayFocusCard() {
   if (todayTasks.length === 0 && firstBlocks.length === 0) return null;
 
   return (
-    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 hover:border-[#27272a] transition-colors">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 hover:border-[#1c1c20] transition-colors">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <span className="text-base">🗓️</span>
@@ -184,10 +184,10 @@ function OverviewTab({ trips = [], accounts = [], transactions = [], budgets = [
             <Link to="/trips/new" className="px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-medium hover:bg-amber-500/15 transition-colors">
               ✈️ Plan a Trip
             </Link>
-            <Link to="/finance" className="px-4 py-2 rounded-xl bg-[#111113] border border-[#1c1c20] text-[#a1a1aa] text-sm font-medium hover:border-[#27272a] transition-colors">
+            <Link to="/finance" className="px-4 py-2 rounded-xl bg-[#111113] border border-[#1c1c20] text-[#a1a1aa] text-sm font-medium hover:border-[#1c1c20] transition-colors">
               💰 Add Accounts
             </Link>
-            <Link to="/planner" className="px-4 py-2 rounded-xl bg-[#111113] border border-[#1c1c20] text-[#a1a1aa] text-sm font-medium hover:border-[#27272a] transition-colors">
+            <Link to="/planner" className="px-4 py-2 rounded-xl bg-[#111113] border border-[#1c1c20] text-[#a1a1aa] text-sm font-medium hover:border-[#1c1c20] transition-colors">
               🗓️ Start Planning
             </Link>
           </div>
@@ -241,7 +241,7 @@ function OverviewTab({ trips = [], accounts = [], transactions = [], budgets = [
       )}
 
       {/* Sports */}
-      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-5 hover:border-[#27272a] transition-colors">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-5 hover:border-[#1c1c20] transition-colors">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span>🏆</span>
@@ -261,7 +261,7 @@ function OverviewTab({ trips = [], accounts = [], transactions = [], budgets = [
 
       {/* Recent trips */}
       {trips.length > 0 && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 hover:border-[#27272a] transition-colors">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6 hover:border-[#1c1c20] transition-colors">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[#e4e4e7] font-semibold text-sm">Recent Trips</h3>
             <Link to="/trips" className="text-amber-400/70 hover:text-amber-400 text-xs transition-colors">View all →</Link>

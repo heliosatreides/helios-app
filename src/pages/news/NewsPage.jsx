@@ -189,7 +189,7 @@ export function NewsPage() {
             className={`shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
               activeTopic === t.id
                 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-sm shadow-amber-500/5'
-                : 'bg-[#0c0c0e] text-[#52525b] border border-[#1c1c20] hover:text-[#a1a1aa] hover:border-[#27272a]'
+                : 'bg-[#0c0c0e] text-[#52525b] border border-[#1c1c20] hover:text-[#a1a1aa] hover:border-[#1c1c20]'
             }`}
           >
             {t.label}
@@ -256,7 +256,7 @@ export function NewsPage() {
               <button
                 type="button"
                 onClick={() => setPage((p) => p + 1)}
-                className="bg-[#0c0c0e] hover:bg-[#111113] border border-[#1c1c20] hover:border-[#27272a] text-[#71717a] text-sm px-6 py-2.5 rounded-xl transition-all"
+                className="bg-[#0c0c0e] hover:bg-[#111113] border border-[#1c1c20] hover:border-[#1c1c20] text-[#71717a] text-sm px-6 py-2.5 rounded-xl transition-all"
               >
                 Load more
               </button>

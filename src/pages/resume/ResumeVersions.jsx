@@ -88,7 +88,7 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
           {versions.map((v) => (
             <div
               key={v.id}
-              className="bg-[#18181b] border border-[#27272a] rounded-xl p-4 flex items-center justify-between"
+              className="bg-[#18181b] border border-[#1c1c20] rounded-xl p-4 flex items-center justify-between"
             >
               <div>
                 <p className="text-[#e4e4e7] font-medium">{v.name}</p>
@@ -103,7 +103,7 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
                 </button>
                 <button
                   onClick={() => downloadJSON(v, `resume-${v.name.replace(/\s+/g, '-').toLowerCase()}.json`)}
-                  className="px-3 py-1.5 text-[#71717a] hover:text-amber-400 text-xs transition-colors border border-[#27272a] hover:border-amber-400/30 rounded-lg"
+                  className="px-3 py-1.5 text-[#71717a] hover:text-amber-400 text-xs transition-colors border border-[#1c1c20] hover:border-amber-400/30 rounded-lg"
                   title="Download as JSON"
                 >
                   ⬇️ JSON

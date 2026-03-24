@@ -81,7 +81,7 @@ export function FavoritesTab({ allGames }) {
         <button
           aria-label="Add favorite"
           onClick={() => setShowPicker((v) => !v)}
-          className="text-xs px-3 py-1.5 rounded-full border border-dashed border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] hover:border-[#71717a] transition-colors"
+          className="text-xs px-3 py-1.5 rounded-full border border-dashed border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] hover:border-[#71717a] transition-colors"
         >
           + Add favorite
         </button>
@@ -89,7 +89,7 @@ export function FavoritesTab({ allGames }) {
 
       {/* Team picker */}
       {showPicker && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 max-h-64 overflow-y-auto">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 max-h-64 overflow-y-auto">
           {teams.length === 0 ? (
             <p className="text-[#71717a] text-sm">No teams available. Check the Scores tab first.</p>
           ) : (

@@ -1,21 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ScoresTab } from './ScoresTab';
 import { StandingsTab } from './StandingsTab';
 import { FavoritesTab } from './FavoritesTab';
 import { useSportsScores } from '../../hooks/useSportsScores';
 
 const TABS = [
-  { id: 'scores', label: 'Scores' },
-  { id: 'standings', label: 'Standings' },
-  { id: 'favorites', label: 'Favorites ⭐' },
+  { id: 'scores', label: '📊 Scores' },
+  { id: 'standings', label: '🏅 Standings' },
+  { id: 'favorites', label: '⭐ Favorites' },
 ];
 
-const SPORTS = ['NBA', 'NFL', 'MLB', 'NHL', 'MLS'];
-
-/**
- * Gather all games data for the Favorites tab.
- * We pre-load each sport silently so Favorites has data regardless of active sport.
- */
 function useAllGames() {
   const nba = useSportsScores('NBA');
   const nfl = useSportsScores('NFL');
@@ -39,22 +33,21 @@ export function SportsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-[#e4e4e7]">Sports Hub 🏆</h2>
-        <p className="text-[#71717a] text-sm mt-1">Live scores, standings, and your favorites.</p>
+        <h1 className="text-2xl font-bold text-[#e4e4e7]">Sports Hub</h1>
+        <p className="text-[#52525b] text-sm mt-0.5">Live scores, standings, and your favorites</p>
       </div>
 
-      {/* Main tabs */}
-      <div className="flex gap-1 bg-[#111113] border border-[#27272a] rounded-xl p-1 w-fit">
+      {/* Segmented tabs */}
+      <div className="flex gap-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? 'bg-amber-500 text-black'
-                : 'text-[#71717a] hover:text-[#e4e4e7]'
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                : 'text-[#52525b] hover:text-[#a1a1aa] border border-transparent'
             }`}
           >
             {tab.label}
@@ -62,7 +55,6 @@ export function SportsPage() {
         ))}
       </div>
 
-      {/* Tab content */}
       {activeTab === 'scores' && (
         <ScoresTab activeSport={activeSport} onSportChange={setActiveSport} />
       )}

@@ -44,12 +44,12 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
       </div>
 
       {showCreate && (
-        <form onSubmit={handleCreate} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleCreate} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <div>
             <label className="text-[#71717a] text-xs block mb-1">Deck name *</label>
             <input
               autoFocus
-              className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="e.g. Spanish Vocabulary"
@@ -59,7 +59,7 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
           <div>
             <label className="text-[#71717a] text-xs block mb-1">Description</label>
             <input
-              className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               placeholder="Optional description"
@@ -81,7 +81,7 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
           </div>
           <div className="flex gap-2">
             <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-1.5 rounded-lg text-sm">Create</button>
-            <button type="button" onClick={() => setShowCreate(false)} className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="button" onClick={() => setShowCreate(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
       )}
@@ -100,7 +100,7 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
           return (
             <div
               key={deck.id}
-              className="bg-[#111113] border border-[#27272a] rounded-xl p-4 cursor-pointer hover:border-amber-500/40 transition-colors group"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 cursor-pointer hover:border-amber-500/40 transition-colors group"
               onClick={() => onSelect(deck.id)}
             >
               <div className="flex items-start justify-between mb-2">
@@ -232,11 +232,11 @@ function CardManager({ deck, onUpdate, onBack }) {
       </div>
 
       {showAdd && (
-        <form onSubmit={handleAddCard} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAddCard} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <div>
             <label className="text-[#71717a] text-xs block mb-1">Front (question) *</label>
             <textarea
-              className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
               rows={2}
               value={form.front}
               onChange={(e) => setForm((f) => ({ ...f, front: e.target.value }))}
@@ -247,7 +247,7 @@ function CardManager({ deck, onUpdate, onBack }) {
           <div>
             <label className="text-[#71717a] text-xs block mb-1">Back (answer) *</label>
             <textarea
-              className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
               rows={2}
               value={form.back}
               onChange={(e) => setForm((f) => ({ ...f, back: e.target.value }))}
@@ -258,7 +258,7 @@ function CardManager({ deck, onUpdate, onBack }) {
           <div>
             <label className="text-[#71717a] text-xs block mb-1">Tags (comma-separated)</label>
             <input
-              className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full"
               value={form.tags}
               onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))}
               placeholder="e.g. vocab, verbs"
@@ -266,17 +266,17 @@ function CardManager({ deck, onUpdate, onBack }) {
           </div>
           <div className="flex gap-2">
             <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-1.5 rounded-lg text-sm">Add</button>
-            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
       )}
 
       {/* AI generate */}
       {hasKey && (
-        <div className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <p className="text-amber-400 text-xs font-semibold">✨ Generate flashcards with AI</p>
           <textarea
-            className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
             rows={3}
             value={aiText}
             onChange={(e) => setAiText(e.target.value)}
@@ -300,7 +300,7 @@ function CardManager({ deck, onUpdate, onBack }) {
       )}
       <div className="space-y-2">
         {(deck.cards || []).map((card) => (
-          <div key={card.id} className="bg-[#111113] border border-[#27272a] rounded-xl p-3">
+          <div key={card.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <p className="text-[#e4e4e7] text-sm font-medium truncate">{card.front}</p>
@@ -387,7 +387,7 @@ function StudyMode({ deck, dueCards, onUpdate, onExit }) {
 
       {/* Card */}
       <div
-        className="bg-[#111113] border border-[#27272a] rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center cursor-pointer hover:border-amber-500/30 transition-colors"
+        className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-8 min-h-[200px] flex flex-col items-center justify-center cursor-pointer hover:border-amber-500/30 transition-colors"
         onClick={() => setFlipped((f) => !f)}
       >
         {!flipped ? (

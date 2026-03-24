@@ -66,7 +66,7 @@ const MOOD_COLORS = {
 function Card({ title, children }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl overflow-hidden">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -209,7 +209,7 @@ export function MoodJournal() {
               className={`px-3 py-1.5 rounded-lg text-sm border transition-colors ${
                 selectedMood === m.value
                   ? 'border-amber-500 bg-amber-500/20 text-amber-300'
-                  : 'border-[#27272a] text-[#a1a1aa] hover:border-[#3f3f46]'
+                  : 'border-[#1c1c20] text-[#a1a1aa] hover:border-[#3f3f46]'
               }`}
             >
               {m.label}
@@ -225,7 +225,7 @@ export function MoodJournal() {
             onChange={(e) => setNote(e.target.value)}
             placeholder="Optional note (1-2 sentences)…"
             rows={2}
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
           />
           <button
             onClick={handleSave}
@@ -303,7 +303,7 @@ export function SleepTracker() {
             value={bedtime}
             onChange={(e) => setBedtime(e.target.value)}
             data-testid="sleep-bedtime"
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] focus:outline-none"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] focus:outline-none"
           />
         </div>
         <div>
@@ -313,7 +313,7 @@ export function SleepTracker() {
             value={wakeTime}
             onChange={(e) => setWakeTime(e.target.value)}
             data-testid="sleep-waketime"
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] focus:outline-none"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] focus:outline-none"
           />
         </div>
       </div>

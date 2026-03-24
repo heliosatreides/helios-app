@@ -60,7 +60,7 @@ function AddObjectiveForm({ onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-objective-modal">
-      <div className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-6 w-full max-w-md">
+      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
         <h2 className="text-lg font-bold text-[#e4e4e7] mb-4">New Objective</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -69,7 +69,7 @@ function AddObjectiveForm({ onSave, onClose }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Launch MVP product"
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="objective-title-input"
             />
           </div>
@@ -78,7 +78,7 @@ function AddObjectiveForm({ onSave, onClose }) {
             <select
               value={timeframe}
               onChange={(e) => setTimeframe(e.target.value)}
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
             >
               {TIMEFRAMES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
@@ -132,7 +132,7 @@ function AddKRForm({ onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-kr-modal">
-      <div className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-6 w-full max-w-md">
+      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
         <h2 className="text-lg font-bold text-[#e4e4e7] mb-4">Add Key Result</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -141,7 +141,7 @@ function AddKRForm({ onSave, onClose }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Acquire 100 beta users"
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="kr-title-input"
             />
           </div>
@@ -150,7 +150,7 @@ function AddKRForm({ onSave, onClose }) {
             <select
               value={metricType}
               onChange={(e) => setMetricType(e.target.value)}
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="kr-metric-select"
             >
               {METRIC_TYPES.map((m) => <option key={m} value={m}>{m}</option>)}
@@ -164,7 +164,7 @@ function AddKRForm({ onSave, onClose }) {
                   type="number"
                   value={currentValue}
                   onChange={(e) => setCurrentValue(e.target.value)}
-                  className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                  className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
                   data-testid="kr-current-input"
                 />
               </div>
@@ -174,7 +174,7 @@ function AddKRForm({ onSave, onClose }) {
                   type="number"
                   value={targetValue}
                   onChange={(e) => setTargetValue(e.target.value)}
-                  className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                  className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
                   data-testid="kr-target-input"
                 />
               </div>
@@ -289,7 +289,7 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
   }
 
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5" data-testid={`objective-card-${objective.id}`}>
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5" data-testid={`objective-card-${objective.id}`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2 flex-1 min-w-0">

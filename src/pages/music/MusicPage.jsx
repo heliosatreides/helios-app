@@ -83,11 +83,11 @@ export function MusicPage() {
       <h1 className="text-2xl font-bold text-[#e4e4e7]">🎵 Music Recommendations</h1>
 
       {/* Mood selector */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
         <h2 className="text-sm font-semibold text-[#a1a1aa]">How are you feeling?</h2>
         <div className="grid grid-cols-3 gap-2">
           {MOODS.map(m => (
-            <button key={m.id} onClick={() => setMood(m.id)} className={`py-3 rounded-xl text-sm font-medium border transition-all ${mood === m.id ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-[#18181b] border-[#27272a] text-[#71717a] hover:border-[#3f3f46]'}`}>
+            <button key={m.id} onClick={() => setMood(m.id)} className={`py-3 rounded-xl text-sm font-medium border transition-all ${mood === m.id ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-[#18181b] border-[#1c1c20] text-[#71717a] hover:border-[#3f3f46]'}`}>
               {m.label}
             </button>
           ))}
@@ -95,11 +95,11 @@ export function MusicPage() {
       </div>
 
       {/* Genre preferences */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
         <h2 className="text-sm font-semibold text-[#a1a1aa]">Genre Preferences (pick 3-5)</h2>
         <div className="flex flex-wrap gap-2">
           {ALL_GENRES.map(g => (
-            <button key={g} onClick={() => toggleGenre(g)} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${genres.includes(g) ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-[#18181b] border-[#27272a] text-[#71717a] hover:border-[#3f3f46]'}`}>
+            <button key={g} onClick={() => toggleGenre(g)} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${genres.includes(g) ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-[#18181b] border-[#1c1c20] text-[#71717a] hover:border-[#3f3f46]'}`}>
               {g}
             </button>
           ))}
@@ -117,7 +117,7 @@ export function MusicPage() {
         <div className="space-y-3">
           <h2 className="text-sm font-semibold text-[#a1a1aa]">Recommendations for {MOODS.find(m2 => m2.id === mood)?.label}</h2>
           {songs.map((song, i) => (
-            <div key={i} className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-2">
+            <div key={i} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div className="font-semibold text-[#e4e4e7]">{song.song}</div>
@@ -139,7 +139,7 @@ export function MusicPage() {
 
       {/* Raw AI output if parsing failed */}
       {rawText && songs.length === 0 && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4">
           <pre className="text-sm text-[#a1a1aa] whitespace-pre-wrap">{rawText}</pre>
         </div>
       )}
@@ -149,7 +149,7 @@ export function MusicPage() {
         <div className="space-y-3">
           <h2 className="text-sm font-semibold text-[#a1a1aa]">❤️ Liked Songs ({likes.length})</h2>
           {likes.map(song => (
-            <div key={song.id} className="bg-[#111113] border border-[#27272a] rounded-xl p-3 flex items-center justify-between gap-3">
+            <div key={song.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3 flex items-center justify-between gap-3">
               <div>
                 <div className="text-sm font-medium text-[#e4e4e7]">{song.song}</div>
                 <div className="text-xs text-[#71717a]">{song.artist} · {song.mood}</div>

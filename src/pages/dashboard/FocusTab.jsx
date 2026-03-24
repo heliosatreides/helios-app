@@ -39,7 +39,7 @@ function AiResultCard({ title, content, onDismiss }) {
 function CollapsibleCard({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl overflow-hidden">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -148,7 +148,7 @@ function PomodoroTimer() {
 
       {/* Current task */}
       {currentTask && (
-        <div className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-4 py-2.5 text-sm">
+        <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-2.5 text-sm">
           <p className="text-[#52525b] text-xs mb-0.5">Current task</p>
           <p className="text-[#e4e4e7] font-medium">{currentTask.title}</p>
           {todayTasks.length > 1 && (
@@ -217,7 +217,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handleReset}
-            className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] px-4 py-2 rounded-lg text-sm transition-colors"
+            className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-4 py-2 rounded-lg text-sm transition-colors"
           >
             Reset
           </button>
@@ -234,7 +234,7 @@ function PomodoroTimer() {
             max="60"
             value={workMins}
             onChange={(e) => { const v = Number(e.target.value); setWorkMins(v); if (timerState === IDLE) setSecondsLeft(v * 60); }}
-            className="w-12 bg-[#0a0a0b] border border-[#27272a] rounded px-2 py-1 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            className="w-12 bg-[#0a0a0b] border border-[#1c1c20] rounded px-2 py-1 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
           />
           min
         </label>
@@ -246,7 +246,7 @@ function PomodoroTimer() {
             max="30"
             value={breakMins}
             onChange={(e) => setBreakMins(Number(e.target.value))}
-            className="w-12 bg-[#0a0a0b] border border-[#27272a] rounded px-2 py-1 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            className="w-12 bg-[#0a0a0b] border border-[#1c1c20] rounded px-2 py-1 text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
           />
           min
         </label>
@@ -299,7 +299,7 @@ function HabitTracker() {
     }
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
     <div className="space-y-4">
@@ -313,7 +313,7 @@ function HabitTracker() {
             const streak = calculateStreak(completions);
             const doneToday = completions.includes(today);
             return (
-              <div key={habit.id} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4">
+              <div key={habit.id} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
                     <button
@@ -361,7 +361,7 @@ function HabitTracker() {
 
       {/* Add habit form */}
       {showAdd && (
-        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
               <label className="text-[#71717a] text-xs block mb-1">Habit name *</label>
@@ -391,7 +391,7 @@ function HabitTracker() {
           </div>
           <div className="flex gap-2">
             <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-3 py-1.5 rounded-lg text-sm">Add Habit</button>
-            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
+            <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
       )}
@@ -400,7 +400,7 @@ function HabitTracker() {
         <button
           type="button"
           onClick={() => setShowAdd((s) => !s)}
-          className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm transition-colors"
+          className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm transition-colors"
         >
           + Add habit
         </button>
@@ -422,7 +422,7 @@ function HabitTracker() {
             value={goalsInput}
             onChange={(e) => setGoalsInput(e.target.value)}
             placeholder="What are your main goals? (e.g. get fit, read more, learn coding)"
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
           />
           <button
             type="button"
@@ -485,12 +485,12 @@ function QuickNotes({ onAddTasks }) {
         onChange={(e) => setNotes(e.target.value)}
         placeholder="Start writing… (auto-saved)"
         rows={8}
-        className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-4 py-3 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none font-mono"
+        className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none font-mono"
       />
 
       {/* Markdown-ish preview */}
       {notes && notes.trim() && (
-        <div className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-4 py-3 text-sm space-y-1 max-h-32 overflow-y-auto">
+        <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-sm space-y-1 max-h-32 overflow-y-auto">
           <p className="text-[#3f3f46] text-xs mb-2">Preview</p>
           {parsed.map((line, i) => (
             line.type === 'bullet' ? (

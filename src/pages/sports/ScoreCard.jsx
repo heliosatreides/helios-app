@@ -39,7 +39,7 @@ export function ScoreCard({ game }) {
   };
 
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex flex-col gap-2">
+    <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex flex-col gap-2">
       {/* Game name */}
       {game.name && (
         <p className="text-xs text-[#71717a] truncate">{game.name}</p>
@@ -89,7 +89,7 @@ export function ScoreCard({ game }) {
 
       {/* AI Game Preview — only for scheduled games when key is set */}
       {hasKey && isScheduled && (
-        <div className="mt-2 pt-2 border-t border-[#27272a]">
+        <div className="mt-2 pt-2 border-t border-[#1c1c20]">
           <button
             type="button"
             onClick={handleGamePreview}

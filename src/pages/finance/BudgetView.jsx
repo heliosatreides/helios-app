@@ -101,7 +101,7 @@ export function BudgetView({ budgets, transactions, month }) {
           <div
             key={budget.category}
             data-testid={`budget-row-${budget.category}`}
-            className={`bg-[#111113] border rounded-xl p-4 ${isOver ? 'border-red-500/60 over-budget' : 'border-[#27272a]'}`}
+            className={`bg-[#111113] border rounded-xl p-4 ${isOver ? 'border-red-500/60 over-budget' : 'border-[#1c1c20]'}`}
           >
             <div className="flex items-center justify-between mb-2">
               <span className={`font-medium ${isOver ? 'text-red-400' : 'text-[#e4e4e7]'}`}>

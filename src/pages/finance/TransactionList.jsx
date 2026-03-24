@@ -39,12 +39,12 @@ export function TransactionList({ transactions, accounts, onDelete, filterAccoun
         return (
           <div
             key={tx.id}
-            className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex items-center justify-between"
+            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center justify-between"
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-[#e4e4e7] font-medium truncate">{tx.description}</p>
-                <span className="text-xs text-[#71717a] bg-[#0a0a0b] border border-[#27272a] rounded px-2 py-0.5 shrink-0">
+                <span className="text-xs text-[#71717a] bg-[#0a0a0b] border border-[#1c1c20] rounded px-2 py-0.5 shrink-0">
                   {tx.category}
                 </span>
               </div>

@@ -15,7 +15,7 @@ export function StrategyNotes() {
         )}
       </div>
       <textarea
-        className="w-full bg-[#111113] border border-[#27272a] rounded-xl p-5 text-[#e4e4e7] text-sm leading-relaxed placeholder-[#3f3f46] focus:outline-none focus:border-[#f59e0b] resize-none transition-colors"
+        className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 text-[#e4e4e7] text-sm leading-relaxed placeholder-[#3f3f46] focus:outline-none focus:border-[#f59e0b] resize-none transition-colors"
         style={{ minHeight: '420px' }}
         placeholder="Document your investment thesis, rules, and strategy here..."
         value={notes}

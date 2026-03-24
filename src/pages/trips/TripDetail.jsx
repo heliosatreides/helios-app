@@ -209,7 +209,7 @@ export function TripDetail({ trips, onUpdate }) {
 
       {/* Budget Tracker */}
       {trip.budget > 0 && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6">
           <h3 className="text-[#e4e4e7] font-semibold mb-4">Budget Tracker</h3>
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div>
@@ -257,14 +257,14 @@ export function TripDetail({ trips, onUpdate }) {
               placeholder="Description"
               value={newExpense.description}
               onChange={(e) => setNewExpense((p) => ({ ...p, description: e.target.value }))}
-              className="flex-1 bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+              className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
             />
             <input
               type="number"
               placeholder="Amount"
               value={newExpense.amount}
               onChange={(e) => setNewExpense((p) => ({ ...p, amount: e.target.value }))}
-              className="w-28 bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+              className="w-28 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
             />
             <button type="submit" className="bg-[#f59e0b] hover:bg-[#d97706] text-black text-sm font-semibold px-4 py-2 rounded-lg">
               Add
@@ -286,7 +286,7 @@ export function TripDetail({ trips, onUpdate }) {
       )}
 
       {/* Itinerary */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6">
         <h3 className="text-[#e4e4e7] font-semibold mb-4">Itinerary</h3>
 
         {days.length === 0 ? (
@@ -353,7 +353,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.time}
                       onChange={(e) => handleActivityChange(date, 'time', e.target.value)}
                       aria-label="Activity time"
-                      className="w-28 bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+                      className="w-28 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
                     />
                     <input
                       type="text"
@@ -361,7 +361,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.title}
                       onChange={(e) => handleActivityChange(date, 'title', e.target.value)}
                       aria-label="Activity title"
-                      className="flex-1 bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                     />
                     <input
                       type="text"
@@ -369,7 +369,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.notes}
                       onChange={(e) => handleActivityChange(date, 'notes', e.target.value)}
                       aria-label="Activity notes"
-                      className="flex-1 bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                     />
                     <button
                       type="submit"
@@ -386,7 +386,7 @@ export function TripDetail({ trips, onUpdate }) {
       </div>
 
       {/* Notes */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6">
         <h3 className="text-[#e4e4e7] font-semibold mb-4">Notes</h3>
         <textarea
           value={notes}
@@ -394,7 +394,7 @@ export function TripDetail({ trips, onUpdate }) {
           onBlur={handleNotesBlur}
           placeholder="Add any notes about this trip..."
           rows={5}
-          className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-4 py-3 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
+          className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-4 py-3 text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
         />
       </div>
     </div>

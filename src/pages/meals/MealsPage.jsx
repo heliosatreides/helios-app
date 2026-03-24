@@ -124,7 +124,7 @@ export function MealsPage() {
                       <td key={slot} className="px-2 py-1">
                         <div
                           onClick={() => openCell(day, slot)}
-                          className="bg-[#111113] border border-[#27272a] rounded-lg p-2 min-h-[60px] cursor-pointer hover:border-amber-500/50 transition-colors relative group"
+                          className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg p-2 min-h-[60px] cursor-pointer hover:border-amber-500/50 transition-colors relative group"
                         >
                           {meal ? (
                             <>
@@ -148,7 +148,7 @@ export function MealsPage() {
       )}
 
       {tab === 'grocery' && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5">
           <h2 className="text-sm font-semibold text-[#a1a1aa] mb-4">Auto-generated Grocery List</h2>
           {groceryList.length === 0 ? (
             <p className="text-[#52525b] text-sm">Add meals with ingredients in the Planner tab to generate a grocery list.</p>
@@ -156,7 +156,7 @@ export function MealsPage() {
             <ul className="space-y-2">
               {groceryList.map((ing, i) => (
                 <li key={i} className="flex items-center gap-3 text-sm text-[#e4e4e7]">
-                  <span className="w-4 h-4 border border-[#27272a] rounded" />
+                  <span className="w-4 h-4 border border-[#1c1c20] rounded" />
                   {ing}
                 </li>
               ))}
@@ -167,11 +167,11 @@ export function MealsPage() {
 
       {tab === 'ai' && (
         <div className="space-y-6">
-          <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-4">
+          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
             <h2 className="text-sm font-semibold text-[#a1a1aa]">✨ Plan My Week</h2>
             <div>
               <label className="block text-xs text-[#71717a] mb-1">Dietary Preferences (e.g., vegetarian, high-protein, low-carb)</label>
-              <input value={dietPrefs} onChange={e => setDietPrefs(e.target.value)} placeholder="e.g., vegetarian, gluten-free, high protein" className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+              <input value={dietPrefs} onChange={e => setDietPrefs(e.target.value)} placeholder="e.g., vegetarian, gluten-free, high protein" className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
             </div>
             <button onClick={planMyWeek} disabled={loading} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
               {loading ? 'Planning...' : '✨ Plan My Week'}
@@ -179,11 +179,11 @@ export function MealsPage() {
             {aiPlan && <pre className="text-sm text-[#a1a1aa] leading-relaxed whitespace-pre-wrap bg-[#18181b] rounded-lg p-4">{aiPlan}</pre>}
           </div>
 
-          <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-4">
+          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
             <h2 className="text-sm font-semibold text-[#a1a1aa]">✨ What Can I Make?</h2>
             <div>
               <label className="block text-xs text-[#71717a] mb-1">Paste your available ingredients</label>
-              <textarea value={availableIngredients} onChange={e => setAvailableIngredients(e.target.value)} placeholder="chicken, rice, onions, garlic, tomatoes..." rows={3} className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 resize-none" />
+              <textarea value={availableIngredients} onChange={e => setAvailableIngredients(e.target.value)} placeholder="chicken, rice, onions, garlic, tomatoes..." rows={3} className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 resize-none" />
             </div>
             <button onClick={suggestMeals} disabled={loading || !availableIngredients.trim()} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
               {loading ? 'Thinking...' : '✨ Suggest Meals'}
@@ -197,7 +197,7 @@ export function MealsPage() {
       {/* Edit modal */}
       {editCell && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#111113] border border-[#27272a] rounded-xl p-6 w-full max-w-md space-y-4">
+          <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md space-y-4">
             <h2 className="font-semibold text-[#e4e4e7]">{editCell.day} – {editCell.slot}</h2>
             {[
               { label: 'Meal Name', key: 'name', placeholder: 'e.g., Oatmeal with Berries' },
@@ -208,7 +208,7 @@ export function MealsPage() {
             ].map(({ label, key, placeholder, type }) => (
               <div key={key}>
                 <label className="block text-xs text-[#71717a] mb-1">{label}</label>
-                <input type={type || 'text'} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+                <input type={type || 'text'} value={form[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={placeholder} className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
               </div>
             ))}
             <div className="flex gap-3">

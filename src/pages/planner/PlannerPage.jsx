@@ -11,7 +11,6 @@ export function PlannerPage() {
   const [activeTab, setActiveTab] = useState('Today');
   const today = getTodayStr();
 
-  // Get trip activities for today (cross-app integration)
   const [trips] = useIDB('helios-trips', []);
 
   const todayTripActivities = useMemo(() => {
@@ -29,22 +28,23 @@ export function PlannerPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page header */}
-      <div>
-        <h2 className="text-2xl font-bold text-[#e4e4e7]">Daily Planner 🗓️</h2>
-        <p className="text-[#71717a] text-sm mt-1">{today}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#e4e4e7]">Daily Planner</h1>
+          <p className="text-[#52525b] text-sm mt-0.5">{today}</p>
+        </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-[#0a0a0b] p-1 rounded-xl border border-[#27272a] w-fit">
+      {/* Segmented tabs */}
+      <div className="flex gap-1 bg-[#0a0a0b] p-1 rounded-xl border border-[#1c1c20] w-fit">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               activeTab === tab
-                ? 'bg-[#27272a] text-[#e4e4e7]'
-                : 'text-[#71717a] hover:text-[#a1a1aa]'
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                : 'text-[#52525b] hover:text-[#a1a1aa] border border-transparent'
             }`}
           >
             {tab}
@@ -52,8 +52,7 @@ export function PlannerPage() {
         ))}
       </div>
 
-      {/* Tab content */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-5">
         {activeTab === 'Today' && (
           <TodayTab dateStr={today} tripActivities={todayTripActivities} />
         )}

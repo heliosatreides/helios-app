@@ -89,7 +89,7 @@ export function CalculatorPage() {
     setAiInterpretation(resp);
   }
 
-  const inputCls = "w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500";
+  const inputCls = "w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500";
 
   return (
     <div className="space-y-6">
@@ -103,7 +103,7 @@ export function CalculatorPage() {
       </div>
 
       {/* Inputs per tab */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-4">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
         {tab === 'Loan' && (
           <>
             <h2 className="text-sm font-semibold text-[#a1a1aa]">Loan Calculator</h2>
@@ -185,7 +185,7 @@ export function CalculatorPage() {
 
       {/* Results */}
       {result && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-4">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
           {result.type === 'loan' && (
             <>
               <div className="grid grid-cols-3 gap-4">
@@ -200,7 +200,7 @@ export function CalculatorPage() {
                     <thead><tr className="text-[#52525b]"><th className="text-left py-1">Mo</th><th className="text-right py-1">Payment</th><th className="text-right py-1">Principal</th><th className="text-right py-1">Interest</th><th className="text-right py-1">Balance</th></tr></thead>
                     <tbody>
                       {result.schedule.map(row => (
-                        <tr key={row.month} className="text-[#a1a1aa] border-t border-[#27272a]/50">
+                        <tr key={row.month} className="text-[#a1a1aa] border-t border-[#1c1c20]/50">
                           <td className="py-1">{row.month}</td>
                           <td className="text-right">{fmt(row.payment)}</td>
                           <td className="text-right text-green-400">{fmt(row.principal)}</td>
@@ -242,7 +242,7 @@ export function CalculatorPage() {
           )}
 
           {/* AI interpret */}
-          <div className="border-t border-[#27272a] pt-4 space-y-3">
+          <div className="border-t border-[#1c1c20] pt-4 space-y-3">
             <button onClick={interpret} disabled={loading} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
               {loading ? 'Thinking...' : '✨ Interpret My Results'}
             </button>
@@ -257,7 +257,7 @@ export function CalculatorPage() {
         <div className="space-y-2">
           <h2 className="text-xs font-semibold text-[#52525b] uppercase tracking-widest">Recent Calculations</h2>
           {history.slice(0, 5).map(h => (
-            <div key={h.id} className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 flex items-center justify-between text-sm">
+            <div key={h.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 flex items-center justify-between text-sm">
               <span className="text-[#a1a1aa]">{h.label}</span>
               <span className="text-amber-400 font-semibold">{h.summary}</span>
             </div>

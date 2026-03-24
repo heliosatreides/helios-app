@@ -150,7 +150,7 @@ export function LandingPage() {
           <a
             href="#features"
             onClick={scrollToFeatures}
-            className="px-8 py-4 rounded-2xl font-semibold border border-[#27272a] text-[#a1a1aa] hover:text-[#e4e4e7] hover:border-[#3f3f46] hover:bg-[#111113] transition-all"
+            className="px-8 py-4 rounded-2xl font-semibold border border-[#1c1c20] text-[#a1a1aa] hover:text-[#e4e4e7] hover:border-[#3f3f46] hover:bg-[#111113] transition-all"
           >
             Explore Features
           </a>
@@ -199,7 +199,7 @@ export function LandingPage() {
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 activeCategory === cat.id
                   ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-lg shadow-amber-500/5'
-                  : 'bg-[#111113] text-[#71717a] border border-[#1c1c20] hover:text-[#e4e4e7] hover:border-[#27272a]'
+                  : 'bg-[#111113] text-[#71717a] border border-[#1c1c20] hover:text-[#e4e4e7] hover:border-[#1c1c20]'
               }`}
             >
               <span>{cat.icon}</span>
@@ -253,7 +253,7 @@ export function LandingPage() {
               desc: 'No accounts to create. No email to provide. No analytics. No telemetry. There\'s literally no server to breach.',
             },
           ].map((item) => (
-            <div key={item.title} className="bg-[#111113] border border-[#1c1c20] rounded-2xl p-8 text-center hover:border-[#27272a] transition-colors">
+            <div key={item.title} className="bg-[#111113] border border-[#1c1c20] rounded-2xl p-8 text-center hover:border-[#1c1c20] transition-colors">
               <span className="text-4xl mb-4 block">{item.icon}</span>
               <h3 className="font-bold text-[#e4e4e7] text-lg mb-3">{item.title}</h3>
               <p className="text-[#52525b] text-sm leading-relaxed">{item.desc}</p>

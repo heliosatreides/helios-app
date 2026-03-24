@@ -88,7 +88,7 @@ function HoldingRow({ h, onRemove, onPriceUpdate, totalValue }) {
   const weightPct = totalValue > 0 ? (marketValue / totalValue) * 100 : 0;
 
   return (
-    <tr className="border-b border-[#27272a] last:border-0 hover:bg-[#0a0a0b]">
+    <tr className="border-b border-[#1c1c20] last:border-0 hover:bg-[#0a0a0b]">
       <td className="px-4 py-3 font-bold text-[#f59e0b]">{h.ticker}</td>
       <td className="px-4 py-3 text-[#a1a1aa]">{h.name || '—'}</td>
       <td className="px-4 py-3 text-[#71717a]">{h.assetClass}</td>
@@ -169,10 +169,10 @@ function AddHoldingForm({ onAdd, onCancel }) {
     setForm({ ticker: '', name: '', shares: '', costBasis: '', currentPrice: '', assetClass: 'Stocks' });
   };
 
-  const inputCls = 'bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-4">
+    <form onSubmit={handleSubmit} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-4">
       <h3 className="text-[#e4e4e7] font-semibold">Add Holding</h3>
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2 sm:col-span-1">
@@ -223,7 +223,7 @@ function AddHoldingForm({ onAdd, onCancel }) {
         <button type="submit" className="bg-[#f59e0b] hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors">
           Add Holding
         </button>
-        <button type="button" onClick={onCancel} className="border border-[#27272a] text-[#71717a] hover:text-[#e4e4e7] px-4 py-2 rounded-lg text-sm transition-colors">
+        <button type="button" onClick={onCancel} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-4 py-2 rounded-lg text-sm transition-colors">
           Cancel
         </button>
       </div>
@@ -302,7 +302,7 @@ export function Portfolio() {
   return (
     <div className="space-y-5">
       {/* Summary Bar */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div>
           <p className="text-[#71717a] text-xs mb-1">Total Value</p>
           <p className="text-xl font-bold text-[#f59e0b]">
@@ -362,7 +362,7 @@ export function Portfolio() {
 
       {/* Asset Allocation */}
       {allocations.length > 0 && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5">
           <h3 className="text-[#e4e4e7] font-semibold mb-4">Asset Allocation</h3>
           <AssetPieChart allocations={allocations} />
         </div>
@@ -408,11 +408,11 @@ export function Portfolio() {
           <p className="text-sm">Monitor gains, losses, and asset allocation over time.</p>
         </div>
       ) : (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl overflow-hidden">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#27272a]">
+                <tr className="border-b border-[#1c1c20]">
                   {['Ticker', 'Name', 'Class', 'Shares', 'Cost Basis', 'Live Price', 'Mkt Value', 'Weight %', 'Gain/Loss', '%', ''].map((h) => (
                     <th key={h} className="text-left text-[#71717a] font-medium px-4 py-3 whitespace-nowrap">{h}</th>
                   ))}

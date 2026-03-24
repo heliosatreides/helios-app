@@ -52,7 +52,7 @@ function AddContactModal({ onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-contact-modal">
-      <div className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
         <h2 className="text-lg font-bold text-[#e4e4e7] mb-4">Add Contact</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           {[
@@ -71,7 +71,7 @@ function AddContactModal({ onSave, onClose }) {
                 value={form[field]}
                 onChange={set(field)}
                 placeholder={placeholder}
-                className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
                 data-testid={testId}
               />
             </div>
@@ -84,7 +84,7 @@ function AddContactModal({ onSave, onClose }) {
               onChange={set('followUpDays')}
               placeholder="14"
               min="0"
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
               data-testid="contact-followup-input"
             />
           </div>
@@ -114,7 +114,7 @@ function LogInteractionModal({ contact, onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="log-interaction-modal">
-      <div className="bg-[#0a0a0b] border border-[#27272a] rounded-xl p-6 w-full max-w-md">
+      <div className="bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-6 w-full max-w-md">
         <h2 className="text-lg font-bold text-[#e4e4e7] mb-1">Log Interaction</h2>
         <p className="text-[#71717a] text-sm mb-4">with {contact.name}</p>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -124,7 +124,7 @@ function LogInteractionModal({ contact, onSave, onClose }) {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
             />
           </div>
           <div>
@@ -134,7 +134,7 @@ function LogInteractionModal({ contact, onSave, onClose }) {
               onChange={(e) => setNote(e.target.value)}
               placeholder="Had coffee, discussed job opportunity..."
               rows={3}
-              className="w-full bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] resize-none"
+              className="w-full bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b] resize-none"
               data-testid="interaction-note-input"
             />
           </div>
@@ -202,7 +202,7 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
 
   return (
     <div
-      className={`bg-[#111113] border rounded-xl p-4 ${overdue ? 'border-amber-500/50' : 'border-[#27272a]'}`}
+      className={`bg-[#111113] border rounded-xl p-4 ${overdue ? 'border-amber-500/50' : 'border-[#1c1c20]'}`}
       data-testid={`contact-card-${contact.id}`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -304,7 +304,7 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
                     value={meetingContext}
                     onChange={(e) => setMeetingContext(e.target.value)}
                     placeholder="Meeting context (optional)"
-                    className="flex-1 min-w-0 bg-[#111113] border border-[#27272a] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+                    className="flex-1 min-w-0 bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-1.5 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
                   />
                   <button
                     type="button"
@@ -432,14 +432,14 @@ export function NetworkingTab() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search contacts…"
-          className="flex-1 min-w-0 bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 min-w-0 bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
           data-testid="contact-search"
         />
         {allTags.length > 0 && (
           <select
             value={filterTag}
             onChange={(e) => setFilterTag(e.target.value)}
-            className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+            className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
             data-testid="tag-filter"
           >
             <option value="">All tags</option>

@@ -173,7 +173,7 @@ export function FinancePage() {
     <div className="space-y-6">
       {/* Net Worth Banner */}
       {accounts.length > 0 && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5" data-testid="net-worth-banner">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5" data-testid="net-worth-banner">
           <p className="text-[#71717a] text-sm mb-1">Net Worth</p>
           <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-amber-400' : 'text-red-400'}`} data-testid="net-worth-value">
             {netWorth < 0 ? '-' : ''}${Math.abs(netWorth).toLocaleString('en-US', { maximumFractionDigits: 2 })}
@@ -183,7 +183,7 @@ export function FinancePage() {
 
       {/* Monthly Summary */}
       {(monthlyIncome > 0 || monthlyExpensesTotal > 0) && (
-        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5" data-testid="monthly-summary-card">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5" data-testid="monthly-summary-card">
           <p className="text-[#e4e4e7] font-semibold mb-3">
             Monthly Summary <span className="text-[#52525b] text-sm font-normal">({currentMonth})</span>
           </p>
@@ -214,7 +214,7 @@ export function FinancePage() {
                 />
               </div>
             </div>
-            <div className="flex justify-between text-sm pt-1 border-t border-[#27272a]">
+            <div className="flex justify-between text-sm pt-1 border-t border-[#1c1c20]">
               <span className="text-[#71717a]">Net</span>
               <span className={`font-semibold ${monthlyIncome - monthlyExpensesTotal >= 0 ? 'text-green-400' : 'text-red-400'}`} data-testid="monthly-net">
                 {monthlyIncome - monthlyExpensesTotal >= 0 ? '+' : ''}${(monthlyIncome - monthlyExpensesTotal).toLocaleString('en-US', { maximumFractionDigits: 2 })}
@@ -243,7 +243,7 @@ export function FinancePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#111113] border border-[#27272a] rounded-xl p-1">
+      <div className="flex gap-1 bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-1">
         {TABS.map((tab) => (
           <button
             key={tab}
@@ -299,7 +299,7 @@ export function FinancePage() {
             <select
               value={filterAccountId}
               onChange={(e) => setFilterAccountId(e.target.value)}
-              className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
             >
               <option value="">All Accounts</option>
               {accounts.map((a) => (
@@ -309,7 +309,7 @@ export function FinancePage() {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm focus:outline-none focus:border-[#f59e0b]"
             >
               <option value="">All Categories</option>
               {CATEGORIES.map((c) => (
@@ -347,7 +347,7 @@ export function FinancePage() {
                 <button
                   key={b.category}
                   onClick={() => handleDeleteBudget(b.category)}
-                  className="text-xs text-[#71717a] hover:text-red-400 bg-[#111113] border border-[#27272a] rounded px-2 py-1 transition-colors"
+                  className="text-xs text-[#71717a] hover:text-red-400 bg-[#0c0c0e] border border-[#1c1c20] rounded px-2 py-1 transition-colors"
                 >
                   Remove {b.category}
                 </button>

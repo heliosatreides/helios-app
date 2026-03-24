@@ -130,7 +130,7 @@ export function PackingPage() {
           {lists.map(list => {
             const done = list.items.filter(i => i.checked).length;
             return (
-              <div key={list.id} className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex items-center gap-4">
+              <div key={list.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-center gap-4">
                 <div className="flex-1 cursor-pointer" onClick={() => { setActiveList(list); setFilterCat('All'); setAiSuggestion(''); setView('detail'); }}>
                   <div className="font-semibold text-[#e4e4e7]">{list.name}</div>
                   <div className="text-sm text-[#71717a]">{done}/{list.items.length} items packed</div>
@@ -157,31 +157,31 @@ export function PackingPage() {
       </div>
 
       {/* Templates */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
         <h2 className="text-sm font-semibold text-[#a1a1aa]">Use a Template</h2>
         <div className="grid grid-cols-2 gap-2">
           {TEMPLATE_NAMES.map(t => (
-            <button key={t} onClick={() => createFromTemplate(t)} className="p-3 bg-[#18181b] border border-[#27272a] rounded-lg text-sm text-[#e4e4e7] hover:border-amber-500 text-left">{t}</button>
+            <button key={t} onClick={() => createFromTemplate(t)} className="p-3 bg-[#18181b] border border-[#1c1c20] rounded-lg text-sm text-[#e4e4e7] hover:border-amber-500 text-left">{t}</button>
           ))}
         </div>
       </div>
 
       {/* Blank list */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
         <h2 className="text-sm font-semibold text-[#a1a1aa]">Create from Scratch</h2>
         <div className="flex gap-2">
-          <input value={newListName} onChange={e => setNewListName(e.target.value)} placeholder="List name" className="flex-1 bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input value={newListName} onChange={e => setNewListName(e.target.value)} placeholder="List name" className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
           <button onClick={createBlank} disabled={!newListName.trim()} className="px-4 py-2 bg-amber-500 text-black rounded-lg font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">Create</button>
         </div>
       </div>
 
       {/* AI builder */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 space-y-3">
         <h2 className="text-sm font-semibold text-[#a1a1aa]">✨ AI Packing List Builder</h2>
         <div className="grid grid-cols-2 gap-2">
-          <input value={aiDestination} onChange={e => setAiDestination(e.target.value)} placeholder="Destination (e.g., Bali)" className="bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-          <input value={aiTripType} onChange={e => setAiTripType(e.target.value)} placeholder="Trip type (e.g., beach)" className="bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-          <input value={aiDuration} onChange={e => setAiDuration(e.target.value)} placeholder="Duration (e.g., 7 days)" className="bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 col-span-2" />
+          <input value={aiDestination} onChange={e => setAiDestination(e.target.value)} placeholder="Destination (e.g., Bali)" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input value={aiTripType} onChange={e => setAiTripType(e.target.value)} placeholder="Trip type (e.g., beach)" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+          <input value={aiDuration} onChange={e => setAiDuration(e.target.value)} placeholder="Duration (e.g., 7 days)" className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 col-span-2" />
         </div>
         <button onClick={buildWithAI} disabled={loading || !aiDestination.trim()} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-semibold hover:bg-purple-500 disabled:opacity-50">
           {loading ? 'Building...' : '✨ Build with AI'}
@@ -226,8 +226,8 @@ export function PackingPage() {
 
       {/* Add item */}
       <div className="flex gap-2">
-        <input value={newItemName} onChange={e => setNewItemName(e.target.value)} onKeyDown={e => e.key === 'Enter' && addItem()} placeholder="Add item..." className="flex-1 bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
-        <select value={newItemCat} onChange={e => setNewItemCat(e.target.value)} className="bg-[#18181b] border border-[#27272a] rounded-lg px-2 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500">
+        <input value={newItemName} onChange={e => setNewItemName(e.target.value)} onKeyDown={e => e.key === 'Enter' && addItem()} placeholder="Add item..." className="flex-1 bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+        <select value={newItemCat} onChange={e => setNewItemCat(e.target.value)} className="bg-[#18181b] border border-[#1c1c20] rounded-lg px-2 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500">
           {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
         <button onClick={addItem} className="px-3 py-2 bg-amber-500 text-black rounded-lg text-sm font-semibold hover:bg-amber-400">+</button>
@@ -241,7 +241,7 @@ export function PackingPage() {
           <div key={cat} className="space-y-2">
             <h3 className="text-xs font-semibold text-[#52525b] uppercase tracking-widest">{cat}</h3>
             {catItems.map(item => (
-              <div key={item.id} className="flex items-center gap-3 bg-[#111113] border border-[#27272a] rounded-lg px-3 py-2.5">
+              <div key={item.id} className="flex items-center gap-3 bg-[#0c0c0e] border border-[#1c1c20] rounded-lg px-3 py-2.5">
                 <input type="checkbox" checked={item.checked} onChange={() => toggleItem(item.id)} className="w-4 h-4 rounded accent-amber-500" />
                 <span className={`flex-1 text-sm ${item.checked ? 'line-through text-[#52525b]' : 'text-[#e4e4e7]'}`}>{item.name}</span>
                 <button onClick={() => removeItem(item.id)} className="text-[#52525b] hover:text-red-400 text-xs">✕</button>

@@ -206,7 +206,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
               {isActive && (
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-[#111113] border border-[#27272a] rounded-xl p-3 mx-1 my-1 space-y-3"
+                  className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-3 mx-1 my-1 space-y-3"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <input
@@ -215,14 +215,14 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     value={formData.title}
                     onChange={(e) => setFormData((p) => ({ ...p, title: e.target.value }))}
                     autoFocus
-                    className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                    className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                   />
                   <div className="flex gap-2 flex-wrap">
                     {/* Duration */}
                     <select
                       value={formData.duration}
                       onChange={(e) => setFormData((p) => ({ ...p, duration: Number(e.target.value) }))}
-                      className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+                      className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
                     >
                       {DURATION_OPTIONS.map((d) => (
                         <option key={d} value={d}>{d === 30 ? '30min' : d === 60 ? '1hr' : '2hr'}</option>

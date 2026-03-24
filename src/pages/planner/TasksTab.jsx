@@ -21,7 +21,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className={`border rounded-xl px-3 py-2.5 ${task.completed ? 'bg-[#0a0a0b] border-[#1a1a1c]' : 'bg-[#111113] border-[#27272a]'}`}>
+    <div className={`border rounded-xl px-3 py-2.5 ${task.completed ? 'bg-[#0a0a0b] border-[#1a1a1c]' : 'bg-[#111113] border-[#1c1c20]'}`}>
       <div className="flex items-start gap-3">
         {/* Checkbox */}
         <button
@@ -94,18 +94,18 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
 
       {/* Inline edit */}
       {expanded && (
-        <div className="mt-2 pt-2 border-t border-[#27272a] space-y-2">
+        <div className="mt-2 pt-2 border-t border-[#1c1c20] space-y-2">
           <input
             type="text"
             value={task.title}
             onChange={(e) => onUpdate(task.id, { title: e.target.value })}
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-sm text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-sm text-[#e4e4e7] focus:outline-none focus:border-[#f59e0b]"
           />
           <div className="flex gap-2 flex-wrap">
             <select
               value={task.priority}
               onChange={(e) => onUpdate(task.id, { priority: e.target.value })}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
             >
               {['High', 'Medium', 'Low'].map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
@@ -113,12 +113,12 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
               type="date"
               value={task.dueDate || ''}
               onChange={(e) => onUpdate(task.id, { dueDate: e.target.value || null })}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
             />
             <select
               value={task.recurring}
               onChange={(e) => onUpdate(task.id, { recurring: e.target.value })}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1 text-xs text-[#e4e4e7] focus:outline-none"
             >
               {RECURRING_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
@@ -128,7 +128,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
             onChange={(e) => onUpdate(task.id, { notes: e.target.value })}
             placeholder="Notes…"
             rows={2}
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
           />
           <button
             onClick={() => setExpanded(false)}
@@ -236,20 +236,20 @@ export function TasksTab() {
 
       {/* Add form */}
       {showAddForm && (
-        <form onSubmit={handleAdd} className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+        <form onSubmit={handleAdd} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
           <input
             type="text"
             placeholder="Task title…"
             value={newTask.title}
             onChange={(e) => setNewTask((p) => ({ ...p, title: e.target.value }))}
             autoFocus
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
           />
           <div className="flex gap-2 flex-wrap">
             <select
               value={newTask.priority}
               onChange={(e) => setNewTask((p) => ({ ...p, priority: e.target.value }))}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
             >
               {['High', 'Medium', 'Low'].map((p) => <option key={p} value={p}>{p}</option>)}
             </select>
@@ -257,12 +257,12 @@ export function TasksTab() {
               type="date"
               value={newTask.dueDate}
               onChange={(e) => setNewTask((p) => ({ ...p, dueDate: e.target.value }))}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
             />
             <select
               value={newTask.recurring}
               onChange={(e) => setNewTask((p) => ({ ...p, recurring: e.target.value }))}
-              className="bg-[#0a0a0b] border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
+              className="bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-2 py-1.5 text-xs text-[#e4e4e7] focus:outline-none"
             >
               {RECURRING_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
@@ -272,7 +272,7 @@ export function TasksTab() {
             value={newTask.notes}
             onChange={(e) => setNewTask((p) => ({ ...p, notes: e.target.value }))}
             rows={2}
-            className="w-full bg-[#0a0a0b] border border-[#27272a] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-[#0a0a0b] border border-[#1c1c20] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none resize-none"
           />
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-1.5 text-sm bg-[#f59e0b] hover:bg-[#d97706] text-black font-semibold rounded-lg">

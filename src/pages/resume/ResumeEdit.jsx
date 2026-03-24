@@ -11,7 +11,7 @@ import {
 function Section({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-[#18181b] border border-[#27272a] rounded-xl mb-4">
+    <div className="bg-[#18181b] border border-[#1c1c20] rounded-xl mb-4">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-4 py-3 text-left"

@@ -117,10 +117,10 @@ export function WikiPage() {
         <h1 className="text-xl font-bold text-[#e4e4e7]">{activePage ? 'Edit Page' : 'New Page'}</h1>
       </div>
       <div className="space-y-3">
-        <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Page title" className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 font-semibold" />
-        <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} placeholder="Category (e.g., Projects, References)" list="wiki-cats" className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+        <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Page title" className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 font-semibold" />
+        <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} placeholder="Category (e.g., Projects, References)" list="wiki-cats" className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
         <datalist id="wiki-cats">{categories.map(c => <option key={c} value={c} />)}</datalist>
-        <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} placeholder="Write your page content... Supports # headings, **bold**, *italic*, `code`, - bullets, and [[Page Links]]" rows={16} className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 font-mono resize-none" />
+        <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} placeholder="Write your page content... Supports # headings, **bold**, *italic*, `code`, - bullets, and [[Page Links]]" rows={16} className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500 font-mono resize-none" />
         <div className="flex gap-2">
           <button onClick={activePage ? updatePage : createPage} className="px-4 py-2 bg-amber-500 text-black rounded-lg font-semibold text-sm hover:bg-amber-400">
             {activePage ? 'Update' : 'Create'}
@@ -143,11 +143,11 @@ export function WikiPage() {
         </div>
       </div>
       <h1 className="text-2xl font-bold text-[#e4e4e7]">{activePage.title}</h1>
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5 prose prose-invert max-w-none text-sm text-[#a1a1aa] leading-relaxed"
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5 prose prose-invert max-w-none text-sm text-[#a1a1aa] leading-relaxed"
         dangerouslySetInnerHTML={{ __html: renderContent(activePage.content) }} />
 
       {/* AI panel */}
-      <div className="bg-[#111113] border border-[#27272a] rounded-xl p-4 space-y-3">
+      <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 space-y-3">
         <h3 className="text-sm font-semibold text-[#a1a1aa]">✨ AI Tools</h3>
         <div className="flex gap-2">
           <button onClick={summarize} disabled={loading} className="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-500 disabled:opacity-50">Summarize</button>
@@ -172,7 +172,7 @@ export function WikiPage() {
         <h1 className="text-2xl font-bold text-[#e4e4e7]">📝 Personal Wiki</h1>
         <button onClick={() => { setActivePage(null); setForm({ title: '', content: '', category: '' }); setView('edit'); }} className="px-4 py-2 bg-amber-500 text-black rounded-lg font-semibold text-sm hover:bg-amber-400">+ New Page</button>
       </div>
-      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search pages..." className="w-full bg-[#18181b] border border-[#27272a] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
+      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search pages..." className="w-full bg-[#18181b] border border-[#1c1c20] rounded-lg px-3 py-2 text-[#e4e4e7] text-sm outline-none focus:border-amber-500" />
 
       {pages.length === 0 ? (
         <div className="text-center py-16 text-[#52525b]">Your wiki is empty. Create your first page!</div>
@@ -183,7 +183,7 @@ export function WikiPage() {
           <div key={cat} className="space-y-2">
             <h2 className="text-xs font-semibold text-[#52525b] uppercase tracking-widest">{cat}</h2>
             {catPages.map(page => (
-              <div key={page.id} className="bg-[#111113] border border-[#27272a] rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => { setActivePage(page); setAiSummary(''); setAiRelated(''); setView('read'); }}>
+              <div key={page.id} className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => { setActivePage(page); setAiSummary(''); setAiRelated(''); setView('read'); }}>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-[#e4e4e7]">{page.title}</div>
                   <div className="text-sm text-[#71717a] truncate mt-0.5">{page.content.replace(/[#*`\[\]]/g, '').slice(0, 100)}...</div>
