@@ -36,6 +36,7 @@ import { LoginPage } from './auth/LoginPage';
 import { LandingPage } from './pages/landing/LandingPage';
 import { useAuth } from './auth/AuthContext';
 import { useIDB } from './hooks/useIDB';
+import { CommandPalette } from './components/CommandPalette';
 import './index.css';
 
 function AppShell() {
@@ -48,6 +49,7 @@ function AppShell() {
 
   return (
     <div className="flex h-screen bg-[#0a0a0b] overflow-hidden">
+      <CommandPalette />
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div

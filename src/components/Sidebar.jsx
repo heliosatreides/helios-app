@@ -73,6 +73,20 @@ export function Sidebar({ onNavClick }) {
         </div>
       </div>
 
+      {/* Search hint */}
+      <div className="px-3 pt-3 pb-1 shrink-0">
+        <button
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-[#111113] border border-[#1c1c20] hover:border-[#27272a] text-[#3f3f46] text-xs transition-colors"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+          </svg>
+          <span className="flex-1 text-left">Search…</span>
+          <kbd className="text-[10px] bg-[#18181b] px-1.5 py-0.5 rounded border border-[#27272a] font-mono">⌘K</kbd>
+        </button>
+      </div>
+
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-5 scrollbar-hide">
         {navGroups.map((group) => (
