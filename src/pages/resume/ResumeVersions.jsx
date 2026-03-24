@@ -1,0 +1,107 @@
+import { useState } from 'react';
+
+export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
+  const [saving, setSaving] = useState(false);
+  const [versionName, setVersionName] = useState('');
+
+  function handleSave() {
+    const name = versionName.trim();
+    if (!name) return;
+    onSave(name);
+    setVersionName('');
+    setSaving(false);
+  }
+
+  function formatDate(iso) {
+    try {
+      return new Date(iso).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return iso;
+    }
+  }
+
+  return (
+    <div>
+      <div className="mb-6">
+        {!saving ? (
+          <button
+            onClick={() => setSaving(true)}
+            className="px-4 py-2 bg-amber-500 text-black font-semibold rounded-lg text-sm hover:bg-amber-400 transition-colors"
+          >
+            + Save as Version
+          </button>
+        ) : (
+          <div className="bg-[#18181b] border border-amber-500/30 rounded-xl p-4 flex gap-3 items-end max-w-sm">
+            <div className="flex-1">
+              <label className="block text-xs text-[#71717a] mb-1">Version Name</label>
+              <input
+                type="text"
+                value={versionName}
+                onChange={(e) => setVersionName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                placeholder='e.g. "SWE Resume"'
+                autoFocus
+                className="w-full bg-[#27272a] border border-[#3f3f46] rounded-lg px-3 py-2 text-sm text-[#e4e4e7] placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+              />
+            </div>
+            <button
+              onClick={handleSave}
+              disabled={!versionName.trim()}
+              className="px-3 py-2 bg-amber-500 text-black font-semibold rounded-lg text-sm hover:bg-amber-400 disabled:opacity-50"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => { setSaving(false); setVersionName(''); }}
+              className="px-3 py-2 text-[#71717a] hover:text-[#e4e4e7] text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
+
+      {versions.length === 0 ? (
+        <div className="text-center py-12 text-[#52525b]">
+          <p className="text-3xl mb-2">📄</p>
+          <p className="text-sm">No saved versions yet.</p>
+          <p className="text-xs mt-1">Save your current resume as a named version to switch between them.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {versions.map((v) => (
+            <div
+              key={v.id}
+              className="bg-[#18181b] border border-[#27272a] rounded-xl p-4 flex items-center justify-between"
+            >
+              <div>
+                <p className="text-[#e4e4e7] font-medium">{v.name}</p>
+                <p className="text-xs text-[#52525b] mt-0.5">Saved {formatDate(v.savedAt)}</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onLoad(v.id)}
+                  className="px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-xs hover:bg-amber-500/20 transition-colors"
+                >
+                  Load
+                </button>
+                <button
+                  onClick={() => onDelete(v.id)}
+                  className="px-3 py-1.5 text-[#52525b] hover:text-red-400 text-xs transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
