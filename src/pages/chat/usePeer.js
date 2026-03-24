@@ -101,7 +101,9 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         room.onPeerLeave(() => {
           hasGuestRef.current = false;
           setPeerCount(c => Math.max(0, c - 1));
-          setStatus('disconnected');
+          // Go back to waiting — don't destroy the room. If the other
+          // person refreshes they'll rejoin the same room via the URL.
+          setStatus('waiting');
         });
 
         // Poll relay status

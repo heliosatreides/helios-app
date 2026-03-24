@@ -188,7 +188,9 @@ export function ChatPage() {
     );
   }
 
-  if (status === 'waiting') {
+  // If waiting but we already have messages, show the chat UI with a reconnecting banner
+  // This handles the case where one side refreshes — room stays open, banner shows until they rejoin
+  if (status === 'waiting' && messages.length === 0) {
     return (
       <FullScreenDark>
         <Spinner />
@@ -208,7 +210,7 @@ export function ChatPage() {
     );
   }
 
-  // connected or disconnected — show chat UI
+  // connected, or waiting-with-history (reconnecting) — show chat UI
   return (
     <div className="fixed inset-0 flex flex-col bg-[#0a0a0b] z-50">
       {/* Header */}
@@ -224,9 +226,9 @@ export function ChatPage() {
         </div>
         <button
           onClick={handleNewChat}
-          className="text-zinc-500 hover:text-zinc-300 text-xs transition-colors"
+          className="text-zinc-500 hover:text-red-400 text-xs transition-colors"
         >
-          New Chat
+          Leave
         </button>
       </div>
 
@@ -243,19 +245,11 @@ export function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Disconnected overlay */}
-      {status === 'disconnected' && (
-        <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-10">
-          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-8 max-w-sm w-full text-center mx-4">
-            <p className="text-zinc-200 text-lg font-semibold mb-2">Chat ended</p>
-            <p className="text-zinc-400 text-sm mb-6">The other party has disconnected.</p>
-            <button
-              onClick={handleNewChat}
-              className="px-6 py-2.5 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold hover:bg-amber-400 transition-colors"
-            >
-              Start New Chat
-            </button>
-          </div>
+      {/* Reconnecting banner — non-blocking, preserves message history */}
+      {status === 'waiting' && messages.length > 0 && (
+        <div className="absolute top-[53px] inset-x-0 z-10 flex items-center justify-center px-4 py-2 bg-zinc-900/95 border-b border-zinc-800">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse mr-2 shrink-0" />
+          <span className="text-zinc-400 text-xs">Other person disconnected — waiting for them to rejoin…</span>
         </div>
       )}
 
