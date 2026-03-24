@@ -7,6 +7,8 @@ import { DevToolsTab } from './DevToolsTab';
 import { FocusTab } from './FocusTab';
 import { HealthTab } from './HealthTab';
 import { KnowledgeTab } from './KnowledgeTab';
+import { GoalsTab } from './GoalsTab';
+import { NetworkingTab } from './NetworkingTab';
 
 function TodayFocusCard() {
   const today = getTodayStr();
@@ -290,6 +292,8 @@ const DASHBOARD_TABS = [
   { id: 'focus', label: '🍅 Focus' },
   { id: 'health', label: '💚 Health' },
   { id: 'knowledge', label: '📚 Knowledge' },
+  { id: 'goals', label: '🎯 Goals' },
+  { id: 'networking', label: '🤝 Network' },
 ];
 
 export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
@@ -297,22 +301,24 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
 
   return (
     <div className="space-y-4">
-      {/* Tab bar */}
-      <div className="flex gap-1 border-b border-[#27272a]">
-        {DASHBOARD_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            data-testid={`dashboard-tab-${tab.id}`}
-            className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-              activeTab === tab.id
-                ? 'text-amber-400 border-b-2 border-amber-400'
-                : 'text-[#71717a] hover:text-[#e4e4e7]'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Tab bar — sticky */}
+      <div className="sticky top-0 z-10 bg-[#0a0a0b] pb-px">
+        <div className="flex gap-1 border-b border-[#27272a] overflow-x-auto">
+          {DASHBOARD_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              data-testid={`dashboard-tab-${tab.id}`}
+              className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'text-amber-400 border-b-[3px] border-amber-400'
+                  : 'text-[#71717a] hover:text-[#e4e4e7]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {activeTab === 'overview' && (
@@ -329,6 +335,8 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       {activeTab === 'focus' && <FocusTab />}
       {activeTab === 'health' && <HealthTab />}
       {activeTab === 'knowledge' && <KnowledgeTab />}
+      {activeTab === 'goals' && <GoalsTab trips={trips} budgets={budgets} />}
+      {activeTab === 'networking' && <NetworkingTab />}
     </div>
   );
 }

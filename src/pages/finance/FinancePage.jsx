@@ -159,8 +159,71 @@ export function FinancePage() {
 
   const CATEGORIES = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping', 'Salary', 'Other'];
 
+  // Net worth and monthly summary
+  const netWorth = accounts.reduce((sum, a) => sum + a.balance, 0);
+  const monthlyIncome = transactions
+    .filter((t) => t.type === 'income' && t.date?.startsWith(currentMonth))
+    .reduce((sum, t) => sum + t.amount, 0);
+  const monthlyExpensesTotal = transactions
+    .filter((t) => t.type === 'expense' && t.date?.startsWith(currentMonth))
+    .reduce((sum, t) => sum + t.amount, 0);
+  const maxBar = Math.max(monthlyIncome, monthlyExpensesTotal, 1);
+
   return (
     <div className="space-y-6">
+      {/* Net Worth Banner */}
+      {accounts.length > 0 && (
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5" data-testid="net-worth-banner">
+          <p className="text-[#71717a] text-sm mb-1">Net Worth</p>
+          <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-amber-400' : 'text-red-400'}`} data-testid="net-worth-value">
+            {netWorth < 0 ? '-' : ''}${Math.abs(netWorth).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+          </p>
+        </div>
+      )}
+
+      {/* Monthly Summary */}
+      {(monthlyIncome > 0 || monthlyExpensesTotal > 0) && (
+        <div className="bg-[#111113] border border-[#27272a] rounded-xl p-5" data-testid="monthly-summary-card">
+          <p className="text-[#e4e4e7] font-semibold mb-3">
+            Monthly Summary <span className="text-[#52525b] text-sm font-normal">({currentMonth})</span>
+          </p>
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-green-400">Income</span>
+                <span className="text-green-400 font-medium">${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</span>
+              </div>
+              <div className="h-2 bg-[#27272a] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-500 rounded-full transition-all"
+                  style={{ width: `${(monthlyIncome / maxBar) * 100}%` }}
+                  data-testid="income-bar"
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-red-400">Expenses</span>
+                <span className="text-red-400 font-medium">${monthlyExpensesTotal.toLocaleString('en-US', { maximumFractionDigits: 2 })}</span>
+              </div>
+              <div className="h-2 bg-[#27272a] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-red-500 rounded-full transition-all"
+                  style={{ width: `${(monthlyExpensesTotal / maxBar) * 100}%` }}
+                  data-testid="expenses-bar"
+                />
+              </div>
+            </div>
+            <div className="flex justify-between text-sm pt-1 border-t border-[#27272a]">
+              <span className="text-[#71717a]">Net</span>
+              <span className={`font-semibold ${monthlyIncome - monthlyExpensesTotal >= 0 ? 'text-green-400' : 'text-red-400'}`} data-testid="monthly-net">
+                {monthlyIncome - monthlyExpensesTotal >= 0 ? '+' : ''}${(monthlyIncome - monthlyExpensesTotal).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
