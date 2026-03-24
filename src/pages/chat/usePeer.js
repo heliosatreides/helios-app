@@ -46,6 +46,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const connRef = useRef(null);
   const hasGuestRef = useRef(false);
   const retryTimerRef = useRef(null);
+  const masterRetryRef = useRef(null);
   const openTimeoutRef = useRef(null);
   const signalingTimeoutRef = useRef(null);
   const signalingHealthRef = useRef(null);
@@ -167,14 +168,27 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
             pc.addEventListener('connectionstatechange', () => {
               addDebug(`PC state: ${pc.connectionState}`);
             });
+            // Log initial states so we can see the baseline in debug output
+            addDebug(`ICE state (initial): ${pc.iceConnectionState}`);
+          } else {
+            addDebug('RTCPeerConnection not yet available on conn');
           }
 
-          // ICE timeout: if 'open' hasn't fired in ICE_TIMEOUT_MS the negotiation stalled —
-          // close the connection so the retry loop can start a fresh exchange.
+          // ICE timeout: if 'open' hasn't fired in ICE_TIMEOUT_MS the negotiation stalled.
+          // We null out connRef BEFORE calling close() so the close handler sees it's already
+          // superseded and won't double-fire onConnectionClosed.  We then trigger the retry
+          // directly here instead of relying on the 'close' event — PeerJS does not reliably
+          // emit 'close' for connections that never completed the SDP exchange.
           openTimeoutRef.current = setTimeout(() => {
             if (connRef.current === conn && !conn.open) {
               addDebug('ICE negotiation timed out — closing to trigger retry');
+              connRef.current = null;
               conn.close();
+              hasGuestRef.current = false;
+              setPeerCount(0);
+              setReconnecting(true);
+              setStatus('waiting');
+              if (!cancelled) onConnectionClosed?.();
             }
           }, ICE_TIMEOUT_MS);
 
@@ -248,10 +262,23 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
               if (!cancelled) {
                 addDebug(`Connection lost, retrying in ${CONN_FAILURE_RETRY_MS}ms...`);
                 clearTimeout(retryTimerRef.current);
+                clearTimeout(masterRetryRef.current);
                 retryTimerRef.current = setTimeout(attemptConnect, CONN_FAILURE_RETRY_MS);
               }
             });
             setStatus('waiting');
+
+            // Master retry watchdog: if we haven't opened ICE_TIMEOUT_MS + 2s after starting,
+            // force a fresh attempt.  This is a safety net for cases where the ICE timeout
+            // triggers conn.close() but the 'close' event silently drops (seen with 0.peerjs.com
+            // signaling relay dropping offer/answer packets during SDP exchange).
+            clearTimeout(masterRetryRef.current);
+            masterRetryRef.current = setTimeout(() => {
+              if (!cancelled && !connRef.current?.open) {
+                addDebug('Master retry watchdog: still not connected — forcing new attempt');
+                attemptConnect();
+              }
+            }, ICE_TIMEOUT_MS + 2000);
           }
 
           function createGuestPeer() {
@@ -396,6 +423,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
       cancelled = true;
       clearTimeout(tid);
       clearTimeout(retryTimerRef.current);
+      clearTimeout(masterRetryRef.current);
       clearTimeout(openTimeoutRef.current);
       clearTimeout(signalingTimeoutRef.current);
       clearInterval(signalingHealthRef.current);
