@@ -24,6 +24,7 @@ export function TripDetail({ trips, onUpdate }) {
   const [notes, setNotes] = useState(trip?.notes || '');
   const { generate, loading: aiLoading, error: aiError, hasKey } = useGemini();
   const [aiSuggestions, setAiSuggestions] = useState({});
+  const [itineraryAi, setItineraryAi] = useState({ loading: false, result: null, error: null });
 
   if (!trip) {
     return (
@@ -104,6 +105,44 @@ export function TripDetail({ trips, onUpdate }) {
     onUpdate({ ...trip, notes });
   };
 
+  const handleBuildItinerary = async () => {
+    if (!window.confirm('This will add AI-suggested activities. Continue?')) return;
+    setItineraryAi({ loading: true, result: null, error: null });
+    try {
+      const prompt = `Create a detailed day-by-day travel itinerary for a trip to ${trip.destination} from ${trip.startDate} to ${trip.endDate}. For each day, suggest 3-4 activities with brief descriptions. Format: Day 1 (Mon Jan 1): [activity 1] - [description]. Day 2...`;
+      const text = await generate(prompt);
+      setItineraryAi({ loading: false, result: text, error: null });
+      // Parse and populate: match "Day N (label): activities"
+      const dayBlocks = text.split(/(?=Day \d+)/g).filter(Boolean);
+      const dateList = days.map((d) => d.date);
+      const newActivities = [];
+      dayBlocks.forEach((block, idx) => {
+        const date = dateList[idx];
+        if (!date) return;
+        // Skip days already populated
+        if ((activitiesByDate[date] || []).length > 0) return;
+        const lines = block.split('\n').filter((l) => l.match(/^\s*[-•*]|^\s*\d+\./));
+        lines.forEach((line) => {
+          const clean = line.replace(/^\s*[-•*\d.]+\s*/, '').trim();
+          if (!clean) return;
+          const [title, ...rest] = clean.split(' - ');
+          newActivities.push({
+            id: Date.now().toString() + Math.random().toString(36).slice(2),
+            date,
+            time: '',
+            title: title?.trim() || clean,
+            notes: rest.join(' - ').trim(),
+          });
+        });
+      });
+      if (newActivities.length > 0) {
+        onUpdate({ ...trip, itinerary: [...(trip.itinerary || []), ...newActivities] });
+      }
+    } catch (err) {
+      setItineraryAi({ loading: false, result: null, error: err.message });
+    }
+  };
+
   const handleAiSuggest = async (date, label) => {
     setAiSuggestions((prev) => ({ ...prev, [date]: { loading: true, result: null, error: null } }));
     try {
@@ -134,6 +173,39 @@ export function TripDetail({ trips, onUpdate }) {
           ))}
         </select>
       </div>
+
+      {/* AI Build Full Itinerary */}
+      {hasKey && trip.startDate && trip.endDate && (
+        <div>
+          <button
+            type="button"
+            onClick={handleBuildItinerary}
+            disabled={itineraryAi.loading}
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            data-testid="build-itinerary-btn"
+          >
+            {itineraryAi.loading ? '⏳ Building…' : '✨ Build Full Itinerary'}
+          </button>
+          {itineraryAi.error && (
+            <p className="text-red-400 text-xs mt-2">❌ {itineraryAi.error}</p>
+          )}
+          {itineraryAi.result && (
+            <div className="mt-3 border border-amber-500/30 bg-amber-950/20 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-amber-400 text-xs font-semibold">✨ AI Itinerary Generated</span>
+                <button
+                  type="button"
+                  onClick={() => setItineraryAi({ loading: false, result: null, error: null })}
+                  className="text-[#52525b] hover:text-[#e4e4e7] text-xs"
+                >
+                  Dismiss
+                </button>
+              </div>
+              <p className="text-[#a1a1aa] text-xs">Activities have been added to your itinerary below.</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Budget Tracker */}
       {trip.budget > 0 && (
