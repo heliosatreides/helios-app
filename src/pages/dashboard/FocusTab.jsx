@@ -181,7 +181,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handleStart}
-            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-5 py-2 rounded-lg text-sm transition-colors"
+            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-5 py-2 rounded-lg text-sm transition-colors"
           >
             ▶ Start
           </button>
@@ -199,7 +199,7 @@ function PomodoroTimer() {
           <button
             type="button"
             onClick={handleStart}
-            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-5 py-2 rounded-lg text-sm transition-colors"
+            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-5 py-2 rounded-lg text-sm transition-colors"
           >
             ▶ Resume
           </button>
@@ -390,7 +390,7 @@ function HabitTracker() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-3 py-1.5 rounded-lg text-sm">Add Habit</button>
+            <button type="submit" className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-1.5 rounded-lg text-sm">Add Habit</button>
             <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
           </div>
         </form>

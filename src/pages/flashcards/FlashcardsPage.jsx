@@ -37,7 +37,7 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
         <button
           type="button"
           onClick={() => setShowCreate((s) => !s)}
-          className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-3 py-1.5 rounded-lg text-sm"
+          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-1.5 rounded-lg text-sm"
         >
           + New deck
         </button>
@@ -80,7 +80,7 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
             </div>
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-1.5 rounded-lg text-sm">Create</button>
+            <button type="submit" className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-1.5 rounded-lg text-sm">Create</button>
             <button type="button" onClick={() => setShowCreate(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
@@ -209,7 +209,7 @@ function CardManager({ deck, onUpdate, onBack }) {
         <button
           type="button"
           onClick={() => setStudying(true)}
-          className="w-full bg-amber-500 hover:bg-amber-400 text-black font-semibold py-3 rounded-xl text-sm transition-colors"
+          className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 py-3 rounded-xl text-sm transition-colors"
         >
           🎓 Study {due.length} due card{due.length !== 1 ? 's' : ''}
         </button>
@@ -265,7 +265,7 @@ function CardManager({ deck, onUpdate, onBack }) {
             />
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-1.5 rounded-lg text-sm">Add</button>
+            <button type="submit" className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-1.5 rounded-lg text-sm">Add</button>
             <button type="button" onClick={() => setShowAdd(false)} className="border border-[#1c1c20] text-[#71717a] hover:text-[#e4e4e7] px-3 py-1.5 rounded-lg text-sm">Cancel</button>
           </div>
         </form>
@@ -370,7 +370,7 @@ function StudyMode({ deck, dueCards, onUpdate, onExit }) {
         <button
           type="button"
           onClick={onExit}
-          className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-6 py-2 rounded-xl text-sm transition-colors"
+          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-6 py-2 rounded-xl text-sm transition-colors"
         >
           Back to deck
         </button>

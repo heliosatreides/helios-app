@@ -131,7 +131,7 @@ export function WorldClockPage() {
         <button
           type="button"
           onClick={() => setShowSearch((s) => !s)}
-          className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-3 py-1.5 rounded-lg text-sm transition-colors"
+          className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-3 py-1.5 rounded-lg text-sm transition-colors"
         >
           + Add city
         </button>

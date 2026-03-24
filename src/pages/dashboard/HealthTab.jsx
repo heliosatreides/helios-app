@@ -230,7 +230,7 @@ export function MoodJournal() {
           <button
             onClick={handleSave}
             data-testid="mood-save"
-            className="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-lg text-sm transition-colors"
+            className="px-4 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg text-sm transition-colors"
           >
             {saved ? '✓ Saved' : 'Save Mood'}
           </button>
@@ -330,7 +330,7 @@ export function SleepTracker() {
       <button
         onClick={handleSave}
         data-testid="sleep-save"
-        className="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-lg text-sm transition-colors"
+        className="px-4 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg text-sm transition-colors"
       >
         {saved ? '✓ Saved' : 'Log Sleep'}
       </button>

@@ -144,7 +144,7 @@ export function ReadingList() {
             </select>
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-1.5 text-sm bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-lg">Add</button>
+            <button type="submit" className="px-4 py-1.5 text-sm bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg">Add</button>
             <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] rounded-lg">Cancel</button>
           </div>
         </form>
@@ -311,7 +311,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
           />
           <input className={inputCls} placeholder="Tags (comma-separated)" value={form.tags} onChange={(e) => setForm((p) => ({ ...p, tags: e.target.value }))} />
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-1.5 text-sm bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-lg">Add</button>
+            <button type="submit" className="px-4 py-1.5 text-sm bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 rounded-lg">Add</button>
             <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] rounded-lg">Cancel</button>
           </div>
         </form>

@@ -341,7 +341,7 @@ export function SettingsPage() {
                 />
                 <button
                   type="submit"
-                  className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+                  className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
                 >
                   Unlock
                 </button>
@@ -391,7 +391,7 @@ export function SettingsPage() {
           <div className="flex gap-3">
             <button
               onClick={handleSave}
-              className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
             >
               {saved ? '✓ Saved' : 'Save Key'}
             </button>
@@ -463,7 +463,7 @@ export function SettingsPage() {
             <h3 className="text-[#a1a1aa] text-sm font-medium">Full Export</h3>
             <button
               onClick={handleExportJSON}
-              className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+              className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
             >
               ⬇️ Export All Data (JSON)
             </button>
@@ -541,7 +541,7 @@ export function SettingsPage() {
           </div>
           <button
             onClick={handleSaveGithub}
-            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
           >
             {ghSaved ? '✓ Saved' : 'Save'}
           </button>
@@ -571,7 +571,7 @@ export function SettingsPage() {
           </div>
           <button
             onClick={handleSaveWater}
-            className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+            className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 px-4 py-2 rounded-lg text-sm transition-colors"
           >
             {waterSaved ? '✓ Saved' : 'Save'}
           </button>

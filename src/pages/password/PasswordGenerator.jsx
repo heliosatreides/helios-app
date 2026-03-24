@@ -80,7 +80,7 @@ export function PasswordGenerator() {
       <button
         type="button"
         onClick={handleGenerate}
-        className="w-full bg-amber-500 hover:bg-amber-400 text-black font-semibold py-2.5 rounded-xl text-sm transition-colors"
+        className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black font-semibold shadow-sm shadow-amber-500/10 py-2.5 rounded-xl text-sm transition-colors"
       >
         Generate Password
       </button>
