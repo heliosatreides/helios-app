@@ -17,6 +17,7 @@ vi.mock('trystero/nostr', () => ({
     onPeerLeave: mockOnPeerLeave,
     makeAction: mockMakeAction,
   })),
+  getRelaySockets: vi.fn(() => ({})),
 }));
 
 function renderChat(search = '') {

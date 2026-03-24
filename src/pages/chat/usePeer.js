@@ -13,6 +13,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState('initializing');
   const [peerCount, setPeerCount] = useState(0);
+  const [relayStatus, setRelayStatus] = useState([]); // [{ url, connected }]
 
   const roomRef = useRef(null);
   const sendRef = useRef(null);
@@ -38,7 +39,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     async function setup() {
       try {
         // Dynamic import so it doesn't break SSR/tests
-        const { joinRoom } = await import('trystero/nostr');
+        const { joinRoom, getRelaySockets } = await import('trystero/nostr');
 
         if (cancelled) return;
 
@@ -116,6 +117,35 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           setPeerCount(c => c + 1);
         });
 
+        // Poll relay connection status every 2 seconds
+        const relayUrls = [
+          'wss://relay.damus.io',
+          'wss://nos.lol',
+          'wss://relay.nostr.place',
+          'wss://purplerelay.com',
+          'wss://nostr.data.haus',
+        ];
+
+        const updateRelayStatus = () => {
+          try {
+            const sockets = getRelaySockets();
+            const statuses = relayUrls.map(url => ({
+              url,
+              // WebSocket readyState: 0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED
+              connected: sockets[url]?.readyState === 1,
+              state: sockets[url]?.readyState ?? -1,
+            }));
+            setRelayStatus(statuses);
+          } catch {
+            // getRelaySockets may not be available in all contexts
+          }
+        };
+
+        updateRelayStatus();
+        // Store interval ref for cleanup
+        const relayPollInterval = setInterval(updateRelayStatus, 2000);
+        roomRef._relayPollInterval = relayPollInterval;
+
         room.onPeerLeave(() => {
           hasGuestRef.current = false;
           setPeerCount(c => Math.max(0, c - 1));
@@ -147,6 +177,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
     return () => {
       cancelled = true;
+      if (roomRef._relayPollInterval) clearInterval(roomRef._relayPollInterval);
       if (roomRef.current) {
         roomRef.current.leave();
         roomRef.current = null;
@@ -154,5 +185,5 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     };
   }, [actualRoomId, isGuest]);
 
-  return { peerId: actualRoomId, messages, sendMessage, status, peerCount };
+  return { peerId: actualRoomId, messages, sendMessage, status, peerCount, relayStatus };
 }

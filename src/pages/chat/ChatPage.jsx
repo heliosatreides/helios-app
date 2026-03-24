@@ -32,6 +32,42 @@ function CopyLinkBox({ link }) {
   );
 }
 
+function RelayPanel({ relayStatus, collapsed = false }) {
+  const [open, setOpen] = useState(!collapsed);
+  if (!relayStatus?.length) return null;
+  const connectedCount = relayStatus.filter(r => r.connected).length;
+
+  return (
+    <div className="w-full max-w-lg mx-auto mt-4">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between text-xs text-zinc-500 hover:text-zinc-400 transition-colors px-1"
+      >
+        <span className="flex items-center gap-1.5">
+          <span className={`w-1.5 h-1.5 rounded-full ${connectedCount > 0 ? 'bg-emerald-400' : 'bg-red-500'}`} />
+          {connectedCount}/{relayStatus.length} relays connected
+        </span>
+        <span>{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div className="mt-2 bg-zinc-900/60 border border-zinc-800 rounded-xl p-3 space-y-1.5">
+          {relayStatus.map(r => (
+            <div key={r.url} className="flex items-center gap-2 text-xs">
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${r.connected ? 'bg-emerald-400' : r.state === 0 ? 'bg-amber-400 animate-pulse' : 'bg-zinc-600'}`} />
+              <span className={`font-mono truncate ${r.connected ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                {r.url.replace('wss://', '')}
+              </span>
+              <span className={`ml-auto shrink-0 ${r.connected ? 'text-emerald-400' : r.state === 0 ? 'text-amber-400' : 'text-zinc-600'}`}>
+                {r.connected ? 'connected' : r.state === 0 ? 'connecting…' : 'offline'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Spinner() {
   return (
     <div className="flex items-center justify-center">
@@ -87,7 +123,7 @@ export function ChatPage() {
   const roomId = searchParams.get('room');
   const isGuest = Boolean(roomId);
 
-  const { peerId, messages, sendMessage, status, peerCount } = usePeer({ isGuest, roomId });
+  const { peerId, messages, sendMessage, status, peerCount, relayStatus } = usePeer({ isGuest, roomId });
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
@@ -165,6 +201,7 @@ export function ChatPage() {
           <>
             <p className="mt-4 text-zinc-300 text-lg font-semibold">Waiting for someone to join…</p>
             {chatLink && <CopyLinkBox link={chatLink} />}
+            <RelayPanel relayStatus={relayStatus} />
           </>
         )}
       </FullScreenDark>
@@ -179,6 +216,11 @@ export function ChatPage() {
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" aria-label="Connected" />
           <span className="text-zinc-200 text-sm font-semibold">P2P Chat</span>
+          {relayStatus.length > 0 && (
+            <span className="text-xs text-zinc-500 ml-1">
+              {relayStatus.filter(r => r.connected).length}/{relayStatus.length} relays
+            </span>
+          )}
         </div>
         <button
           onClick={handleNewChat}
