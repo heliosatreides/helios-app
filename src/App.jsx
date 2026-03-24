@@ -19,6 +19,16 @@ import { NewsPage } from './pages/news/NewsPage';
 import { ConverterPage } from './pages/converter/ConverterPage';
 import { WorldClockPage } from './pages/worldclock/WorldClockPage';
 import { FlashcardsPage } from './pages/flashcards/FlashcardsPage';
+import { SplitterPage } from './pages/splitter/SplitterPage';
+import { MealsPage } from './pages/meals/MealsPage';
+import { SubscriptionsPage } from './pages/subscriptions/SubscriptionsPage';
+import { ApiPlaygroundPage } from './pages/apiplayground/ApiPlaygroundPage';
+import { ColorsPage } from './pages/colors/ColorsPage';
+import { WikiPage } from './pages/wiki/WikiPage';
+import { MusicPage } from './pages/music/MusicPage';
+import { PackingPage } from './pages/packing/PackingPage';
+import { RegexPage } from './pages/regex/RegexPage';
+import { CalculatorPage } from './pages/calculator/CalculatorPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
@@ -90,6 +100,16 @@ function AppShell() {
               <Route path="/converter" element={<ProtectedRoute><ConverterPage /></ProtectedRoute>} />
               <Route path="/worldclock" element={<ProtectedRoute><WorldClockPage /></ProtectedRoute>} />
               <Route path="/flashcards" element={<ProtectedRoute><FlashcardsPage /></ProtectedRoute>} />
+              <Route path="/splitter" element={<ProtectedRoute><SplitterPage /></ProtectedRoute>} />
+              <Route path="/meals" element={<ProtectedRoute><MealsPage /></ProtectedRoute>} />
+              <Route path="/subscriptions" element={<ProtectedRoute><SubscriptionsPage /></ProtectedRoute>} />
+              <Route path="/apiplayground" element={<ProtectedRoute><ApiPlaygroundPage /></ProtectedRoute>} />
+              <Route path="/colors" element={<ProtectedRoute><ColorsPage /></ProtectedRoute>} />
+              <Route path="/wiki" element={<ProtectedRoute><WikiPage /></ProtectedRoute>} />
+              <Route path="/music" element={<ProtectedRoute><MusicPage /></ProtectedRoute>} />
+              <Route path="/packing" element={<ProtectedRoute><PackingPage /></ProtectedRoute>} />
+              <Route path="/regex" element={<ProtectedRoute><RegexPage /></ProtectedRoute>} />
+              <Route path="/calculator" element={<ProtectedRoute><CalculatorPage /></ProtectedRoute>} />
             </Routes>
           </div>
         </main>

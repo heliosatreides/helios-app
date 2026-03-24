@@ -32,6 +32,21 @@ const navGroups = [
       { to: '/converter', label: 'Converter', icon: '🔄' },
       { to: '/worldclock', label: 'World Clock', icon: '🕐' },
       { to: '/flashcards', label: 'Flashcards', icon: '🃏' },
+      { to: '/meals', label: 'Meals', icon: '🍽️' },
+      { to: '/splitter', label: 'Splitter', icon: '💸' },
+      { to: '/subscriptions', label: 'Subscriptions', icon: '📋' },
+      { to: '/music', label: 'Music', icon: '🎵' },
+      { to: '/packing', label: 'Packing', icon: '🧳' },
+    ],
+  },
+  {
+    label: 'Developer',
+    items: [
+      { to: '/apiplayground', label: 'API Playground', icon: '🔌' },
+      { to: '/colors', label: 'Colors', icon: '🎨' },
+      { to: '/wiki', label: 'Wiki', icon: '📝' },
+      { to: '/regex', label: 'Regex', icon: '🔤' },
+      { to: '/calculator', label: 'Calculator', icon: '🧮' },
     ],
   },
   {

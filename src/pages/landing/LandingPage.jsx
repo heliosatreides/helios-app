@@ -20,10 +20,18 @@ const ALL_FEATURES = [
   { icon: '🔄', title: 'Currency & Unit Converter', category: 'Developer', desc: 'Live exchange rates, length, weight, temperature, data, and time unit conversions.' },
   { icon: '🕐', title: 'World Clock', category: 'Developer', desc: 'Add cities, see live times, business hours indicator, and meeting planner across timezones.' },
   { icon: '🃏', title: 'Flashcards', category: 'Developer', desc: 'Decks with spaced repetition (Easy/Good/Hard). AI generates flashcards from any text.' },
-  { icon: '📰', title: 'News Aggregator', category: 'Developer', desc: 'General, Tech, Startups, Finance, Crypto, Sports, AI feeds. AI briefings and personalized picks.' },
-  { icon: '🔄', title: 'Currency & Unit Converter', category: 'Developer', desc: 'Live exchange rates, length, weight, temperature, data, and time unit conversions.' },
-  { icon: '🕐', title: 'World Clock', category: 'Developer', desc: 'Live times for 25+ cities, business hours indicator, and a meeting planner across timezones.' },
   { icon: '🔐', title: 'Password Generator', category: 'Developer', desc: 'Cryptographically secure passwords with strength meter. Adjustable length, character sets, clipboard copy.' },
+  // New features
+  { icon: '💸', title: 'Expense Splitter', category: 'Personal', desc: 'Split bills fairly with friends. Equal or itemized splits, settle-up view, AI recommends fairest split.' },
+  { icon: '🍽️', title: 'Meal Planner', category: 'Personal', desc: 'Weekly 7-day meal grid, grocery list generator, calorie tracker, and AI meal planning by diet preferences.' },
+  { icon: '📋', title: 'Subscription Tracker', category: 'Personal', desc: 'Track all subscriptions, monthly & annual totals, renewal alerts, and AI suggests which to cancel.' },
+  { icon: '🎵', title: 'Music Recommendations', category: 'Personal', desc: 'Mood-based music suggestions powered by Gemini. Energetic, Focused, Relaxed — save favorites, open in Spotify.' },
+  { icon: '🧳', title: 'Travel Packing Lists', category: 'Personal', desc: 'Pre-built templates for beach, hiking, business travel. AI builds custom packing list from destination + duration.' },
+  { icon: '🔌', title: 'API Playground', category: 'Developer', desc: 'Test API endpoints with full request/response viewer, history, favorites, and AI response explanation.' },
+  { icon: '🎨', title: 'Color Palette Generator', category: 'Developer', desc: 'Generate complementary, analogous, triadic palettes. CSS vars output. AI names palettes and generates from mood.' },
+  { icon: '📝', title: 'Personal Wiki', category: 'Developer', desc: 'A personal knowledge wiki with markdown, folders, [[page links]], search, and AI summarization.' },
+  { icon: '🔤', title: 'Regex Tester', category: 'Developer', desc: 'Live regex testing with match highlighting, group capture, common patterns library, and AI regex explainer.' },
+  { icon: '🧮', title: 'Financial Calculator', category: 'Developer', desc: 'Loan, compound interest, retirement, savings goal, and tax estimator with AI result interpretation.' },
 ];
 
 const CATEGORIES = ['Personal', 'Productivity', 'Developer'];
