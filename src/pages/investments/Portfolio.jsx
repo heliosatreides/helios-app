@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGemini } from '../../hooks/useGemini';
 import { useIDB } from '../../hooks/useIDB';
 import { useStockQuote } from '../../hooks/useStockQuote';
 import { useStockSearch } from '../../hooks/useStockSearch';
@@ -232,6 +233,9 @@ export function Portfolio() {
   const [holdings, setHoldings] = useIDB('investments-portfolio', []);
   const [showAdd, setShowAdd] = useState(false);
   const [importMsg, setImportMsg] = useState('');
+  const { generate, loading: aiLoading, hasKey } = useGemini();
+  const [riskResult, setRiskResult] = useState(null);
+  const [riskError, setRiskError] = useState(null);
 
   const addHolding = (h) => {
     setHoldings((prev) => [...prev, h]);
@@ -274,6 +278,25 @@ export function Portfolio() {
   const totals = calculatePortfolioTotals(holdings);
   const allocations = calculateAssetAllocation(holdings);
 
+  const handleAssessRisk = async () => {
+    setRiskResult(null);
+    setRiskError(null);
+    const totalVal = holdings.reduce((s, h) => s + h.shares * h.currentPrice, 0);
+    const holdingsSummary = holdings.map((h) => {
+      const val = h.shares * h.currentPrice;
+      const pct = totalVal > 0 ? ((val / totalVal) * 100).toFixed(1) : '0.0';
+      return `${h.ticker} ${pct}%`;
+    }).join(', ');
+    try {
+      const text = await generate(
+        `My investment portfolio: ${holdingsSummary}. Identify concentration risks, suggest diversification improvements, and give an overall risk assessment (Conservative/Moderate/Aggressive).`
+      );
+      setRiskResult(text);
+    } catch (err) {
+      setRiskError(err.message);
+    }
+  };
+
   return (
     <div className="space-y-5">
       {/* Summary Bar */}
@@ -303,6 +326,37 @@ export function Portfolio() {
           </p>
         </div>
       </div>
+
+      {/* AI Risk Assessment */}
+      {hasKey && holdings.length > 0 && (
+        <div>
+          <button
+            type="button"
+            onClick={handleAssessRisk}
+            disabled={aiLoading}
+            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            data-testid="assess-risk-btn"
+          >
+            {aiLoading ? '⏳ Analyzing…' : '✨ Assess Risk'}
+          </button>
+          {riskError && <p className="text-red-400 text-xs mt-2">❌ {riskError}</p>}
+          {riskResult && (
+            <div className="mt-3 border border-amber-500/30 bg-amber-950/20 rounded-xl p-4" data-testid="risk-card">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-amber-400 text-sm font-semibold">✨ Risk Assessment</span>
+                <button
+                  type="button"
+                  onClick={() => setRiskResult(null)}
+                  className="text-[#52525b] hover:text-[#e4e4e7] text-xs"
+                >
+                  Dismiss
+                </button>
+              </div>
+              <p className="text-[#e4e4e7] text-sm whitespace-pre-wrap">{riskResult}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Asset Allocation */}
       {allocations.length > 0 && (
