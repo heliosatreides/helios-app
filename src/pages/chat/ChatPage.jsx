@@ -32,9 +32,17 @@ function Spinner({ size = 8 }) {
 
 // ── PIN entry (guest) ─────────────────────────────────────────────────────────
 
-function PinEntry({ onSubmit, rejected }) {
+function PinEntry({ onSubmit, rejected, submitting }) {
   const [digits, setDigits] = useState(['', '', '', '']);
   const refs = [useRef(), useRef(), useRef(), useRef()];
+
+  // Reset digits when rejection arrives so user can re-enter
+  useEffect(() => {
+    if (rejected) {
+      setDigits(['', '', '', '']);
+      setTimeout(() => refs[0].current?.focus(), 50);
+    }
+  }, [rejected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChange = (i, val) => {
     const d = val.replace(/\D/, '').slice(-1);
@@ -112,10 +120,15 @@ function PinEntry({ onSubmit, rejected }) {
 
         <button
           onClick={submit}
-          disabled={!full}
-          className="w-full py-3 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold text-sm hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all mt-2"
+          disabled={!full || submitting}
+          className="w-full py-3 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold text-sm hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all mt-2 flex items-center justify-center gap-2"
         >
-          Join Chat
+          {submitting ? (
+            <>
+              <div className="w-4 h-4 border-2 border-[#0a0a0b] border-t-transparent rounded-full animate-spin" />
+              Verifying…
+            </>
+          ) : 'Join Chat'}
         </button>
       </div>
     </div>
@@ -299,19 +312,20 @@ export function ChatPage() {
     );
   }
 
-  // Guest: waiting for host to appear
-  if (isGuest && status === 'waiting' && pinStatus === 'pending' && peerCount === 0) {
+  // Guest: waiting for host to appear (no peer yet)
+  if (isGuest && peerCount === 0 && pinStatus !== 'verified') {
     return <WaitingGuest />;
   }
 
-  // Guest: host is present but PIN not yet verified
-  if (isGuest && pinStatus === 'pending') {
-    return <PinEntry onSubmit={submitPin} rejected={pinStatus === 'rejected'} />;
-  }
-
-  // Guest: PIN was rejected — show PIN entry with error
-  if (isGuest && pinStatus === 'rejected') {
-    return <PinEntry onSubmit={submitPin} rejected={true} />;
+  // Guest: host is present but PIN not verified — show entry (with error if rejected)
+  if (isGuest && pinStatus !== 'verified') {
+    return (
+      <PinEntry
+        onSubmit={submitPin}
+        rejected={pinStatus === 'rejected'}
+        submitting={pinStatus === 'submitting'}
+      />
+    );
   }
 
   // Host: waiting for guest, no messages yet

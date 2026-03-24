@@ -38,12 +38,12 @@ async function getIceServers() {
 
 export function usePeer({ isGuest = false, roomId = null } = {}) {
   const [peerId] = useState(() => isGuest ? null : roomId || generateRoomId());
-  // Host: generate PIN once. Guest: null until verified.
   const [pin] = useState(() => isGuest ? null : generatePin());
+
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState('initializing');
-  // pinStatus: 'pending' | 'verified' | 'rejected'
-  const [pinStatus, setPinStatus] = useState(isGuest ? 'pending' : 'verified');
+  // pinStatus: 'idle' (host) | 'pending' (guest waiting to enter) | 'submitting' | 'verified' | 'rejected'
+  const [pinStatus, setPinStatus] = useState(isGuest ? 'pending' : 'idle');
   const [reconnecting, setReconnecting] = useState(false);
   const [peerCount, setPeerCount] = useState(0);
   const [relayStatus, setRelayStatus] = useState([]);
@@ -54,7 +54,9 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const sendPinResultRef = useRef(null);
   const hasGuestRef = useRef(false);
   const intervalRef = useRef(null);
-  const pinRef = useRef(pin); // stable ref to pin for callbacks
+  const pinRef = useRef(pin);
+  // Store last attempted PIN so we can resend after reconnect
+  const lastPinAttemptRef = useRef(null);
 
   const actualRoomId = isGuest ? roomId : peerId;
 
@@ -65,13 +67,15 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     setMessages(prev => [...prev, { text: text.trim(), from: 'you', timestamp: msg.timestamp }]);
   }, []);
 
-  // Guest calls this to submit their PIN attempt
+  // Guest calls this to submit a PIN attempt
   const submitPin = useCallback((attempt) => {
     if (!sendPinVerifyRef.current) return;
+    lastPinAttemptRef.current = attempt;
+    setPinStatus('submitting');
     sendPinVerifyRef.current({ pin: attempt });
   }, []);
 
-  // Explicit leave — tears down room cleanly
+  // Explicit leave
   const leave = useCallback(() => {
     clearInterval(intervalRef.current);
     if (roomRef.current) {
@@ -102,11 +106,9 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
         roomRef.current = room;
 
-        // Chat messages
         const [sendMsg, onMsg] = room.makeAction('msg');
         sendRef.current = sendMsg;
 
-        // PIN verification actions
         const [sendPinVerify, onPinVerify] = room.makeAction('pin-verify');
         const [sendPinResult, onPinResult] = room.makeAction('pin-result');
         sendPinVerifyRef.current = sendPinVerify;
@@ -120,16 +122,15 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           }]);
         });
 
-        // Host handles PIN verification from guest
+        // Host: verify incoming PIN attempts
         if (!isGuest) {
           onPinVerify((data) => {
             const correct = data.pin === pinRef.current;
-            sendPinResult({ ok: correct });
-            // Host side is always verified; just track guest auth
+            sendPinResultRef.current({ ok: correct });
           });
         }
 
-        // Guest receives PIN result from host
+        // Guest: receive PIN result
         if (isGuest) {
           onPinResult((data) => {
             if (data.ok) {
@@ -145,12 +146,26 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           if (!isGuest && hasGuestRef.current) return;
           hasGuestRef.current = true;
           setReconnecting(false);
-          if (!isGuest) {
-            // Host: mark connected once peer joins
-            setStatus('connected');
-          }
-          // Guest: stays at pinStatus 'pending' until PIN verified
           setPeerCount(c => c + 1);
+
+          if (!isGuest) {
+            setStatus('connected');
+          } else {
+            // Guest rejoined — if already verified, go straight to connected
+            // If not, go back to pending so they can re-enter PIN
+            setPinStatus(prev => {
+              if (prev === 'verified') {
+                setStatus('connected');
+                return 'verified';
+              }
+              // Resend last attempt automatically if we have one
+              if (lastPinAttemptRef.current && sendPinVerifyRef.current) {
+                sendPinVerifyRef.current({ pin: lastPinAttemptRef.current });
+                return 'submitting';
+              }
+              return 'pending';
+            });
+          }
         });
 
         room.onPeerLeave(() => {
@@ -160,7 +175,6 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           setStatus('waiting');
         });
 
-        // Poll relay status
         const updateRelays = () => {
           try {
             const sockets = getRelaySockets();
@@ -195,11 +209,11 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
   return {
     peerId: actualRoomId,
-    pin,           // host only — display to user
+    pin,
     messages,
     sendMessage,
-    submitPin,     // guest only — call with PIN attempt
-    pinStatus,     // 'pending' | 'verified' | 'rejected'
+    submitPin,
+    pinStatus,
     status,
     reconnecting,
     peerCount,
