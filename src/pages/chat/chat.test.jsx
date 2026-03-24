@@ -4,20 +4,15 @@ import { MemoryRouter } from 'react-router-dom';
 import { ChatPage } from './ChatPage';
 import { generateRoomId } from './usePeer';
 
-// Mock trystero/nostr
-const mockLeave = vi.fn();
-const mockOnPeerJoin = vi.fn();
-const mockOnPeerLeave = vi.fn();
-const mockMakeAction = vi.fn();
-
-vi.mock('trystero/nostr', () => ({
-  joinRoom: vi.fn(() => ({
-    leave: mockLeave,
-    onPeerJoin: mockOnPeerJoin,
-    onPeerLeave: mockOnPeerLeave,
-    makeAction: mockMakeAction,
-  })),
-  getRelaySockets: vi.fn(() => ({})),
+// Mock PeerJS
+const mockPeer = {
+  on: vi.fn(),
+  connect: vi.fn(() => ({ on: vi.fn(), send: vi.fn(), open: true, close: vi.fn() })),
+  destroy: vi.fn(),
+  reconnect: vi.fn(),
+};
+vi.mock('peerjs', () => ({
+  default: vi.fn(() => mockPeer),
 }));
 
 function renderChat(search = '') {
@@ -41,13 +36,10 @@ describe('generateRoomId', () => {
   });
 });
 
-
 describe('ChatPage', () => {
   beforeEach(() => {
-    mockLeave.mockClear();
-    mockOnPeerJoin.mockClear();
-    mockOnPeerLeave.mockClear();
-    mockMakeAction.mockReturnValue([vi.fn(), vi.fn()]);
+    vi.clearAllMocks();
+    mockPeer.on.mockImplementation(() => mockPeer);
   });
 
   it('renders without crashing', () => {
@@ -66,13 +58,13 @@ describe('ChatPage', () => {
     });
   });
 
-  it('shows joining/waiting state for guest', async () => {
+  it('shows connecting/waiting state for guest', async () => {
     renderChat('?room=testroom123');
     await vi.waitFor(() => {
       expect(
         screen.queryByText(/connecting/i) ||
         screen.queryByText(/waiting/i) ||
-        screen.queryByText(/enter/i)
+        screen.queryByText(/setting up/i)
       ).toBeTruthy();
     });
   });

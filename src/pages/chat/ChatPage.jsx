@@ -38,7 +38,7 @@ function DebugPanel({ log }) {
   );
 }
 
-function WaitingHost({ chatLink, relayStatus, debugLog }) {
+function WaitingHost({ chatLink, debugLog }) {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6 overflow-y-auto py-8">
       <div className="w-full max-w-sm space-y-4">
@@ -61,13 +61,6 @@ function WaitingHost({ chatLink, relayStatus, debugLog }) {
           <div className="flex items-center gap-2">
             <span className="flex-1 text-zinc-300 text-xs font-mono break-all truncate">{chatLink}</span>
             <CopyButton text={chatLink} />
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="flex items-center gap-1.5 text-xs text-zinc-600 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1.5">
-            <span className={`w-1.5 h-1.5 rounded-full ${relayStatus[0]?.connected > 0 ? 'bg-emerald-400' : 'bg-zinc-600'}`} />
-            {relayStatus[0]?.connected ?? 0}/{relayStatus[0]?.total ?? 0} relays
           </div>
         </div>
 
@@ -139,7 +132,7 @@ export function ChatPage() {
   const roomId = searchParams.get('room');
   const isGuest = Boolean(roomId);
 
-  const { peerId, messages, sendMessage, status, reconnecting, peerCount, relayStatus, leave, debugLog } =
+  const { peerId, messages, sendMessage, status, reconnecting, peerCount, leave, debugLog } =
     usePeer({ isGuest, roomId });
 
   const messagesEndRef = useRef(null);
@@ -192,11 +185,8 @@ export function ChatPage() {
 
   // Host waiting for guest — only if we've never had a peer yet
   if (!isGuest && status === 'waiting' && messages.length === 0 && !reconnecting) {
-    return <WaitingHost chatLink={chatLink} relayStatus={relayStatus} debugLog={debugLog} />;
+    return <WaitingHost chatLink={chatLink} debugLog={debugLog} />;
   }
-
-  const connectedRelays = relayStatus[0]?.connected ?? 0;
-  const totalRelays = relayStatus[0]?.total ?? 0;
 
   return (
     <div className="fixed inset-0 flex flex-col bg-[#0a0a0b]">
@@ -225,7 +215,6 @@ export function ChatPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-zinc-700 text-xs">{connectedRelays}/{totalRelays} relays</span>
           <button
             onClick={handleLeave}
             className="text-zinc-500 hover:text-red-400 text-xs font-medium transition-colors px-2 py-1 rounded-lg hover:bg-red-950/30"

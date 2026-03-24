@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import Peer from 'peerjs';
 
 // Generate a random room code
 export function generateRoomId() {
@@ -8,30 +9,22 @@ export function generateRoomId() {
     .join('');
 }
 
-// Don't override relayUrls — let trystero pick deterministically from its
-// full pool based on appId (deriveFromAppId=true), so host and guest always
-// land on the same relays regardless of when they join.
-// relayRedundancy=10 gives wider overlap margin.
-const RELAY_REDUNDANCY = 10;
+// Prefix room IDs so PeerJS IDs don't collide with other apps
+const PEER_PREFIX = 'helios-chat-';
 
-// Returns { turnConfig, rtcConfig } for joinRoom
-// turnConfig = TURN-only servers (trystero merges with its defaults)
-// rtcConfig = full override if needed
-async function getTurnConfig() {
+// Fetch TURN + STUN servers from our Vercel proxy
+async function getIceServers() {
   try {
     const res = await fetch('/api/turn');
     if (res.ok) {
       const data = await res.json();
-      if (data.iceServers?.length) {
-        // Split STUN vs TURN — trystero's turnConfig is for TURN/credential servers
-        const turnServers = data.iceServers.filter(s =>
-          [].concat(s.urls).some(u => u.startsWith('turn:') || u.startsWith('turns:'))
-        );
-        return turnServers.length ? turnServers : null;
-      }
+      if (data.iceServers?.length) return data.iceServers;
     }
   } catch { /* fallback */ }
-  return null;
+  return [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun.cloudflare.com:3478' },
+  ];
 }
 
 export function usePeer({ isGuest = false, roomId = null } = {}) {
@@ -40,34 +33,29 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const [status, setStatus] = useState('initializing');
   const [reconnecting, setReconnecting] = useState(false);
   const [peerCount, setPeerCount] = useState(0);
-  const [relayStatus, setRelayStatus] = useState([]);
 
-  const roomRef = useRef(null);
-  const sendRef = useRef(null);
+  const peerRef = useRef(null);
+  const connRef = useRef(null);
   const hasGuestRef = useRef(false);
-  const intervalRef = useRef(null);
 
   const actualRoomId = isGuest ? roomId : peerId;
-
-  const sendMessage = useCallback((text) => {
-    if (!sendRef.current || !text.trim()) return;
-    const msg = { text: text.trim(), timestamp: Date.now() };
-    sendRef.current(msg);
-    setMessages(prev => [...prev, { text: text.trim(), from: 'you', timestamp: msg.timestamp }]);
-  }, []);
-
-  const leave = useCallback(() => {
-    clearInterval(intervalRef.current);
-    if (roomRef.current) {
-      roomRef.current.leave();
-      roomRef.current = null;
-    }
-  }, []);
 
   const [debugLog, setDebugLog] = useState([]);
   const addDebug = useCallback((msg) => {
     console.log('[P2P]', msg);
-    setDebugLog(prev => [...prev.slice(-20), `${new Date().toLocaleTimeString()}: ${msg}`]);
+    setDebugLog(prev => [...prev.slice(-30), `${new Date().toLocaleTimeString()}: ${msg}`]);
+  }, []);
+
+  const sendMessage = useCallback((text) => {
+    if (!connRef.current?.open || !text.trim()) return;
+    const msg = { text: text.trim(), timestamp: Date.now() };
+    connRef.current.send(msg);
+    setMessages(prev => [...prev, { text: text.trim(), from: 'you', timestamp: msg.timestamp }]);
+  }, []);
+
+  const leave = useCallback(() => {
+    if (connRef.current) { connRef.current.close(); connRef.current = null; }
+    if (peerRef.current) { peerRef.current.destroy(); peerRef.current = null; }
   }, []);
 
   useEffect(() => {
@@ -75,94 +63,127 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
     let cancelled = false;
 
-    // Defer by one macrotask so React StrictMode's synchronous cleanup+remount
-    // cycle completes before we touch trystero. The phantom first mount's timeout
-    // is cancelled before it fires, so joinRoom (and trystero's didInit singleton)
-    // is only ever touched by the surviving second mount.
+    // Defer for StrictMode
     const tid = setTimeout(() => { if (!cancelled) setup(); }, 0);
 
     async function setup() {
       try {
-        addDebug('Fetching TURN config...');
-        const turnConfig = await getTurnConfig();
-        addDebug(`TURN: ${turnConfig ? turnConfig.length + ' servers' : 'none (STUN only)'}`);
+        addDebug('Fetching ICE servers...');
+        const iceServers = await getIceServers();
+        addDebug(`ICE: ${iceServers.length} servers`);
         if (cancelled) return;
 
-        addDebug('Loading trystero/nostr...');
-        const { joinRoom, getRelaySockets } = await import('trystero/nostr');
-        addDebug('Trystero loaded');
-        if (cancelled) return;
-
-        const roomConfig = {
-          appId: 'helios-p2p-chat-v1',
-          relayRedundancy: RELAY_REDUNDANCY,
+        const peerConfig = {
+          config: { iceServers },
+          debug: 0, // 0=none, 1=errors, 2=warnings, 3=all
         };
-        if (turnConfig) roomConfig.turnConfig = turnConfig;
 
-        addDebug(`Joining room "${actualRoomId}" with redundancy=${RELAY_REDUNDANCY}...`);
-        const room = joinRoom(roomConfig, actualRoomId, {
-          onJoinError: (err) => addDebug(`JOIN ERROR: ${JSON.stringify(err)}`),
-        });
-        addDebug('Room joined (waiting for relays)');
+        function setupConn(conn) {
+          connRef.current = conn;
+          addDebug(`DataConnection to ${conn.peer}`);
 
-        // Log which relays were selected
-        setTimeout(() => {
-          try {
-            const sockets = getRelaySockets();
-            const urls = Object.keys(sockets).map(u => u.replace('wss://', ''));
-            addDebug(`Relay URLs: ${urls.slice(0, 5).join(', ')}${urls.length > 5 ? '...' : ''}`);
-          } catch {}
-        }, 3000);
+          conn.on('open', () => {
+            if (cancelled) return;
+            addDebug('Connection OPEN — ready to chat');
+            hasGuestRef.current = true;
+            setReconnecting(false);
+            setStatus('connected');
+            setPeerCount(1);
+          });
 
-        roomRef.current = room;
+          conn.on('data', (data) => {
+            setMessages(prev => [...prev, {
+              text: data.text,
+              from: 'them',
+              timestamp: data.timestamp ?? Date.now(),
+            }]);
+          });
 
-        const [sendMsg, onMsg] = room.makeAction('msg');
-        sendRef.current = sendMsg;
+          conn.on('close', () => {
+            addDebug('Connection closed');
+            hasGuestRef.current = false;
+            connRef.current = null;
+            setPeerCount(0);
+            setReconnecting(true);
+            setStatus('waiting');
+          });
 
-        onMsg((data) => {
-          setMessages(prev => [...prev, {
-            text: data.text,
-            from: 'them',
-            timestamp: data.timestamp ?? Date.now(),
-          }]);
-        });
+          conn.on('error', (err) => {
+            addDebug(`Connection error: ${err.type || err.message}`);
+          });
+        }
 
-        room.onPeerJoin((peerId) => {
-          addDebug(`onPeerJoin: ${peerId}`);
-          if (!isGuest && hasGuestRef.current) return;
-          hasGuestRef.current = true;
-          setReconnecting(false);
-          setStatus('connected');
-          setPeerCount(c => c + 1);
-        });
+        if (isGuest) {
+          // Guest: create anonymous peer, then connect to host
+          addDebug('Creating guest peer...');
+          const peer = new Peer(peerConfig);
+          peerRef.current = peer;
 
-        room.onPeerLeave((peerId) => {
-          addDebug(`onPeerLeave: ${peerId}`);
-          hasGuestRef.current = false;
-          setPeerCount(c => Math.max(0, c - 1));
-          setReconnecting(true);
-          setStatus('waiting');
-        });
+          peer.on('open', (id) => {
+            addDebug(`Guest peer open: ${id}`);
+            if (cancelled) return;
+            addDebug(`Connecting to host: ${PEER_PREFIX}${actualRoomId}`);
+            const conn = peer.connect(PEER_PREFIX + actualRoomId, { reliable: true });
+            setupConn(conn);
+            setStatus('waiting');
+          });
 
-        // Track relay count for UI indicator
-        const updateRelays = () => {
-          try {
-            const sockets = getRelaySockets();
-            const entries = Object.entries(sockets);
-            const connected = entries.filter(([, s]) => s?.readyState === 1).length;
-            const total = entries.length;
-            setRelayStatus([{ connected, total }]);
-            // Log relay changes
-            if (total > 0) {
-              addDebug(`Relays: ${connected}/${total} connected`);
+          peer.on('error', (err) => {
+            addDebug(`Peer error: ${err.type} — ${err.message}`);
+            if (err.type === 'peer-unavailable') {
+              // Host not online yet — retry after delay
+              addDebug('Host not available, retrying in 3s...');
+              setTimeout(() => {
+                if (cancelled || !peerRef.current) return;
+                addDebug(`Retrying connection to host...`);
+                const conn = peerRef.current.connect(PEER_PREFIX + actualRoomId, { reliable: true });
+                setupConn(conn);
+              }, 3000);
+            } else if (!cancelled) {
+              setStatus('error');
             }
-          } catch (e) { addDebug(`Relay check error: ${e.message}`); }
-        };
-        // Delay first check to let relays connect
-        setTimeout(updateRelays, 2000);
-        intervalRef.current = setInterval(updateRelays, 3000);
+          });
 
-        setStatus('waiting');
+          peer.on('disconnected', () => {
+            addDebug('Peer disconnected from signaling server');
+            if (!cancelled && peerRef.current) peerRef.current.reconnect();
+          });
+
+        } else {
+          // Host: create peer with known ID, wait for guest to connect
+          addDebug(`Creating host peer: ${PEER_PREFIX}${actualRoomId}`);
+          const peer = new Peer(PEER_PREFIX + actualRoomId, peerConfig);
+          peerRef.current = peer;
+
+          peer.on('open', (id) => {
+            addDebug(`Host peer open: ${id}`);
+            if (cancelled) return;
+            setStatus('waiting');
+          });
+
+          peer.on('connection', (conn) => {
+            addDebug(`Incoming connection from ${conn.peer}`);
+            if (hasGuestRef.current) {
+              addDebug('Already have a guest, rejecting');
+              conn.close();
+              return;
+            }
+            setupConn(conn);
+          });
+
+          peer.on('error', (err) => {
+            addDebug(`Peer error: ${err.type} — ${err.message}`);
+            if (err.type === 'unavailable-id') {
+              addDebug('Room ID already taken — someone else is hosting');
+              if (!cancelled) setStatus('error');
+            }
+          });
+
+          peer.on('disconnected', () => {
+            addDebug('Peer disconnected from signaling server');
+            if (!cancelled && peerRef.current) peerRef.current.reconnect();
+          });
+        }
 
       } catch (err) {
         if (!cancelled) {
@@ -176,10 +197,10 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
     return () => {
       cancelled = true;
       clearTimeout(tid);
-      clearInterval(intervalRef.current);
-      if (roomRef.current) { roomRef.current.leave(); roomRef.current = null; }
+      if (connRef.current) { connRef.current.close(); connRef.current = null; }
+      if (peerRef.current) { peerRef.current.destroy(); peerRef.current = null; }
     };
   }, [actualRoomId, isGuest]);
 
-  return { peerId: actualRoomId, messages, sendMessage, status, reconnecting, peerCount, relayStatus, leave, debugLog };
+  return { peerId: actualRoomId, messages, sendMessage, status, reconnecting, peerCount, leave, debugLog };
 }
