@@ -39,6 +39,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const connRef = useRef(null);
   const hasGuestRef = useRef(false);
   const retryTimerRef = useRef(null);
+  const openTimeoutRef = useRef(null);
 
   const actualRoomId = isGuest ? roomId : (peerId ?? roomId);
 
@@ -75,16 +76,45 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         addDebug(`ICE: ${iceServers.length} servers`);
         if (cancelled) return;
 
+        // Force relay-only when TURN credentials are present — more reliable through NAT
+        const hasTurn = iceServers.some(s => {
+          const urls = Array.isArray(s.urls) ? s.urls : [s.urls];
+          return urls.some(u => u.startsWith('turn:') || u.startsWith('turns:'));
+        });
+        addDebug(`TURN available: ${hasTurn}`);
+
         const peerConfig = {
-          config: { iceServers },
-          debug: 0, // 0=none, 1=errors, 2=warnings, 3=all
+          config: {
+            iceServers,
+            ...(hasTurn ? { iceTransportPolicy: 'relay' } : {}),
+          },
+          debug: 1,
         };
 
-        function setupConn(conn) {
+        // setupConn wires up events for a DataConnection.
+        // onConnectionClosed is called after the 'close' event fires (used by guest to auto-retry).
+        function setupConn(conn, onConnectionClosed) {
+          // Cancel any pending ICE timeout from a prior attempt
+          clearTimeout(openTimeoutRef.current);
+
+          // Close stale connection if we're replacing it
+          if (connRef.current && connRef.current !== conn) {
+            connRef.current.close();
+          }
           connRef.current = conn;
           addDebug(`DataConnection to ${conn.peer}`);
 
+          // ICE timeout: if 'open' hasn't fired in 15s the negotiation stalled —
+          // close the connection so the retry loop can start a fresh exchange.
+          openTimeoutRef.current = setTimeout(() => {
+            if (connRef.current === conn && !conn.open) {
+              addDebug('ICE negotiation timed out — closing to trigger retry');
+              conn.close();
+            }
+          }, 15000);
+
           conn.on('open', () => {
+            clearTimeout(openTimeoutRef.current);
             if (cancelled) return;
             addDebug('Connection OPEN — ready to chat');
             hasGuestRef.current = true;
@@ -102,12 +132,14 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           });
 
           conn.on('close', () => {
+            clearTimeout(openTimeoutRef.current);
             addDebug('Connection closed');
             hasGuestRef.current = false;
-            connRef.current = null;
+            if (connRef.current === conn) connRef.current = null;
             setPeerCount(0);
             setReconnecting(true);
             setStatus('waiting');
+            onConnectionClosed?.();
           });
 
           conn.on('error', (err) => {
@@ -122,10 +154,25 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           peerRef.current = peer;
 
           function attemptConnect() {
-            if (cancelled || !peerRef.current) return;
+            if (cancelled || !peerRef.current || peerRef.current.destroyed) return;
             addDebug(`Connecting to host: ${PEER_PREFIX}${actualRoomId}`);
+
+            // Close any stale connection before starting a fresh ICE exchange
+            if (connRef.current) {
+              connRef.current.close();
+              connRef.current = null;
+            }
+            clearTimeout(openTimeoutRef.current);
+
             const conn = peer.connect(PEER_PREFIX + actualRoomId, { reliable: true });
-            setupConn(conn);
+            setupConn(conn, () => {
+              // Auto-retry when connection closes (ICE timeout, remote close, etc.)
+              if (!cancelled) {
+                addDebug('Connection lost, retrying in 2s...');
+                clearTimeout(retryTimerRef.current);
+                retryTimerRef.current = setTimeout(attemptConnect, 2000);
+              }
+            });
             setStatus('waiting');
           }
 
@@ -175,6 +222,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
                 conn.close();
                 return;
               }
+              // Pass no onConnectionClosed callback — host just waits for guest to retry
               setupConn(conn);
             });
 
@@ -193,6 +241,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
             peer.on('disconnected', () => {
               addDebug('Peer disconnected from signaling server');
+              // reconnect() re-registers the same peer ID so guests can reach us again
               if (!cancelled && peerRef.current) peerRef.current.reconnect();
             });
           }
@@ -213,6 +262,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
       cancelled = true;
       clearTimeout(tid);
       clearTimeout(retryTimerRef.current);
+      clearTimeout(openTimeoutRef.current);
       if (connRef.current) { connRef.current.close(); connRef.current = null; }
       if (peerRef.current) { peerRef.current.destroy(); peerRef.current = null; }
     };
