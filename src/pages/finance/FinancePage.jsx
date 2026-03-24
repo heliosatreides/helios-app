@@ -173,7 +173,7 @@ export function FinancePage() {
     <div className="space-y-6">
       {/* Net Worth Banner */}
       {accounts.length > 0 && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5" data-testid="net-worth-banner">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6" data-testid="net-worth-banner">
           <p className="text-[#71717a] text-sm mb-1">Net Worth</p>
           <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-amber-400' : 'text-red-400'}`} data-testid="net-worth-value">
             {netWorth < 0 ? '-' : ''}${Math.abs(netWorth).toLocaleString('en-US', { maximumFractionDigits: 2 })}
@@ -183,7 +183,7 @@ export function FinancePage() {
 
       {/* Monthly Summary */}
       {(monthlyIncome > 0 || monthlyExpensesTotal > 0) && (
-        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-5" data-testid="monthly-summary-card">
+        <div className="bg-[#0c0c0e] border border-[#1c1c20] rounded-2xl p-6" data-testid="monthly-summary-card">
           <p className="text-[#e4e4e7] font-semibold mb-3">
             Monthly Summary <span className="text-[#52525b] text-sm font-normal">({currentMonth})</span>
           </p>
@@ -236,22 +236,22 @@ export function FinancePage() {
             else if (activeTab === 'Transactions') setShowTxModal(true);
             else if (activeTab === 'Budget') setShowBudgetForm(true);
           }}
-          className="px-4 py-2 bg-[#f59e0b] text-black rounded-lg font-semibold hover:bg-amber-400 transition-colors text-sm"
+          className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-black rounded-xl font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
         >
           + Add {activeTab === 'Accounts' ? 'Account' : activeTab === 'Transactions' ? 'Transaction' : 'Budget'}
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-[#0c0c0e] border border-[#1c1c20] rounded-xl p-1">
+      <div className="flex gap-1 bg-[#0a0a0b] border border-[#1c1c20] rounded-xl p-1 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
               activeTab === tab
-                ? 'bg-[#f59e0b] text-black'
-                : 'text-[#71717a] hover:text-[#e4e4e7]'
+                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                : 'text-[#52525b] hover:text-[#a1a1aa] border border-transparent'
             }`}
           >
             {tab}
