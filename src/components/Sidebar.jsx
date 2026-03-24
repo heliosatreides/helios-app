@@ -7,6 +7,7 @@ const navItems = [
   { to: '/finance', label: 'Finance', icon: '💰' },
   { to: '/investments', label: 'Investments', icon: '📈' },
   { to: '/sports', label: 'Sports', icon: '🏆' },
+  { to: '/resume', label: 'Resume', icon: '📄' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
 ];
 
