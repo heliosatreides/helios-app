@@ -37,6 +37,7 @@ import { LandingPage } from './pages/landing/LandingPage';
 import { useAuth } from './auth/AuthContext';
 import { useIDB } from './hooks/useIDB';
 import { CommandPalette } from './components/CommandPalette';
+import { ToastProvider } from './components/Toast';
 import './index.css';
 
 function AppShell() {
@@ -136,12 +137,14 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<RootRoute />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/*" element={<AppShell />} />
-        </Routes>
+        <ToastProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<RootRoute />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/*" element={<AppShell />} />
+          </Routes>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   );
