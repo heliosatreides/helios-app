@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { formatGitHubEventType, eventTypeBadgeClass, searchSnippets, getSnippetLanguages, createSnippet } from './devtools.utils';
+import { PasswordGenerator } from '../password/PasswordGenerator';
 
 const GITHUB_USERNAME_KEY = 'devtools-github-username';
 
@@ -403,6 +404,9 @@ export function DevToolsTab() {
       </CollapsibleCard>
       <CollapsibleCard title="📝 Daily Dev Log">
         <DevLog />
+      </CollapsibleCard>
+      <CollapsibleCard title="🔐 Password Generator" defaultOpen={false}>
+        <PasswordGenerator />
       </CollapsibleCard>
     </div>
   );
