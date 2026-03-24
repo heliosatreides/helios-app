@@ -47,7 +47,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
         // Pin to a small set of fast, well-known Nostr relays
         // instead of Trystero's random 75+ relay list
-        const relayRedundancy = 2; // connect to 2 relays for redundancy
+        const relayRedundancy = 5; // connect to ALL relays so host+guest always share at least one
 
         // ICE config with STUN + free TURN servers for NAT traversal
         // TURN is required for mobile (carrier NAT) and strict firewalls
