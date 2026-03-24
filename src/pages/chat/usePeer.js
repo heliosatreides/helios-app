@@ -17,6 +17,7 @@ const SIGNAL_OPEN_TIMEOUT_MS = 4000;    // If signaling 'open' doesn't fire, des
 const ICE_TIMEOUT_MS = 6000;            // If DataConnection 'open' doesn't fire, retry ICE
 const PEER_UNAVAILABLE_RETRY_MS = 2000; // Guest retry when host not yet registered
 const CONN_FAILURE_RETRY_MS = 1500;     // Retry after connection close/failure
+const SIGNALING_HEALTH_MS = 5000;       // Poll signaling health + send keepalive every 5s
 
 // Fetch TURN + STUN servers from our Vercel proxy
 async function getIceServers() {
@@ -47,6 +48,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   const retryTimerRef = useRef(null);
   const openTimeoutRef = useRef(null);
   const signalingTimeoutRef = useRef(null);
+  const signalingHealthRef = useRef(null);
 
   const actualRoomId = isGuest ? roomId : (peerId ?? roomId);
 
@@ -100,6 +102,35 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           },
           debug: 1,
         };
+
+        // startSignalingHealth starts a periodic health-check for the signaling WebSocket.
+        // PeerJS's signaling server (0.peerjs.com) drops idle WebSocket connections after ~30s.
+        // Two defenses:
+        //   1. Send a HEARTBEAT message every SIGNALING_HEALTH_MS to keep the WS alive.
+        //   2. Poll peer.disconnected and call peer.reconnect() if the socket dropped anyway.
+        // When the host reconnects it re-registers the same peer ID so guests can still find it.
+        function startSignalingHealth(peer) {
+          clearInterval(signalingHealthRef.current);
+          signalingHealthRef.current = setInterval(() => {
+            if (cancelled || peerRef.current !== peer) {
+              clearInterval(signalingHealthRef.current);
+              return;
+            }
+            if (peer.destroyed) {
+              clearInterval(signalingHealthRef.current);
+              return;
+            }
+            if (peer.disconnected) {
+              addDebug('Signaling health: disconnected — reconnecting...');
+              peer.reconnect();
+            } else {
+              addDebug(`Signaling health: ok (open=${peer.open})`);
+              // Send HEARTBEAT to prevent the signaling WS from timing out at ~30s idle.
+              // peer.socket is PeerJS's Socket wrapper; send() queues if not yet open.
+              try { peer.socket.send({ type: 'HEARTBEAT' }); } catch { /* non-fatal */ }
+            }
+          }, SIGNALING_HEALTH_MS);
+        }
 
         // setupConn wires up events for a DataConnection.
         // onConnectionClosed is called after the 'close' event fires (used by guest to auto-retry),
@@ -244,6 +275,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
               clearTimeout(signalingTimeoutRef.current);
               addDebug(`Guest peer open: ${id}`);
               if (cancelled) return;
+              startSignalingHealth(peer);
               attemptConnect();
             });
 
@@ -258,6 +290,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
                 // Signaling server trouble — recreate the peer entirely
                 addDebug('Signaling server error — recreating peer in 1s...');
                 clearTimeout(signalingTimeoutRef.current);
+                clearInterval(signalingHealthRef.current);
                 if (peerRef.current === peer) {
                   peerRef.current = null;
                   peer.destroy();
@@ -301,6 +334,8 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
               // Strip prefix so callers see just the room code
               setEffectiveRoomId(actualRoomId + suffix);
               setStatus('waiting');
+              // Keep the signaling WebSocket alive so guests can reach us indefinitely
+              startSignalingHealth(peer);
             });
 
             peer.on('connection', (conn) => {
@@ -319,6 +354,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
               if (err.type === 'unavailable-id') {
                 // ID collision (e.g. stale registration) — retry with random suffix
                 clearTimeout(signalingTimeoutRef.current);
+                clearInterval(signalingHealthRef.current);
                 addDebug('Peer ID taken, retrying with suffix...');
                 peer.destroy();
                 if (!cancelled) {
@@ -328,6 +364,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
               } else if (err.type === 'network' || err.type === 'server-error') {
                 addDebug('Host signaling server error — retrying in 1s...');
                 clearTimeout(signalingTimeoutRef.current);
+                clearInterval(signalingHealthRef.current);
                 if (peerRef.current === peer) {
                   peerRef.current = null;
                   peer.destroy();
@@ -361,6 +398,7 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
       clearTimeout(retryTimerRef.current);
       clearTimeout(openTimeoutRef.current);
       clearTimeout(signalingTimeoutRef.current);
+      clearInterval(signalingHealthRef.current);
       if (connRef.current) { connRef.current.close(); connRef.current = null; }
       if (peerRef.current) { peerRef.current.destroy(); peerRef.current = null; }
     };
