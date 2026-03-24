@@ -8,16 +8,63 @@ export function generateRoomId() {
     .join('');
 }
 
+const RELAY_URLS = [
+  'wss://relay.damus.io',
+  'wss://nos.lol',
+  'wss://relay.nostr.place',
+  'wss://purplerelay.com',
+  'wss://nostr.data.haus',
+];
+
+// Fetch short-lived Cloudflare TURN credentials (free, no account needed)
+async function getIceServers() {
+  const base = [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun.cloudflare.com:3478' },
+  ];
+
+  try {
+    const res = await fetch('https://rtc.live.cloudflare.com/v1/turn/keys/free/credentials/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ttl: 86400 }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.iceServers?.length) {
+        return [...base, ...data.iceServers];
+      }
+    }
+  } catch { /* fallback to STUN only */ }
+
+  // Fallback TURN if Cloudflare fails
+  return [
+    ...base,
+    {
+      urls: 'turn:openrelay.metered.ca:80',
+      username: 'openrelayproject',
+      credential: 'openrelayproject',
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+      username: 'openrelayproject',
+      credential: 'openrelayproject',
+    },
+  ];
+}
+
 export function usePeer({ isGuest = false, roomId = null } = {}) {
   const [peerId] = useState(() => isGuest ? null : roomId || generateRoomId());
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState('initializing');
   const [peerCount, setPeerCount] = useState(0);
-  const [relayStatus, setRelayStatus] = useState([]); // [{ url, connected }]
+  const [relayStatus, setRelayStatus] = useState([]);
 
   const roomRef = useRef(null);
   const sendRef = useRef(null);
   const hasGuestRef = useRef(false);
+  const intervalRef = useRef(null);
 
   const actualRoomId = isGuest ? roomId : peerId;
 
@@ -29,69 +76,29 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
   }, []);
 
   useEffect(() => {
-    if (!actualRoomId) {
-      setStatus('error');
-      return;
-    }
+    if (!actualRoomId) { setStatus('error'); return; }
 
     let cancelled = false;
 
     async function setup() {
       try {
-        // Dynamic import so it doesn't break SSR/tests
-        const { joinRoom, getRelaySockets } = await import('trystero/nostr');
-
+        // Fetch TURN credentials before joining
+        const iceServers = await getIceServers();
         if (cancelled) return;
 
-        const appId = 'helios-p2p-chat-v1';
-
-        // Pin to a small set of fast, well-known Nostr relays
-        // instead of Trystero's random 75+ relay list
-        const relayRedundancy = 5; // connect to ALL relays so host+guest always share at least one
-
-        // Trystero uses `turnConfig` array specifically for TURN servers
-        // TURN is essential for cross-device connections behind strict NAT/carrier networks
-        const turnConfig = [
-          {
-            urls: 'turn:openrelay.metered.ca:80',
-            username: 'openrelayproject',
-            credential: 'openrelayproject',
-          },
-          {
-            urls: 'turn:openrelay.metered.ca:443',
-            username: 'openrelayproject',
-            credential: 'openrelayproject',
-          },
-          {
-            urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-            username: 'openrelayproject',
-            credential: 'openrelayproject',
-          },
-          {
-            urls: 'turn:relay1.expressturn.com:3478',
-            username: 'efIGKFN0G6FR9K7OFO',
-            credential: 'GBEjqnBbbcUEd4Zl',
-          },
-        ];
-
-        const rtcConfig = {}; // extra peer connection options (not ICE)
+        const { joinRoom, getRelaySockets } = await import('trystero/nostr');
+        if (cancelled) return;
 
         const room = joinRoom({
-          appId,
-          rtcConfig,
-          turnConfig,
-          relayRedundancy,
-          relayUrls: [
-            'wss://relay.damus.io',
-            'wss://nos.lol',
-            'wss://relay.nostr.place',
-            'wss://purplerelay.com',
-            'wss://nostr.data.haus',
-          ],
+          appId: 'helios-p2p-chat-v1',
+          // Pass ICE servers as rtcConfig so WebRTC uses our TURN servers
+          rtcConfig: { iceServers },
+          relayRedundancy: 5,
+          relayUrls: RELAY_URLS,
         }, actualRoomId);
+
         roomRef.current = room;
 
-        // Set up send/receive for messages
         const [sendMsg, onMsg] = room.makeAction('msg');
         sendRef.current = sendMsg;
 
@@ -103,52 +110,12 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           }]);
         });
 
-        // Track peer presence
-        room.onPeerJoin((peerId) => {
-          if (isGuest) {
-            // Guest joined — we're connected to host
-            setStatus('connected');
-          } else {
-            // Host — guest joined
-            if (hasGuestRef.current) {
-              // Second guest — kick them out by... we can't kick in Trystero
-              // But we can ignore their messages and show warning
-            } else {
-              hasGuestRef.current = true;
-              setStatus('connected');
-            }
-          }
+        room.onPeerJoin(() => {
+          if (!isGuest && hasGuestRef.current) return; // ignore 2nd guest
+          hasGuestRef.current = true;
+          setStatus('connected');
           setPeerCount(c => c + 1);
         });
-
-        // Poll relay connection status every 2 seconds
-        const relayUrls = [
-          'wss://relay.damus.io',
-          'wss://nos.lol',
-          'wss://relay.nostr.place',
-          'wss://purplerelay.com',
-          'wss://nostr.data.haus',
-        ];
-
-        const updateRelayStatus = () => {
-          try {
-            const sockets = getRelaySockets();
-            const statuses = relayUrls.map(url => ({
-              url,
-              // WebSocket readyState: 0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED
-              connected: sockets[url]?.readyState === 1,
-              state: sockets[url]?.readyState ?? -1,
-            }));
-            setRelayStatus(statuses);
-          } catch {
-            // getRelaySockets may not be available in all contexts
-          }
-        };
-
-        updateRelayStatus();
-        // Store interval ref for cleanup
-        const relayPollInterval = setInterval(updateRelayStatus, 2000);
-        roomRef._relayPollInterval = relayPollInterval;
 
         room.onPeerLeave(() => {
           hasGuestRef.current = false;
@@ -156,22 +123,25 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
           setStatus('disconnected');
         });
 
-        // For guest: set a timeout — if no peer joins in 15s, room may not exist
-        if (isGuest) {
-          setTimeout(() => {
-            if (!cancelled && status !== 'connected') {
-              // Still waiting — but Trystero doesn't have a "room not found" concept
-              // so we stay waiting (host may just be slow to load)
-            }
-          }, 15000);
-        }
+        // Poll relay status
+        const updateRelays = () => {
+          try {
+            const sockets = getRelaySockets();
+            setRelayStatus(RELAY_URLS.map(url => ({
+              url,
+              connected: sockets[url]?.readyState === 1,
+              state: sockets[url]?.readyState ?? -1,
+            })));
+          } catch { /* ignore */ }
+        };
+        updateRelays();
+        intervalRef.current = setInterval(updateRelays, 2000);
 
-        // Mark as waiting (host) or connecting (guest)
-        setStatus(isGuest ? 'waiting' : 'waiting');
+        setStatus('waiting');
 
       } catch (err) {
         if (!cancelled) {
-          console.error('Trystero setup error:', err);
+          console.error('Chat setup error:', err);
           setStatus('error');
         }
       }
@@ -181,11 +151,8 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
     return () => {
       cancelled = true;
-      if (roomRef._relayPollInterval) clearInterval(roomRef._relayPollInterval);
-      if (roomRef.current) {
-        roomRef.current.leave();
-        roomRef.current = null;
-      }
+      clearInterval(intervalRef.current);
+      if (roomRef.current) { roomRef.current.leave(); roomRef.current = null; }
     };
   }, [actualRoomId, isGuest]);
 
