@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { ChatPage } from './ChatPage';
-import { generateRoomId, generatePin } from './usePeer';
+import { generateRoomId } from './usePeer';
 
 // Mock trystero/nostr
 const mockLeave = vi.fn();
@@ -41,21 +41,6 @@ describe('generateRoomId', () => {
   });
 });
 
-describe('generatePin', () => {
-  it('generates a 4-digit string', () => {
-    const pin = generatePin();
-    expect(pin).toHaveLength(4);
-    expect(pin).toMatch(/^\d{4}$/);
-  });
-
-  it('generates values between 1000-9999', () => {
-    for (let i = 0; i < 20; i++) {
-      const n = parseInt(generatePin(), 10);
-      expect(n).toBeGreaterThanOrEqual(1000);
-      expect(n).toBeLessThanOrEqual(9999);
-    }
-  });
-});
 
 describe('ChatPage', () => {
   beforeEach(() => {

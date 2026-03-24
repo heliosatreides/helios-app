@@ -3,8 +3,6 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { usePeer } from './usePeer';
 import { ChatMessage } from './ChatMessage';
 
-// ── helpers ──────────────────────────────────────────────────────────────────
-
 function CopyButton({ text, label = 'Copy' }) {
   const [copied, setCopied] = useState(false);
   const copy = useCallback(async () => {
@@ -24,126 +22,15 @@ function CopyButton({ text, label = 'Copy' }) {
 
 function Spinner({ size = 8 }) {
   return (
-    <div
-      className={`w-${size} h-${size} border-2 border-amber-500 border-t-transparent rounded-full animate-spin`}
-    />
+    <div className={`w-${size} h-${size} border-2 border-amber-500 border-t-transparent rounded-full animate-spin`} />
   );
 }
 
-// ── PIN entry (guest) ─────────────────────────────────────────────────────────
-
-function PinEntry({ onSubmit, rejected, submitting }) {
-  const [digits, setDigits] = useState(['', '', '', '']);
-  const refs = [useRef(), useRef(), useRef(), useRef()];
-
-  // Reset digits when rejection arrives so user can re-enter
-  useEffect(() => {
-    if (rejected) {
-      setDigits(['', '', '', '']);
-      setTimeout(() => refs[0].current?.focus(), 50);
-    }
-  }, [rejected]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleChange = (i, val) => {
-    const d = val.replace(/\D/, '').slice(-1);
-    const next = [...digits];
-    next[i] = d;
-    setDigits(next);
-    if (d && i < 3) refs[i + 1].current?.focus();
-  };
-
-  const handleKeyDown = (i, e) => {
-    if (e.key === 'Backspace' && !digits[i] && i > 0) {
-      refs[i - 1].current?.focus();
-    }
-  };
-
-  const handlePaste = (e) => {
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
-    if (pasted.length === 4) {
-      setDigits(pasted.split(''));
-      refs[3].current?.focus();
-    }
-  };
-
-  const submit = () => {
-    const pin = digits.join('');
-    if (pin.length === 4) onSubmit(pin);
-  };
-
-  const full = digits.every(Boolean);
-
-  return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
-      <div className="w-full max-w-sm">
-        {/* Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-3xl">
-            🔐
-          </div>
-        </div>
-
-        <h1 className="text-xl font-semibold text-zinc-100 text-center mb-1">Enter Access Code</h1>
-        <p className="text-zinc-500 text-sm text-center mb-8">
-          Ask the person who shared this link for their 4-digit code
-        </p>
-
-        {/* 4 digit boxes */}
-        <div className="flex gap-3 justify-center mb-4" onPaste={handlePaste}>
-          {digits.map((d, i) => (
-            <input
-              key={i}
-              ref={refs[i]}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={d}
-              autoFocus={i === 0}
-              onChange={e => handleChange(i, e.target.value)}
-              onKeyDown={e => handleKeyDown(i, e)}
-              className={`w-14 h-16 text-center text-2xl font-bold rounded-xl border bg-zinc-900 text-zinc-100 focus:outline-none transition-colors
-                ${rejected
-                  ? 'border-red-500 text-red-400'
-                  : d
-                    ? 'border-amber-500 text-amber-400'
-                    : 'border-zinc-700 focus:border-amber-500/70'
-                }`}
-            />
-          ))}
-        </div>
-
-        {rejected && (
-          <p className="text-red-400 text-sm text-center mb-4 animate-pulse">
-            Incorrect code — try again
-          </p>
-        )}
-
-        <button
-          onClick={submit}
-          disabled={!full || submitting}
-          className="w-full py-3 rounded-xl bg-amber-500 text-[#0a0a0b] font-semibold text-sm hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all mt-2 flex items-center justify-center gap-2"
-        >
-          {submitting ? (
-            <>
-              <div className="w-4 h-4 border-2 border-[#0a0a0b] border-t-transparent rounded-full animate-spin" />
-              Verifying…
-            </>
-          ) : 'Join Chat'}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ── waiting screen (host) ─────────────────────────────────────────────────────
-
-function WaitingHost({ chatLink, pin, relayStatus }) {
+function WaitingHost({ chatLink, relayStatus }) {
   const connectedRelays = relayStatus.filter(r => r.connected).length;
-
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
       <div className="w-full max-w-sm space-y-4">
-        {/* Pulse ring */}
         <div className="flex justify-center mb-2">
           <div className="relative">
             <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
@@ -155,17 +42,9 @@ function WaitingHost({ chatLink, pin, relayStatus }) {
 
         <div className="text-center">
           <h2 className="text-lg font-semibold text-zinc-100 mb-1">Waiting for someone to join</h2>
-          <p className="text-zinc-500 text-sm">Share the link and code below</p>
+          <p className="text-zinc-500 text-sm">Share the link below</p>
         </div>
 
-        {/* PIN card */}
-        <div className="bg-zinc-900 border border-amber-500/30 rounded-2xl p-5">
-          <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Your Access Code</p>
-          <p className="text-5xl font-bold tracking-[0.2em] text-amber-400 mb-3">{pin}</p>
-          <p className="text-zinc-600 text-xs">Share this verbally or in a separate message — not in this chat</p>
-        </div>
-
-        {/* Link */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
           <p className="text-zinc-500 text-xs mb-2 uppercase tracking-widest">Invite Link</p>
           <div className="flex items-center gap-2">
@@ -174,7 +53,6 @@ function WaitingHost({ chatLink, pin, relayStatus }) {
           </div>
         </div>
 
-        {/* Relay status pill */}
         <div className="flex justify-center">
           <div className="flex items-center gap-1.5 text-xs text-zinc-600 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1.5">
             <span className={`w-1.5 h-1.5 rounded-full ${connectedRelays > 0 ? 'bg-emerald-400' : 'bg-zinc-600'}`} />
@@ -186,8 +64,6 @@ function WaitingHost({ chatLink, pin, relayStatus }) {
   );
 }
 
-// ── waiting screen (guest) ────────────────────────────────────────────────────
-
 function WaitingGuest() {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#0a0a0b] px-6">
@@ -197,8 +73,6 @@ function WaitingGuest() {
     </div>
   );
 }
-
-// ── chat input ────────────────────────────────────────────────────────────────
 
 function ChatInput({ onSend }) {
   const [text, setText] = useState('');
@@ -245,27 +119,14 @@ function ChatInput({ onSend }) {
   );
 }
 
-// ── main ChatPage ─────────────────────────────────────────────────────────────
-
 export function ChatPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const roomId = searchParams.get('room');
   const isGuest = Boolean(roomId);
 
-  const {
-    peerId,
-    pin,
-    messages,
-    sendMessage,
-    submitPin,
-    pinStatus,
-    status,
-    reconnecting,
-    peerCount,
-    relayStatus,
-    leave,
-  } = usePeer({ isGuest, roomId });
+  const { peerId, messages, sendMessage, status, reconnecting, peerCount, relayStatus, leave } =
+    usePeer({ isGuest, roomId });
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
@@ -278,8 +139,6 @@ export function ChatPage() {
     leave();
     navigate('/chat');
   }, [leave, navigate]);
-
-  // ── states ────────────────────────────────────────────────────────────────
 
   if (status === 'initializing') {
     return (
@@ -312,28 +171,15 @@ export function ChatPage() {
     );
   }
 
-  // Guest: waiting for host to appear (no peer yet)
-  if (isGuest && peerCount === 0 && pinStatus !== 'verified') {
+  // Guest waiting for host
+  if (isGuest && status === 'waiting' && peerCount === 0) {
     return <WaitingGuest />;
   }
 
-  // Guest: host is present but PIN not verified — show entry (with error if rejected)
-  if (isGuest && pinStatus !== 'verified') {
-    return (
-      <PinEntry
-        onSubmit={submitPin}
-        rejected={pinStatus === 'rejected'}
-        submitting={pinStatus === 'submitting'}
-      />
-    );
-  }
-
-  // Host: waiting for guest, no messages yet
+  // Host waiting for guest
   if (!isGuest && status === 'waiting' && messages.length === 0) {
-    return <WaitingHost chatLink={chatLink} pin={pin} relayStatus={relayStatus} />;
+    return <WaitingHost chatLink={chatLink} relayStatus={relayStatus} />;
   }
-
-  // ── chat UI (connected or reconnecting) ────────────────────────────────────
 
   const connectedRelays = relayStatus.filter(r => r.connected).length;
 
@@ -375,18 +221,14 @@ export function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-0.5">
+      <div className="flex-1 overflow-y-auto px-4 py-4">
         {messages.length === 0 && (
           <div className="flex items-center justify-center h-full">
             <p className="text-zinc-700 text-sm">Connected — say hi!</p>
           </div>
         )}
         {messages.map((msg, i) => (
-          <ChatMessage
-            key={i}
-            message={msg}
-            prevMessage={i > 0 ? messages[i - 1] : null}
-          />
+          <ChatMessage key={i} message={msg} prevMessage={i > 0 ? messages[i - 1] : null} />
         ))}
         <div ref={messagesEndRef} />
       </div>
