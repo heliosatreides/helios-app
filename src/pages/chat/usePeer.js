@@ -92,26 +92,50 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
         };
 
         // setupConn wires up events for a DataConnection.
-        // onConnectionClosed is called after the 'close' event fires (used by guest to auto-retry).
+        // onConnectionClosed is called after the 'close' event fires (used by guest to auto-retry),
+        // but ONLY when this connection is still the active one — not when it was already superseded
+        // by a retry. Without this guard, explicitly closing a stale conn in attemptConnect would
+        // fire the old callback and schedule a second concurrent retry, cascading indefinitely.
         function setupConn(conn, onConnectionClosed) {
           // Cancel any pending ICE timeout from a prior attempt
           clearTimeout(openTimeoutRef.current);
 
-          // Close stale connection if we're replacing it
+          // Close stale connection if we're replacing it (its close handler will see
+          // connRef.current !== conn and skip the retry callback — see close handler below)
           if (connRef.current && connRef.current !== conn) {
             connRef.current.close();
           }
           connRef.current = conn;
           addDebug(`DataConnection to ${conn.peer}`);
 
-          // ICE timeout: if 'open' hasn't fired in 15s the negotiation stalled —
+          // Log underlying RTCPeerConnection ICE transitions — the most useful signal
+          // for diagnosing why 'open' doesn't fire. Also force-close on 'failed' because
+          // PeerJS doesn't always emit a DataConnection 'close' event on ICE failure.
+          const pc = conn.peerConnection;
+          if (pc) {
+            pc.addEventListener('icegatheringstatechange', () => {
+              addDebug(`ICE gathering: ${pc.iceGatheringState}`);
+            });
+            pc.addEventListener('iceconnectionstatechange', () => {
+              addDebug(`ICE state: ${pc.iceConnectionState}`);
+              if (pc.iceConnectionState === 'failed') {
+                addDebug('ICE failed — closing to trigger retry');
+                conn.close();
+              }
+            });
+            pc.addEventListener('connectionstatechange', () => {
+              addDebug(`PC state: ${pc.connectionState}`);
+            });
+          }
+
+          // ICE timeout: if 'open' hasn't fired in 10s the negotiation stalled —
           // close the connection so the retry loop can start a fresh exchange.
           openTimeoutRef.current = setTimeout(() => {
             if (connRef.current === conn && !conn.open) {
               addDebug('ICE negotiation timed out — closing to trigger retry');
               conn.close();
             }
-          }, 15000);
+          }, 10000);
 
           conn.on('open', () => {
             clearTimeout(openTimeoutRef.current);
@@ -133,13 +157,21 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
           conn.on('close', () => {
             clearTimeout(openTimeoutRef.current);
-            addDebug('Connection closed');
-            hasGuestRef.current = false;
-            if (connRef.current === conn) connRef.current = null;
-            setPeerCount(0);
-            setReconnecting(true);
-            setStatus('waiting');
-            onConnectionClosed?.();
+            if (connRef.current === conn) {
+              // This was the active connection — clean up and notify caller so it can retry.
+              addDebug('Connection closed');
+              hasGuestRef.current = false;
+              connRef.current = null;
+              setPeerCount(0);
+              setReconnecting(true);
+              setStatus('waiting');
+              onConnectionClosed?.();
+            } else {
+              // Connection was already superseded (e.g. closed intentionally during a retry).
+              // Do NOT call onConnectionClosed — that would schedule a duplicate retry and
+              // cascade into an ever-growing flood of concurrent connection attempts.
+              addDebug('Stale connection closed (already superseded — ignoring)');
+            }
           });
 
           conn.on('error', (err) => {
@@ -155,16 +187,25 @@ export function usePeer({ isGuest = false, roomId = null } = {}) {
 
           function attemptConnect() {
             if (cancelled || !peerRef.current || peerRef.current.destroyed) return;
+            // Cancel any retry that was already scheduled — we're starting a fresh attempt now.
+            // Without this, the stale-conn close handler (which now correctly skips its own
+            // onConnectionClosed) could still race with a timer that was set before the guard.
+            clearTimeout(retryTimerRef.current);
             addDebug(`Connecting to host: ${PEER_PREFIX}${actualRoomId}`);
 
-            // Close any stale connection before starting a fresh ICE exchange
+            // Close any stale connection before starting a fresh ICE exchange.
+            // Setting connRef.current = null BEFORE calling close() ensures the close handler
+            // sees connRef.current !== conn and skips the retry callback (no cascade).
             if (connRef.current) {
-              connRef.current.close();
+              const stale = connRef.current;
               connRef.current = null;
+              stale.close();
             }
             clearTimeout(openTimeoutRef.current);
 
-            const conn = peer.connect(PEER_PREFIX + actualRoomId, { reliable: true });
+            // serialization:'json' skips PeerJS's binary encoding overhead for faster
+            // DataChannel open — we send plain objects so JSON is a natural fit.
+            const conn = peer.connect(PEER_PREFIX + actualRoomId, { reliable: true, serialization: 'json' });
             setupConn(conn, () => {
               // Auto-retry when connection closes (ICE timeout, remote close, etc.)
               if (!cancelled) {
