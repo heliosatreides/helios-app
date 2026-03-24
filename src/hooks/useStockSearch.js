@@ -1,9 +1,7 @@
 import { useState, useCallback } from 'react';
 
-/**
- * Validates a ticker by attempting to fetch a quote.
- * Returns { validate } where validate(ticker) returns { price, name } or throws.
- */
+const PROXY_URL = '/api/stock';
+
 export function useStockSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -13,17 +11,14 @@ export function useStockSearch() {
     setLoading(true);
     setError(null);
     try {
-      const url = `https://query2.finance.yahoo.com/v8/finance/chart/${ticker.trim().toUpperCase()}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await fetch(`${PROXY_URL}?symbol=${encodeURIComponent(ticker.trim().toUpperCase())}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Ticker not found`);
+      }
       const data = await res.json();
-      const result = data?.chart?.result?.[0];
-      if (!result) throw new Error('Invalid ticker');
-      const meta = result.meta;
-      const price = meta?.regularMarketPrice;
-      const name = meta?.shortName || meta?.longName || ticker.toUpperCase();
-      if (price == null) throw new Error('No price data');
-      return { price, name };
+      if (!data.price) throw new Error('No price data');
+      return { price: data.price, name: data.name || ticker.toUpperCase() };
     } catch (err) {
       const msg = err.message || 'Invalid ticker';
       setError(msg);

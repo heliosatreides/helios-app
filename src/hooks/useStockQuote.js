@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 
+const PROXY_URL = '/api/stock';
+
 export function useStockQuote() {
   const [price, setPrice] = useState(null);
   const [name, setName] = useState('');
@@ -12,20 +14,17 @@ export function useStockQuote() {
     setLoading(true);
     setError(null);
     try {
-      const url = `https://query2.finance.yahoo.com/v8/finance/chart/${ticker.toUpperCase()}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await fetch(`${PROXY_URL}?symbol=${encodeURIComponent(ticker.toUpperCase())}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
       const data = await res.json();
-      const result = data?.chart?.result?.[0];
-      if (!result) throw new Error('Ticker not found');
-      const meta = result.meta;
-      const fetchedPrice = meta?.regularMarketPrice;
-      const fetchedName = meta?.shortName || meta?.longName || ticker.toUpperCase();
-      if (fetchedPrice == null) throw new Error('Price unavailable');
-      setPrice(fetchedPrice);
-      setName(fetchedName);
+      if (!data.price) throw new Error('Price unavailable');
+      setPrice(data.price);
+      setName(data.name || ticker.toUpperCase());
       setLastUpdated(new Date().toISOString());
-      return { price: fetchedPrice, name: fetchedName };
+      return { price: data.price, name: data.name || ticker.toUpperCase() };
     } catch (err) {
       setError(err.message || 'Failed to fetch quote');
       setPrice(null);

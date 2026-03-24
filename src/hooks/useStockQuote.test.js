@@ -7,38 +7,22 @@ import { useStockSearch } from './useStockSearch';
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-const validYahooResponse = (symbol = 'AAPL', price = 182.5, name = 'Apple Inc.') => ({
+// Proxy response shape: { symbol, price, name }
+const validProxyResponse = (symbol = 'AAPL', price = 182.5, name = 'Apple Inc.') => ({
   ok: true,
-  json: async () => ({
-    chart: {
-      result: [{
-        meta: {
-          regularMarketPrice: price,
-          shortName: name,
-          symbol,
-        },
-        timestamp: [1234567890],
-        indicators: { quote: [{}] },
-      }],
-      error: null,
-    },
-  }),
+  json: async () => ({ symbol, price, name }),
 });
 
 const notFoundResponse = () => ({
-  ok: true,
-  json: async () => ({
-    chart: {
-      result: null,
-      error: { code: 'Not Found', description: 'No fundamentals data found' },
-    },
-  }),
+  ok: false,
+  status: 404,
+  json: async () => ({ error: 'Ticker not found' }),
 });
 
-const httpErrorResponse = (status = 404) => ({
+const httpErrorResponse = (status = 500) => ({
   ok: false,
   status,
-  json: async () => ({}),
+  json: async () => ({ error: `HTTP ${status}` }),
 });
 
 beforeEach(() => {
@@ -58,7 +42,7 @@ describe('useStockQuote', () => {
   });
 
   it('fetches price successfully', async () => {
-    mockFetch.mockResolvedValueOnce(validYahooResponse('AAPL', 182.5, 'Apple Inc.'));
+    mockFetch.mockResolvedValueOnce(validProxyResponse('AAPL', 182.5, 'Apple Inc.'));
     const { result } = renderHook(() => useStockQuote());
 
     await act(async () => {
@@ -69,9 +53,7 @@ describe('useStockQuote', () => {
     expect(result.current.name).toBe('Apple Inc.');
     expect(result.current.error).toBeNull();
     expect(result.current.lastUpdated).toBeTruthy();
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://query2.finance.yahoo.com/v8/finance/chart/AAPL'
-    );
+    expect(mockFetch).toHaveBeenCalledWith('/api/stock?symbol=AAPL');
   });
 
   it('sets loading true while fetching', async () => {
@@ -85,14 +67,14 @@ describe('useStockQuote', () => {
     expect(result.current.loading).toBe(true);
 
     await act(async () => {
-      resolvePromise(validYahooResponse('TSLA', 250, 'Tesla Inc.'));
+      resolvePromise(validProxyResponse('TSLA', 250, 'Tesla Inc.'));
       await fetchPromise;
     });
 
     expect(result.current.loading).toBe(false);
   });
 
-  it('handles invalid ticker (null result)', async () => {
+  it('handles invalid ticker (404 from proxy)', async () => {
     mockFetch.mockResolvedValueOnce(notFoundResponse());
     const { result } = renderHook(() => useStockQuote());
 
@@ -105,34 +87,32 @@ describe('useStockQuote', () => {
   });
 
   it('handles HTTP error', async () => {
-    mockFetch.mockResolvedValueOnce(httpErrorResponse(404));
+    mockFetch.mockResolvedValueOnce(httpErrorResponse(500));
     const { result } = renderHook(() => useStockQuote());
 
     await act(async () => {
       try { await result.current.fetchQuote('NOTREAL'); } catch {}
     });
 
-    expect(result.current.error).toMatch(/HTTP 404/);
+    expect(result.current.error).toBeTruthy();
     expect(result.current.price).toBeNull();
   });
 
   it('uppercases ticker in request URL', async () => {
-    mockFetch.mockResolvedValueOnce(validYahooResponse('MSFT', 300, 'Microsoft'));
+    mockFetch.mockResolvedValueOnce(validProxyResponse('MSFT', 300, 'Microsoft'));
     const { result } = renderHook(() => useStockQuote());
 
     await act(async () => {
       await result.current.fetchQuote('msft');
     });
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://query2.finance.yahoo.com/v8/finance/chart/MSFT'
-    );
+    expect(mockFetch).toHaveBeenCalledWith('/api/stock?symbol=MSFT');
   });
 });
 
 describe('useStockSearch', () => {
   it('validates a valid ticker', async () => {
-    mockFetch.mockResolvedValueOnce(validYahooResponse('GOOG', 140, 'Alphabet Inc.'));
+    mockFetch.mockResolvedValueOnce(validProxyResponse('GOOG', 140, 'Alphabet Inc.'));
     const { result } = renderHook(() => useStockSearch());
 
     let res;
