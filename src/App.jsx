@@ -40,7 +40,7 @@ import { LandingPage } from './pages/landing/LandingPage';
 import { useAuth } from './auth/AuthContext';
 import { useIDB } from './hooks/useIDB';
 import { CommandPalette } from './components/CommandPalette';
-import { CommandPaletteProvider } from './components/CommandPaletteContext';
+import { CommandPaletteProvider, useCommandPalette } from './components/CommandPaletteContext';
 import { ToastProvider } from './components/Toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
@@ -88,13 +88,27 @@ function getPageLabel(pathname) {
 
 function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { openCommandPalette } = useCommandPalette();
   const location = useLocation();
   const pageLabel = getPageLabel(location.pathname);
-  const [trips] = useIDB('helios-trips', []);
-  const [accounts] = useIDB('finance-accounts', []);
-  const [transactions] = useIDB('finance-transactions', []);
-  const [budgets] = useIDB('finance-budgets', []);
-  const [portfolio] = useIDB('investments-portfolio', []);
+  const [trips, , tripsReady] = useIDB('helios-trips', []);
+  const [accounts, , accountsReady] = useIDB('finance-accounts', []);
+  const [transactions, , txReady] = useIDB('finance-transactions', []);
+  const [budgets, , budgetsReady] = useIDB('finance-budgets', []);
+  const [portfolio, , portfolioReady] = useIDB('investments-portfolio', []);
+
+  const idbReady = tripsReady && accountsReady && txReady && budgetsReady && portfolioReady;
+
+  if (!idbReady) {
+    return (
+      <div className="flex items-center justify-center bg-background" style={{ height: '100dvh' }} data-testid="idb-loading">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-muted-foreground border-t-foreground rounded-full animate-spin" />
+          <span className="text-muted-foreground text-sm">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex bg-background overflow-hidden" style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)' }}>
@@ -125,7 +139,16 @@ function AppShell() {
             </svg>
           </button>
           <span className="text-foreground font-semibold text-sm" data-testid="mobile-header-title">{pageLabel}</span>
-          <div className="w-6" />
+          <button
+            onClick={openCommandPalette}
+            className="text-muted-foreground hover:text-foreground p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Search"
+            data-testid="mobile-search-btn"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
         </header>
 
         {/* AI Chat renders full-bleed (no padding/max-width) to avoid layout hacks */}

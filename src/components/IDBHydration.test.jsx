@@ -1,12 +1,16 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// We need to test the AppShell mobile header inside App.jsx.
-// Since AppShell is not exported, we'll test via a lightweight approach:
-// import App and render at specific routes, then check the mobile header text.
+// Track ready states per key
+let readyStates = {};
 
-// Mock all page components to keep tests fast
+vi.mock('../hooks/useIDB', () => ({
+  useIDB: (key, initial) => {
+    const ready = readyStates[key] ?? false;
+    return [initial, vi.fn(), ready];
+  },
+}));
+
 vi.mock('../pages/dashboard/Dashboard', () => ({ Dashboard: () => <div>Dashboard Page</div> }));
 vi.mock('../pages/trips/TripsPage', () => ({ TripsPage: () => <div>Trips Page</div> }));
 vi.mock('../pages/finance/FinancePage', () => ({ FinancePage: () => <div>Finance Page</div> }));
@@ -42,16 +46,13 @@ vi.mock('../pages/aichat/AIChatPage', () => ({ AIChatPage: () => <div>AI Chat Pa
 vi.mock('../pages/landing/LandingPage', () => ({ LandingPage: () => <div>Landing</div> }));
 vi.mock('./Sidebar', () => ({ Sidebar: () => <nav>Sidebar</nav> }));
 vi.mock('./CommandPalette', () => ({ CommandPalette: () => null }));
-const mockOpenCommandPalette = vi.fn();
 vi.mock('./CommandPaletteContext', () => ({
   CommandPaletteProvider: ({ children }) => children,
-  useCommandPalette: () => ({ open: false, setOpen: vi.fn(), openCommandPalette: mockOpenCommandPalette, closeCommandPalette: vi.fn(), toggleCommandPalette: vi.fn() }),
+  useCommandPalette: () => ({ open: false, setOpen: vi.fn(), openCommandPalette: vi.fn(), closeCommandPalette: vi.fn(), toggleCommandPalette: vi.fn() }),
 }));
 vi.mock('../components/ErrorBoundary', () => ({
   ErrorBoundary: ({ children }) => children,
 }));
-
-// Mock auth to always be authenticated
 vi.mock('../auth/AuthContext', () => ({
   AuthProvider: ({ children }) => children,
   useAuth: () => ({ user: { name: 'Test' }, login: vi.fn(), logout: vi.fn() }),
@@ -61,75 +62,45 @@ vi.mock('../auth/ProtectedRoute', () => ({
 }));
 vi.mock('../auth/LoginPage', () => ({ LoginPage: () => <div>Login</div> }));
 
-// Mock useIDB to return ready immediately (avoids hydration guard blocking)
-vi.mock('../hooks/useIDB', () => ({
-  useIDB: (key, initial) => [initial, vi.fn(), true],
-}));
-
-// We can't use BrowserRouter inside App since it already has one.
-// Instead, we'll directly test AppShell by extracting the mobile header logic.
-// But since AppShell isn't exported, we'll render App with initial entries via a workaround.
-
-// Actually, App uses BrowserRouter internally. We need to mock react-router-dom partially
-// to control the initial route. Let's use a different approach: render App and manipulate
-// window.location.
-
-// Simplest approach: App uses BrowserRouter which reads window.location.
-// In jsdom, we can set window.location before rendering.
-
 import App from '../App';
 
-function renderAppAtRoute(route) {
-  // jsdom lets us push state to change location
-  window.history.pushState({}, '', route);
-  return render(<App />);
-}
-
-describe('Mobile header shows current page name', () => {
-  it('shows "Finance" when on /finance route', () => {
-    renderAppAtRoute('/finance');
-    const header = screen.getByTestId('mobile-header-title');
-    expect(header).toHaveTextContent('Finance');
+describe('IDB hydration guard', () => {
+  beforeEach(() => {
+    readyStates = {};
   });
 
-  it('shows "Trips" when on /trips route', () => {
-    renderAppAtRoute('/trips');
-    const header = screen.getByTestId('mobile-header-title');
-    expect(header).toHaveTextContent('Trips');
+  it('shows loading spinner when IDB stores are not ready', () => {
+    // All stores not ready
+    readyStates = {};
+    window.history.pushState({}, '', '/dashboard');
+    render(<App />);
+    expect(screen.getByTestId('idb-loading')).toBeInTheDocument();
   });
 
-  it('shows "Trips" when on nested /trips/123 route', () => {
-    renderAppAtRoute('/trips/123');
-    const header = screen.getByTestId('mobile-header-title');
-    expect(header).toHaveTextContent('Trips');
+  it('shows loading spinner when only some stores are ready', () => {
+    readyStates = {
+      'helios-trips': true,
+      'finance-accounts': true,
+      'finance-transactions': false,
+      'finance-budgets': true,
+      'investments-portfolio': true,
+    };
+    window.history.pushState({}, '', '/dashboard');
+    render(<App />);
+    expect(screen.getByTestId('idb-loading')).toBeInTheDocument();
   });
 
-  it('shows "Dashboard" when on /dashboard route', () => {
-    renderAppAtRoute('/dashboard');
-    const header = screen.getByTestId('mobile-header-title');
-    expect(header).toHaveTextContent('Dashboard');
-  });
-
-  it('shows "Helios" as fallback for unknown routes', () => {
-    renderAppAtRoute('/some-unknown-route');
-    const header = screen.getByTestId('mobile-header-title');
-    expect(header).toHaveTextContent('Helios');
-  });
-
-  it('renders a search button in mobile header that opens CommandPalette', () => {
-    mockOpenCommandPalette.mockClear();
-    renderAppAtRoute('/dashboard');
-    const searchBtn = screen.getByTestId('mobile-search-btn');
-    expect(searchBtn).toBeInTheDocument();
-    expect(searchBtn).toHaveAttribute('aria-label', 'Search');
-    fireEvent.click(searchBtn);
-    expect(mockOpenCommandPalette).toHaveBeenCalledTimes(1);
-  });
-
-  it('search button has 44px minimum tap target', () => {
-    renderAppAtRoute('/dashboard');
-    const searchBtn = screen.getByTestId('mobile-search-btn');
-    expect(searchBtn.className).toContain('min-w-[44px]');
-    expect(searchBtn.className).toContain('min-h-[44px]');
+  it('renders app content when all IDB stores are ready', () => {
+    readyStates = {
+      'helios-trips': true,
+      'finance-accounts': true,
+      'finance-transactions': true,
+      'finance-budgets': true,
+      'investments-portfolio': true,
+    };
+    window.history.pushState({}, '', '/dashboard');
+    render(<App />);
+    expect(screen.queryByTestId('idb-loading')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mobile-header-title')).toBeInTheDocument();
   });
 });

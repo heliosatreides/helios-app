@@ -30,7 +30,7 @@ const SCHEMAS = {
   portfolio: `{ id, ticker (UPPERCASE), name, shares (number), costBasis (number), currentPrice (number), assetClass ("Stocks"|"ETF"|"Crypto"|"Bonds"|"Real Estate"|"Cash"), addedAt (ISO datetime) }`,
   tasks: `{ id, title, priority ("High"|"Medium"|"Low"), dueDate (YYYY-MM-DD or null), notes, completed (false), recurring ("None"|"Daily"|"Weekly"), createdAt (ISO datetime) }`,
   goals: `{ id, title, description, progress (0-100), status ("active"|"completed"|"paused"), targetDate (YYYY-MM-DD) }`,
-  subscriptions: `{ id, name, amount (number), period ("monthly"|"yearly"|"weekly"), category, nextBilling (YYYY-MM-DD) }`,
+  subscriptions: `{ id, name, cost (number), cycle ("monthly"|"annual"|"weekly"), category, nextDate (YYYY-MM-DD) }`,
 };
 
 function formatStoreData(store, data) {
@@ -110,7 +110,7 @@ function formatStoreData(store, data) {
       const items = Array.isArray(data) ? data : [];
       if (!items.length) return 'No subscriptions found.';
       return items.map(s =>
-        `• ${s.name}: $${Number(s.amount ?? s.price ?? 0).toFixed(2)}/${s.period || s.billing || 'mo'}`
+        `• ${s.name}: $${Number(s.cost ?? s.amount ?? 0).toFixed(2)}/${s.cycle || s.period || 'mo'}`
       ).join('\n');
     }
     case 'meals': {
