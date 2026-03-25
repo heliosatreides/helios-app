@@ -38,6 +38,31 @@ describe('Modal', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it('renders built-in close button', () => {
+    render(<Modal open={true} onClose={onClose}><p>Content</p></Modal>);
+    const closeBtn = screen.getByTestId('modal-close');
+    expect(closeBtn).toBeInTheDocument();
+    expect(closeBtn).toHaveAttribute('aria-label', 'Close');
+  });
+
+  it('calls onClose when close button clicked', () => {
+    render(<Modal open={true} onClose={onClose}><p>Content</p></Modal>);
+    fireEvent.click(screen.getByTestId('modal-close'));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders title when provided', () => {
+    render(<Modal open={true} onClose={onClose} title="Edit Item"><p>Content</p></Modal>);
+    expect(screen.getByText('Edit Item')).toBeInTheDocument();
+  });
+
+  it('close button has 44px minimum tap target', () => {
+    render(<Modal open={true} onClose={onClose}><p>Content</p></Modal>);
+    const closeBtn = screen.getByTestId('modal-close');
+    expect(closeBtn.className).toContain('min-w-[44px]');
+    expect(closeBtn.className).toContain('min-h-[44px]');
+  });
+
   it('sets body overflow hidden when open', () => {
     render(<Modal open={true} onClose={onClose}><p>Content</p></Modal>);
     expect(document.body.style.overflow).toBe('hidden');

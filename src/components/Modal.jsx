@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-export function Modal({ open, onClose, children, className = '' }) {
+export function Modal({ open, onClose, children, className = '', title = '' }) {
   const contentRef = useRef(null);
 
   // ESC key to close
@@ -60,9 +60,28 @@ export function Modal({ open, onClose, children, className = '' }) {
     >
       <div
         ref={contentRef}
-        className={`bg-background border border-border p-6 w-full max-w-md ${className}`}
+        className={`bg-background border border-border p-4 sm:p-6 w-full max-w-md ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="flex items-center justify-between mb-4">
+          {title ? (
+            <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          ) : (
+            <span />
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors -mr-2 -mt-2"
+            aria-label="Close"
+            data-testid="modal-close"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="4" y1="4" x2="12" y2="12" />
+              <line x1="12" y1="4" x2="4" y2="12" />
+            </svg>
+          </button>
+        </div>
         {children}
       </div>
     </div>
