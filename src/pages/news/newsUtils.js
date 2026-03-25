@@ -1,9 +1,9 @@
 // ── News utility functions ────────────────────────────────────────────────
 
-const RSS2JSON_BASE = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const ALLORIGINS_BASE = 'https://api.allorigins.win/raw?url=';
 
 export function buildFeedUrl(rssUrl) {
-  return RSS2JSON_BASE + encodeURIComponent(rssUrl);
+  return ALLORIGINS_BASE + encodeURIComponent(rssUrl);
 }
 
 /**
@@ -88,7 +88,73 @@ export const FEED_TOPICS = [
 ];
 
 /**
- * Parse raw rss2json API response into normalized article objects.
+ * Parse raw RSS 2.0 or Atom XML text into normalized article objects.
+ * Uses DOMParser (browser-native, no dependencies).
+ */
+export function parseRssXml(xmlText, sourceLabel) {
+  if (!xmlText || typeof xmlText !== 'string') return [];
+
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, 'application/xml');
+
+    // Check for parse errors
+    const parseError = doc.querySelector('parsererror');
+    if (parseError) return [];
+
+    // Try RSS 2.0 first (<item> elements)
+    const rssItems = doc.querySelectorAll('item');
+    if (rssItems.length > 0) {
+      const feedTitle = sourceLabel || doc.querySelector('channel > title')?.textContent || '';
+      return Array.from(rssItems).map((item) => {
+        const title = item.querySelector('title')?.textContent || '';
+        const link = item.querySelector('link')?.textContent || '';
+        const guid = item.querySelector('guid')?.textContent || link || title;
+        const pubDate = item.querySelector('pubDate')?.textContent || '';
+        const description = item.querySelector('description')?.textContent || '';
+        return {
+          id: guid,
+          title,
+          link,
+          source: feedTitle,
+          pubDate,
+          excerpt: truncateExcerpt(description, 100),
+        };
+      });
+    }
+
+    // Try Atom (<entry> elements)
+    const atomEntries = doc.querySelectorAll('entry');
+    if (atomEntries.length > 0) {
+      const feedTitle = sourceLabel || doc.querySelector('feed > title')?.textContent || '';
+      return Array.from(atomEntries).map((entry) => {
+        const title = entry.querySelector('title')?.textContent || '';
+        const linkEl = entry.querySelector('link[href]');
+        const link = linkEl ? linkEl.getAttribute('href') : '';
+        const id = entry.querySelector('id')?.textContent || link || title;
+        const pubDate = entry.querySelector('published')?.textContent
+          || entry.querySelector('updated')?.textContent || '';
+        const description = entry.querySelector('summary')?.textContent
+          || entry.querySelector('content')?.textContent || '';
+        return {
+          id,
+          title,
+          link,
+          source: feedTitle,
+          pubDate,
+          excerpt: truncateExcerpt(description, 100),
+        };
+      });
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Legacy: Parse rss2json API response. Kept for backward compatibility.
  */
 export function parseRssResponse(data, sourceLabel) {
   if (!data || data.status !== 'ok' || !Array.isArray(data.items)) return [];
@@ -100,4 +166,16 @@ export function parseRssResponse(data, sourceLabel) {
     pubDate: item.pubDate || '',
     excerpt: truncateExcerpt(item.description || item.content || '', 100),
   }));
+}
+
+/**
+ * Fetch and parse a single RSS feed URL via CORS proxy.
+ * Returns normalized article array (same shape as parseRssResponse output).
+ */
+export async function fetchFeed(feedUrl) {
+  const proxyUrl = buildFeedUrl(feedUrl);
+  const res = await fetch(proxyUrl);
+  if (!res.ok) return [];
+  const xmlText = await res.text();
+  return parseRssXml(xmlText);
 }

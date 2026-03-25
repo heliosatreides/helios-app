@@ -4,15 +4,17 @@ import {
   formatRelativeTime,
   truncateExcerpt,
   parseRssResponse,
+  parseRssXml,
+  fetchFeed,
   FEED_TOPICS,
 } from './newsUtils';
 
 // ── buildFeedUrl ──────────────────────────────────────────────────────────
 
 describe('buildFeedUrl', () => {
-  it('encodes the RSS URL into the proxy base', () => {
+  it('encodes the RSS URL into the allorigins proxy base', () => {
     const url = buildFeedUrl('https://feeds.bbci.co.uk/news/rss.xml');
-    expect(url).toContain('https://api.rss2json.com/v1/api.json?rss_url=');
+    expect(url).toContain('https://api.allorigins.win/raw?url=');
     expect(url).toContain(encodeURIComponent('https://feeds.bbci.co.uk/news/rss.xml'));
   });
 
@@ -112,7 +114,152 @@ describe('truncateExcerpt', () => {
   });
 });
 
-// ── parseRssResponse ──────────────────────────────────────────────────────
+// ── parseRssXml ───────────────────────────────────────────────────────────
+
+describe('parseRssXml', () => {
+  const rss2xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>BBC News</title>
+    <item>
+      <guid>guid-1</guid>
+      <title>Breaking news headline</title>
+      <link>https://bbc.com/article/1</link>
+      <pubDate>Sat, 01 Jun 2024 10:00:00 GMT</pubDate>
+      <description>&lt;p&gt;Some description text here.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid>guid-2</guid>
+      <title>Another article</title>
+      <link>https://bbc.com/article/2</link>
+      <pubDate>Sat, 01 Jun 2024 09:00:00 GMT</pubDate>
+      <description>Plain text description.</description>
+    </item>
+  </channel>
+</rss>`;
+
+  const atomXml = `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Atom Feed</title>
+  <entry>
+    <id>atom-1</id>
+    <title>Atom article one</title>
+    <link href="https://example.com/atom/1" />
+    <published>2024-06-01T10:00:00Z</published>
+    <summary>Atom summary text.</summary>
+  </entry>
+  <entry>
+    <id>atom-2</id>
+    <title>Atom article two</title>
+    <link href="https://example.com/atom/2" />
+    <updated>2024-06-01T09:00:00Z</updated>
+    <content>Atom content text.</content>
+  </entry>
+</feed>`;
+
+  it('returns empty array for null/undefined', () => {
+    expect(parseRssXml(null)).toHaveLength(0);
+    expect(parseRssXml(undefined)).toHaveLength(0);
+    expect(parseRssXml('')).toHaveLength(0);
+  });
+
+  it('returns empty array for non-string input', () => {
+    expect(parseRssXml(42)).toHaveLength(0);
+    expect(parseRssXml({})).toHaveLength(0);
+  });
+
+  it('returns empty array for invalid XML', () => {
+    expect(parseRssXml('not xml at all <><>')).toHaveLength(0);
+  });
+
+  it('parses RSS 2.0 items correctly', () => {
+    const result = parseRssXml(rss2xml);
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe('guid-1');
+    expect(result[0].title).toBe('Breaking news headline');
+    expect(result[0].link).toBe('https://bbc.com/article/1');
+    expect(result[0].source).toBe('BBC News');
+    expect(result[0].pubDate).toBe('Sat, 01 Jun 2024 10:00:00 GMT');
+    expect(result[0].excerpt).toContain('Some description text here');
+    expect(result[0].excerpt).not.toContain('<p>');
+  });
+
+  it('uses sourceLabel override for RSS 2.0', () => {
+    const result = parseRssXml(rss2xml, 'Custom Source');
+    expect(result[0].source).toBe('Custom Source');
+  });
+
+  it('parses Atom entries correctly', () => {
+    const result = parseRssXml(atomXml);
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe('atom-1');
+    expect(result[0].title).toBe('Atom article one');
+    expect(result[0].link).toBe('https://example.com/atom/1');
+    expect(result[0].source).toBe('Atom Feed');
+    expect(result[0].pubDate).toBe('2024-06-01T10:00:00Z');
+    expect(result[0].excerpt).toBe('Atom summary text.');
+  });
+
+  it('falls back to updated date for Atom entries without published', () => {
+    const result = parseRssXml(atomXml);
+    expect(result[1].pubDate).toBe('2024-06-01T09:00:00Z');
+  });
+
+  it('falls back to content when summary is missing in Atom', () => {
+    const result = parseRssXml(atomXml);
+    expect(result[1].excerpt).toBe('Atom content text.');
+  });
+
+  it('uses sourceLabel override for Atom', () => {
+    const result = parseRssXml(atomXml, 'Custom Atom');
+    expect(result[0].source).toBe('Custom Atom');
+  });
+
+  it('returns empty array for XML with no items or entries', () => {
+    const emptyRss = `<?xml version="1.0"?><rss><channel><title>Empty</title></channel></rss>`;
+    expect(parseRssXml(emptyRss)).toHaveLength(0);
+  });
+});
+
+// ── fetchFeed ─────────────────────────────────────────────────────────────
+
+describe('fetchFeed', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn());
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('fetches via allorigins proxy and parses XML', async () => {
+    const xml = `<?xml version="1.0"?><rss version="2.0"><channel><title>Test</title>
+      <item><title>Article 1</title><link>https://example.com/1</link><pubDate>2024-06-01</pubDate><description>Desc</description></item>
+    </channel></rss>`;
+
+    fetch.mockResolvedValueOnce({ ok: true, text: () => Promise.resolve(xml) });
+
+    const result = await fetchFeed('https://example.com/feed.xml');
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://example.com/feed.xml')
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0].title).toBe('Article 1');
+    expect(result[0].source).toBe('Test');
+  });
+
+  it('returns empty array on fetch failure', async () => {
+    fetch.mockResolvedValueOnce({ ok: false });
+    const result = await fetchFeed('https://example.com/feed.xml');
+    expect(result).toHaveLength(0);
+  });
+
+  it('returns empty array on network error', async () => {
+    fetch.mockRejectedValueOnce(new Error('Network error'));
+    await expect(fetchFeed('https://example.com/feed.xml')).rejects.toThrow('Network error');
+  });
+});
+
+// ── parseRssResponse (legacy, backward compat) ───────────────────────────
 
 describe('parseRssResponse', () => {
   const mockData = {

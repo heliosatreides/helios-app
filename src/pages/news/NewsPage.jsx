@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGemini } from '../../hooks/useGemini';
-import { buildFeedUrl, formatRelativeTime, FEED_TOPICS, parseRssResponse } from './newsUtils';
+import { fetchFeed, formatRelativeTime, FEED_TOPICS } from './newsUtils';
 import { EmptyState } from '../../components/ui';
 
 const PAGE_SIZE = 10;
@@ -80,10 +80,7 @@ export function NewsPage() {
 
     for (const feedUrl of topic.feeds) {
       try {
-        const res = await fetch(buildFeedUrl(feedUrl));
-        if (!res.ok) continue;
-        const data = await res.json();
-        const parsed = parseRssResponse(data);
+        const parsed = await fetchFeed(feedUrl);
         all.push(...parsed);
       } catch {
         // graceful per-feed error
