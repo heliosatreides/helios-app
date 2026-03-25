@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useGemini } from '../../hooks/useGemini';
 import { useIDB } from '../../hooks/useIDB';
 import { buildToolSystemPrompt, executeActions } from '../../hooks/useHeliosTools';
+import { Modal } from '../../components/Modal';
 
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
@@ -33,12 +34,60 @@ function TypingIndicator() {
   );
 }
 
+function ConversationDrawer({ open, onClose, conversations, activeConvId, onSelect, onDelete, onCreate }) {
+  return (
+    <Modal open={open} onClose={onClose} title="Conversations" className="w-full h-full max-w-full sm:max-w-full">
+      <div className="flex flex-col h-full">
+        <button
+          onClick={() => { onCreate(); onClose(); }}
+          className="w-full px-4 py-3 text-sm text-left border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+          style={{ minHeight: '44px' }}
+        >
+          + New conversation
+        </button>
+        <div className="flex-1 overflow-y-auto mt-2 space-y-0.5">
+          {conversations.map(conv => (
+            <div key={conv.id} className="flex items-center border-b border-border">
+              <button
+                onClick={() => { onSelect(conv.id); onClose(); }}
+                className={`flex-1 text-left px-4 py-3 text-sm transition-colors ${
+                  activeConvId === conv.id
+                    ? 'bg-secondary text-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                }`}
+                style={{ minHeight: '44px' }}
+              >
+                <div className="truncate">{conv.title}</div>
+                <div className="text-[10px] text-muted-foreground/40 mt-0.5">
+                  {new Date(conv.createdAt).toLocaleDateString()}
+                </div>
+              </button>
+              <button
+                onClick={() => onDelete(conv.id)}
+                className="shrink-0 px-4 py-3 text-muted-foreground hover:text-red-400 text-sm"
+                style={{ minHeight: '44px' }}
+                aria-label={`Delete ${conv.title}`}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          {conversations.length === 0 && (
+            <p className="text-muted-foreground/40 text-xs px-4 py-4">No conversations yet</p>
+          )}
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
 export function AIChatPage() {
   const { generate, loading: geminiLoading, hasKey, error: geminiError } = useGemini();
   const [conversations, setConversations] = useIDB('helios-ai-conversations', []);
   const [activeConvId, setActiveConvId] = useState(null);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -214,23 +263,33 @@ export function AIChatPage() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile header */}
         <div className="md:hidden flex items-center justify-between px-4 py-2 border-b border-border">
-          <select
-            value={activeConvId || ''}
-            onChange={(e) => setActiveConvId(e.target.value || null)}
-            className="bg-background border border-border text-foreground text-sm px-2 py-1 flex-1 mr-2"
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="shrink-0 px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground"
+            style={{ minHeight: '44px' }}
           >
-            <option value="">Select conversation</option>
-            {conversations.map(c => (
-              <option key={c.id} value={c.id}>{c.title}</option>
-            ))}
-          </select>
+            Chats
+          </button>
+          <span className="flex-1 text-sm text-foreground truncate mx-3">
+            {activeConv?.title || 'AI Chat'}
+          </span>
           <button
             onClick={createConversation}
-            className="shrink-0 px-3 py-1 text-sm border border-border text-muted-foreground hover:text-foreground"
+            className="shrink-0 px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground"
+            style={{ minHeight: '44px' }}
           >
             New
           </button>
         </div>
+        <ConversationDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          conversations={conversations}
+          activeConvId={activeConvId}
+          onSelect={setActiveConvId}
+          onDelete={deleteConversation}
+          onCreate={createConversation}
+        />
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
