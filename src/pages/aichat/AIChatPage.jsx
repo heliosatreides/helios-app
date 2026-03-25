@@ -232,7 +232,7 @@ export function AIChatPage() {
   }
 
   return (
-    <div className="flex gap-0 -m-6" style={{ height: 'calc(100vh - env(safe-area-inset-top, 0px))' }}>
+    <div className="flex gap-0 h-full">
       {/* Conversation sidebar */}
       <div className="w-56 shrink-0 border-r border-border flex flex-col bg-background hidden md:flex">
         <div className="p-3 border-b border-border">

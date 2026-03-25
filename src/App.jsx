@@ -125,6 +125,14 @@ function AppShell() {
           <div className="w-6" />
         </header>
 
+        {/* AI Chat renders full-bleed (no padding/max-width) to avoid layout hacks */}
+        {location.pathname === '/ai' ? (
+          <div className="flex-1 overflow-hidden">
+            <ErrorBoundary>
+              <ProtectedRoute><AIChatPage /></ProtectedRoute>
+            </ErrorBoundary>
+          </div>
+        ) : (
         <main className="flex-1 overflow-y-auto p-6">
           <ErrorBoundary>
           <div className="max-w-5xl mx-auto">
@@ -162,6 +170,7 @@ function AppShell() {
           </div>
           </ErrorBoundary>
         </main>
+        )}
       </div>
     </div>
   );
