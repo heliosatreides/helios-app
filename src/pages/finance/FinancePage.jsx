@@ -8,6 +8,7 @@ import { TransactionList } from './TransactionList';
 import { AddTransactionModal } from './AddTransactionModal';
 import { BudgetView } from './BudgetView';
 import { BudgetForm } from './BudgetForm';
+import { SpendingChart } from './SpendingChart';
 import { ImportButton } from '../../components/ImportButton';
 import { mergeById, csvRowToTransaction } from '../../utils/importData';
 
@@ -354,6 +355,15 @@ export function FinancePage() {
               ))}
             </div>
           )}
+          {/* Spending breakdown chart */}
+          <div className="bg-secondary/30 border border-border p-5" data-testid="spending-chart-section">
+            <SpendingChart
+              transactions={transactions}
+              month={currentMonth}
+              budgets={budgets}
+            />
+          </div>
+
           <BudgetView
             budgets={budgets}
             transactions={transactions}
