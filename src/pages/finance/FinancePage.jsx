@@ -255,21 +255,9 @@ export function FinancePage() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">Finance</h1>
-          <p className="text-muted-foreground text-sm mt-1">Track your accounts, transactions, and budgets</p>
-        </div>
-        <button
-          onClick={() => {
-            if (activeTab === 'Accounts') { setEditingAccount(null); setShowAccountModal(true); }
-            else if (activeTab === 'Transactions') { setEditingTransaction(null); setShowTxModal(true); }
-            else if (activeTab === 'Budget') setShowBudgetForm(true);
-          }}
-          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
-        >
-          + Add {activeTab === 'Accounts' ? 'Account' : activeTab === 'Transactions' ? 'Transaction' : 'Budget'}
-        </button>
+      <div>
+        <h1 className="text-lg font-semibold text-foreground">Finance</h1>
+        <p className="text-muted-foreground text-sm mt-1">Track your accounts, transactions, and budgets</p>
       </div>
 
       {/* Tabs */}
@@ -305,6 +293,12 @@ export function FinancePage() {
               label="📥 Import Accounts (JSON)"
               onImport={handleImportAccountsJSON}
             />
+            <button
+              onClick={() => { setEditingAccount(null); setShowAccountModal(true); }}
+              className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm min-h-[44px]"
+            >
+              + Add Account
+            </button>
           </div>
           <AccountList
             accounts={accounts}
@@ -323,6 +317,12 @@ export function FinancePage() {
               label="📥 Import Transactions (CSV)"
               onImport={handleImportTransactionsCSV}
             />
+            <button
+              onClick={() => { setEditingTransaction(null); setShowTxModal(true); }}
+              className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm min-h-[44px]"
+            >
+              + Add Transaction
+            </button>
           </div>
           {/* Filters */}
           <div className="flex gap-3 flex-wrap">
@@ -360,6 +360,14 @@ export function FinancePage() {
 
       {activeTab === 'Budget' && (
         <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setShowBudgetForm(true)}
+              className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm min-h-[44px]"
+            >
+              + Add Budget
+            </button>
+          </div>
           {hasKey && (
             <div>
               <button
