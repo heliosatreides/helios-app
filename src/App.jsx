@@ -67,7 +67,7 @@ function AppShell() {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-background">
+        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-background safe-top">
           <button
             onClick={() => setSidebarOpen(true)}
             className="text-muted-foreground hover:text-foreground p-1"
