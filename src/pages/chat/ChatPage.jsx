@@ -129,7 +129,8 @@ function ChatLobby({ onCreateRoom, onJoinRoom }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-background px-6">
       <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
+        <div className="text-left">
+          <a href="/dashboard" className="text-xs text-muted-foreground hover:text-foreground transition-colors mb-4 inline-block">&larr; Back to Dashboard</a>
           <h1 className="text-lg font-semibold text-foreground mb-1">P2P Ephemeral Chat</h1>
           <p className="text-muted-foreground text-sm">End-to-end encrypted. No servers. Messages disappear when you leave.</p>
         </div>

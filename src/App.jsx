@@ -58,11 +58,10 @@ function AppShell() {
         />
       )}
 
-      <div className={`
-        fixed md:relative inset-y-0 left-0 z-30
-        transform transition-transform duration-200 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-      `}>
+      <div
+        className={`fixed md:relative inset-y-0 left-0 z-30 bg-background transform transition-transform duration-200 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
         <Sidebar onNavClick={() => setSidebarOpen(false)} />
       </div>
 

@@ -11,11 +11,7 @@ function generateToken() {
 }
 
 function getUsers() {
-  try {
-    return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-  } catch {
-    return [];
-  }
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); } catch { return []; }
 }
 
 function saveUsers(users) {
@@ -24,11 +20,21 @@ function saveUsers(users) {
 
 function getSession() {
   try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
+    // Check localStorage first (persistent), fall back to sessionStorage (legacy)
+    const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
     return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
+}
+
+function saveSession(data) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+  // Also write to sessionStorage for backward compat
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
 }
 
 export function AuthProvider({ children }) {
@@ -52,7 +58,7 @@ export function AuthProvider({ children }) {
     saveUsers([...users, newUser]);
 
     const token = generateToken();
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ username, token }));
+    saveSession({ username, token });
     setUser(newUser);
     setPassword(rawPassword);
     return newUser;
@@ -66,20 +72,18 @@ export function AuthProvider({ children }) {
     if (!valid) throw new Error('Invalid password');
 
     const token = generateToken();
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ username, token }));
+    saveSession({ username, token });
     setUser(found);
     setPassword(rawPassword);
     return found;
   }, []);
 
   const logout = useCallback(() => {
-    sessionStorage.removeItem(SESSION_KEY);
+    clearSession();
     setUser(null);
     setPassword(null);
   }, []);
 
-  // True when a session was restored from sessionStorage but the in-memory
-  // password was lost (e.g. after a page refresh).
   const needsReauth = user !== null && password === null;
 
   return (
