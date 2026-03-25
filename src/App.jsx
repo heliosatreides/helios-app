@@ -193,6 +193,7 @@ function AppShell() {
               <Route path="/calculator" element={<ProtectedRoute><CalculatorPage /></ProtectedRoute>} />
               <Route path="/password" element={<ProtectedRoute><PasswordGenerator /></ProtectedRoute>} />
               <Route path="/ai" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
+              <Route path="/lists" element={<ListsPage />} />
             </Routes>
           </div>
           </ErrorBoundary>
@@ -219,7 +220,6 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<RootRoute />} />
             <Route path="/chat" element={<ChatPage />} />
-            <Route path="/lists" element={<ListsPage />} />
             <Route path="/*" element={<AppShell />} />
           </Routes>
         </ToastProvider>

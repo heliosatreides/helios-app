@@ -59,6 +59,12 @@ const navGroups = [
     ],
   },
   {
+    label: 'Discover',
+    items: [
+      { to: '/lists', label: 'Curated Lists' },
+    ],
+  },
+  {
     label: '',
     items: [
       { to: '/settings', label: 'Settings' },

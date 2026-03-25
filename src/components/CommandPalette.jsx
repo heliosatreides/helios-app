@@ -33,6 +33,7 @@ const PAGES = [
   { path: '/regex', label: 'Regex Tester', keywords: 'pattern match test' },
   { path: '/calculator', label: 'Financial Calculator', keywords: 'loan interest retirement' },
   { path: '/password', label: 'Password Generator', keywords: 'password generate secure random strength' },
+  { path: '/lists', label: 'Curated Lists', keywords: 'top accounts follow discover' },
   { path: '/settings', label: 'Settings', keywords: 'preferences api key' },
 ];
 
