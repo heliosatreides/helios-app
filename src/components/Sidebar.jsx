@@ -1,7 +1,11 @@
-import { NavLink } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { useCommandPalette } from './CommandPaletteContext';
+
+const STORAGE_KEY = 'helios-sidebar-collapsed';
+const DEFAULT_COLLAPSED = ['Developer'];
 
 const navGroups = [
   {
@@ -62,10 +66,72 @@ const navGroups = [
   },
 ];
 
+function ChevronIcon({ expanded }) {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
+    >
+      <path d="M4.5 2.5L8 6L4.5 9.5" />
+    </svg>
+  );
+}
+
+function loadCollapsedState() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return [...DEFAULT_COLLAPSED];
+}
+
+function saveCollapsedState(collapsed) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(collapsed));
+  } catch {}
+}
+
 export function Sidebar({ onNavClick }) {
   const { user, logout } = useAuth();
   const { canInstall, install, isIOS, isInstalled } = usePWAInstall();
   const { openCommandPalette } = useCommandPalette();
+  const location = useLocation();
+
+  const [collapsedGroups, setCollapsedGroups] = useState(() => loadCollapsedState());
+
+  // Auto-expand group containing active route
+  useEffect(() => {
+    const currentPath = location.pathname;
+    for (const group of navGroups) {
+      if (!group.label) continue;
+      const hasActiveRoute = group.items.some(item => currentPath.startsWith(item.to));
+      if (hasActiveRoute && collapsedGroups.includes(group.label)) {
+        setCollapsedGroups(prev => {
+          const next = prev.filter(g => g !== group.label);
+          saveCollapsedState(next);
+          return next;
+        });
+        break;
+      }
+    }
+  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleGroup = useCallback((label) => {
+    setCollapsedGroups(prev => {
+      const next = prev.includes(label)
+        ? prev.filter(g => g !== label)
+        : [...prev, label];
+      saveCollapsedState(next);
+      return next;
+    });
+  }, []);
 
   return (
     <aside className="w-56 bg-background border-r border-border flex flex-col h-full shrink-0 overflow-hidden">
@@ -85,31 +151,44 @@ export function Sidebar({ onNavClick }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-4 scrollbar-hide">
-        {navGroups.map((group) => (
-          <div key={group.label || 'bottom'}>
-            {group.label && (
-              <p className="text-muted-foreground text-[11px] font-medium px-3 mb-1">{group.label}</p>
-            )}
-            <div className="space-y-0.5">
-              {group.items.map(({ to, label }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  onClick={onNavClick}
-                  className={({ isActive }) =>
-                    `block px-3 py-1.5 rounded-md text-[13px] transition-colors ${
-                      isActive
-                        ? 'bg-secondary text-foreground font-medium'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                    }`
-                  }
+        {navGroups.map((group) => {
+          const isCollapsible = !!group.label;
+          const isCollapsed = isCollapsible && collapsedGroups.includes(group.label);
+
+          return (
+            <div key={group.label || 'bottom'}>
+              {isCollapsible ? (
+                <button
+                  onClick={() => toggleGroup(group.label)}
+                  className="w-full flex items-center justify-between px-3 min-h-[44px] md:min-h-0 md:h-auto mb-1 text-muted-foreground hover:text-foreground transition-colors group"
                 >
-                  {label}
-                </NavLink>
-              ))}
+                  <span className="text-[11px] font-medium">{group.label}</span>
+                  <ChevronIcon expanded={!isCollapsed} />
+                </button>
+              ) : null}
+              {!isCollapsed && (
+                <div className="space-y-0.5">
+                  {group.items.map(({ to, label }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      onClick={onNavClick}
+                      className={({ isActive }) =>
+                        `block px-3 py-1.5 rounded-md text-[13px] transition-colors ${
+                          isActive
+                            ? 'bg-secondary text-foreground font-medium'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                        }`
+                      }
+                    >
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Install PWA prompt */}
