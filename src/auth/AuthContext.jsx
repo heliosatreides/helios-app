@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 
 const USERS_KEY = 'helios-auth-users';
 const SESSION_KEY = 'helios-session';
+const SESSION_PW_KEY = 'helios-session-pw';
 
 function generateToken() {
   return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
@@ -20,7 +21,6 @@ function saveUsers(users) {
 
 function getSession() {
   try {
-    // Check localStorage first (persistent), fall back to sessionStorage (legacy)
     const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch { return null; }
@@ -28,13 +28,24 @@ function getSession() {
 
 function saveSession(data) {
   localStorage.setItem(SESSION_KEY, JSON.stringify(data));
-  // Also write to sessionStorage for backward compat
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
 }
 
 function clearSession() {
   localStorage.removeItem(SESSION_KEY);
   sessionStorage.removeItem(SESSION_KEY);
+  sessionStorage.removeItem(SESSION_PW_KEY);
+}
+
+// Persist password in sessionStorage so it survives page refresh but not browser quit.
+// This lets us auto-decrypt the Gemini key without re-prompting.
+// The password hash is already in localStorage, so the threat model is unchanged.
+function savePasswordToSession(pw) {
+  try { sessionStorage.setItem(SESSION_PW_KEY, pw); } catch {}
+}
+
+function getPasswordFromSession() {
+  try { return sessionStorage.getItem(SESSION_PW_KEY) || null; } catch { return null; }
 }
 
 export function AuthProvider({ children }) {
@@ -45,8 +56,7 @@ export function AuthProvider({ children }) {
     return users.find((u) => u.username === session.username) || null;
   });
 
-  // In-memory only — never persisted to storage
-  const [password, setPassword] = useState(null);
+  const [password, setPassword] = useState(() => getPasswordFromSession());
 
   const register = useCallback(async (username, rawPassword) => {
     const users = getUsers();
@@ -59,6 +69,7 @@ export function AuthProvider({ children }) {
 
     const token = generateToken();
     saveSession({ username, token });
+    savePasswordToSession(rawPassword);
     setUser(newUser);
     setPassword(rawPassword);
     return newUser;
@@ -73,6 +84,7 @@ export function AuthProvider({ children }) {
 
     const token = generateToken();
     saveSession({ username, token });
+    savePasswordToSession(rawPassword);
     setUser(found);
     setPassword(rawPassword);
     return found;
