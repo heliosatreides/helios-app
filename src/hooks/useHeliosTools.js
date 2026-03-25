@@ -27,7 +27,7 @@ export const SCHEMAS = {
   portfolio: `{ id, ticker (UPPERCASE), name, shares (number), costBasis (number), currentPrice (number), assetClass ("Stocks"|"ETF"|"Crypto"|"Bonds"|"Real Estate"|"Cash"), addedAt (ISO datetime) }`,
   tasks: `{ id, title, priority ("High"|"Medium"|"Low"), dueDate (YYYY-MM-DD or null), notes, completed (false), recurring ("None"|"Daily"|"Weekly"), createdAt (ISO datetime) }`,
   goals: `{ id, title, description, progress (0-100), status ("active"|"completed"|"paused"), targetDate (YYYY-MM-DD) }`,
-  subscriptions: `{ id, name, amount (number), period ("monthly"|"yearly"|"weekly"), category, nextBilling (YYYY-MM-DD) }`,
+  subscriptions: `{ id, name, cost (number), cycle ("monthly"|"annual"|"weekly"), category, nextDate (YYYY-MM-DD) }`,
 };
 
 export function formatStoreData(store, data) {
@@ -46,7 +46,7 @@ export function formatStoreData(store, data) {
     contacts: (c) => `- ${c.name}${c.company ? ` @ ${c.company}` : ''}`,
     flashcards: (d) => `- ${d.name || d.title}: ${d.cards?.length ?? 0} cards`,
     wiki: (p) => `- ${p.title || p.name}`,
-    subscriptions: (s) => `- ${s.name}: $${Number(s.amount ?? 0).toFixed(2)}/${s.period || 'mo'}`,
+    subscriptions: (s) => `- ${s.name}: $${Number(s.cost ?? 0).toFixed(2)}/${s.cycle || 'mo'}`,
     meals: (m) => `- ${typeof m === 'string' ? m : (m?.name || m?.title || JSON.stringify(m))}`,
   };
 
