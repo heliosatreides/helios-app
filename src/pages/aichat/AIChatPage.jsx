@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useGemini } from '../../hooks/useGemini';
 import { useIDB } from '../../hooks/useIDB';
-
-const SYSTEM_PROMPT = `You are Helios, a helpful AI assistant embedded in a personal life dashboard app. You have access to the user's data context when they share it. Be concise, direct, and helpful. Use markdown formatting for code blocks and lists when appropriate.`;
+import { buildToolSystemPrompt, executeActions } from '../../hooks/useHeliosTools';
 
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
@@ -102,20 +101,40 @@ export function AIChatPage() {
     setSending(true);
 
     try {
-      // Read history from ref (always current) + include the new user message
       const conv = conversationsRef.current.find(c => c.id === convId);
       const prevMessages = conv?.messages || [];
       const allMessages = [...prevMessages, userMsg];
 
+      // Build conversation with tool-aware system prompt
+      const systemPrompt = buildToolSystemPrompt();
       const contextParts = allMessages.map(m =>
         `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
       ).join('\n\n');
 
-      const fullPrompt = `${SYSTEM_PROMPT}\n\nConversation:\n${contextParts}\n\nAssistant:`;
+      const fullPrompt = `${systemPrompt}\n\nConversation:\n${contextParts}\n\nAssistant:`;
 
-      const response = await generate(fullPrompt);
+      const rawResponse = await generate(fullPrompt);
 
-      const assistantMsg = { role: 'assistant', content: response, timestamp: Date.now(), animate: true };
+      // Execute any data actions in the response
+      const { response: cleanResponse, dataContext } = await executeActions(rawResponse);
+
+      let finalContent = cleanResponse || rawResponse;
+
+      // If there was data read, make a follow-up call with the data context
+      if (dataContext.trim()) {
+        try {
+          const followUp = await generate(
+            `${systemPrompt}\n\nConversation:\n${contextParts}\n\nYou executed these data operations:\n${dataContext}\n\nNow respond to the user naturally, incorporating the data above. Be concise.`
+          );
+          const { response: followUpClean } = await executeActions(followUp);
+          finalContent = followUpClean || followUp;
+        } catch {
+          // If follow-up fails, show the data directly
+          finalContent = cleanResponse ? `${cleanResponse}\n\n${dataContext}` : dataContext;
+        }
+      }
+
+      const assistantMsg = { role: 'assistant', content: finalContent, timestamp: Date.now(), animate: true };
 
       setConversations(prev => prev.map(c =>
         c.id === convId ? { ...c, messages: [...c.messages, assistantMsg] } : c
@@ -220,10 +239,10 @@ export function AIChatPage() {
               <div className="text-center max-w-sm">
                 <h2 className="text-foreground font-medium mb-2">AI Chat</h2>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Ask anything. Powered by your Gemini API key.
+                  Chat with Gemini. It can read and modify your Helios data — trips, finance, tasks, goals, and more.
                 </p>
                 <div className="space-y-2 text-left">
-                  {['Explain quantum computing simply', 'Help me plan a weekend trip', 'Review my code approach', 'What should I know about startup fundraising?'].map(q => (
+                  {['Show me my upcoming trips', 'Add a task to review Q1 financials', 'What does my spending look like?', 'Create a goal to run a marathon'].map(q => (
                     <button
                       key={q}
                       onClick={() => { if (!activeConvId) createConversation(); setInput(q); }}
