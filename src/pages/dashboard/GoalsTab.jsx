@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
+import { filterObjectivesByTimeframe, getObjectiveStats, getActiveTimeframes } from './goals.utils';
 
 function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -45,6 +46,61 @@ function progressTextColor(pct) {
   if (pct >= 70) return 'text-green-400';
   if (pct >= 40) return 'text-amber-400';
   return 'text-red-400';
+}
+
+// ── Stats bar ─────────────────────────────────────────────────────────────
+
+function OKRStatsBar({ objectives }) {
+  const stats = getObjectiveStats(objectives);
+  if (stats.total === 0) return null;
+
+  return (
+    <div className="grid grid-cols-4 gap-3" data-testid="okr-stats-bar">
+      <div className="border border-border p-3 text-center">
+        <p className="text-2xl font-semibold text-foreground">{stats.total}</p>
+        <p className="text-muted-foreground/80 text-xs mt-1">Total</p>
+      </div>
+      <div className="border border-border p-3 text-center">
+        <p className="text-2xl font-semibold text-green-400" data-testid="stats-ontrack">{stats.onTrack}</p>
+        <p className="text-muted-foreground/80 text-xs mt-1">On Track</p>
+      </div>
+      <div className="border border-border p-3 text-center">
+        <p className="text-2xl font-semibold text-amber-400" data-testid="stats-atrisk">{stats.atRisk}</p>
+        <p className="text-muted-foreground/80 text-xs mt-1">At Risk</p>
+      </div>
+      <div className="border border-border p-3 text-center">
+        <p className="text-2xl font-semibold text-red-400" data-testid="stats-behind">{stats.behind}</p>
+        <p className="text-muted-foreground/80 text-xs mt-1">Behind</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Timeframe filter tabs ─────────────────────────────────────────────────
+
+function TimeframeFilter({ activeTimeframes, selected, onChange }) {
+  const tabs = ['All', ...activeTimeframes];
+  if (tabs.length <= 1) return null; // only 'All' — no point showing
+
+  return (
+    <div className="flex flex-wrap gap-1" data-testid="timeframe-filter">
+      {tabs.map((tf) => (
+        <button
+          key={tf}
+          type="button"
+          onClick={() => onChange(tf)}
+          data-testid={`timeframe-tab-${tf.replace(/\s+/g, '-')}`}
+          className={`px-3 py-1 text-xs font-medium border transition-colors ${
+            selected === tf
+              ? 'bg-foreground text-black border-foreground'
+              : 'border-border text-muted-foreground hover:text-foreground hover:border-amber-500/50'
+          }`}
+        >
+          {tf}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function AddObjectiveForm({ onSave, onClose }) {
@@ -404,7 +460,11 @@ export function GoalsTab({ trips = [], budgets = [] }) {
   const [rateResult, setRateResult] = useState(null);
   const [rateLoading, setRateLoading] = useState(false);
   const [rateError, setRateError] = useState(null);
+  const [selectedTimeframe, setSelectedTimeframe] = useState('All');
   const { generate, hasKey } = useGemini();
+
+  const activeTimeframes = getActiveTimeframes(objectives || []);
+  const filteredObjectives = filterObjectivesByTimeframe(objectives || [], selectedTimeframe);
 
   function handleAddObjective(data) {
     setObjectives((prev) => [...prev, { ...data, id: generateId() }]);
@@ -496,6 +556,20 @@ export function GoalsTab({ trips = [], budgets = [] }) {
         </div>
       )}
 
+      {/* Stats bar — only shown when there are objectives */}
+      {objectives && objectives.length > 0 && (
+        <OKRStatsBar objectives={filteredObjectives} />
+      )}
+
+      {/* Timeframe filter tabs */}
+      {objectives && objectives.length > 0 && (
+        <TimeframeFilter
+          activeTimeframes={activeTimeframes}
+          selected={selectedTimeframe}
+          onChange={setSelectedTimeframe}
+        />
+      )}
+
       {/* Objectives list */}
       {(!objectives || objectives.length === 0) ? (
         <div className="flex flex-col items-center justify-center py-16 text-center" data-testid="goals-empty-state">
@@ -510,9 +584,21 @@ export function GoalsTab({ trips = [], budgets = [] }) {
             + New Objective
           </button>
         </div>
+      ) : filteredObjectives.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="goals-filter-empty">
+          <div className="text-4xl mb-3">🔍</div>
+          <p className="text-muted-foreground text-sm">No objectives for <span className="text-foreground font-medium">{selectedTimeframe}</span></p>
+          <button
+            type="button"
+            onClick={() => setSelectedTimeframe('All')}
+            className="mt-3 text-xs text-amber-400 hover:underline"
+          >
+            Show all timeframes
+          </button>
+        </div>
       ) : (
         <div className="space-y-4">
-          {objectives.map((objective) => (
+          {filteredObjectives.map((objective) => (
             <ObjectiveCard
               key={objective.id}
               objective={objective}
