@@ -52,6 +52,7 @@ export function LandingPage() {
           <div className="flex items-center gap-6">
             <a href="#features" onClick={scrollToFeatures} className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">Features</a>
             <a href="#privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">Privacy</a>
+            <Link to="/lists" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">Lists</Link>
             <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Sign In</Link>
             <Link to="/login" className="text-sm px-4 py-2 bg-foreground text-background font-medium hover:bg-foreground/90 transition-colors">
               Get Started

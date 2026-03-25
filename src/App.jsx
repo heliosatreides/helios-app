@@ -32,6 +32,7 @@ import { CalculatorPage } from './pages/calculator/CalculatorPage';
 import { PasswordGenerator } from './pages/password/PasswordGenerator';
 import { ChatPage } from './pages/chat/ChatPage';
 import { AIChatPage } from './pages/aichat/AIChatPage';
+import { ListsPage } from './pages/lists/ListsPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
@@ -195,6 +196,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<RootRoute />} />
             <Route path="/chat" element={<ChatPage />} />
+            <Route path="/lists" element={<ListsPage />} />
             <Route path="/*" element={<AppShell />} />
           </Routes>
         </ToastProvider>
