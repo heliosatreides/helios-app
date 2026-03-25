@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCommandPalette } from './CommandPaletteContext';
 
 const PAGES = [
   { path: '/dashboard', label: 'Dashboard', keywords: 'home overview summary' },
@@ -35,7 +36,7 @@ const PAGES = [
 ];
 
 export function CommandPalette() {
-  const [open, setOpen] = useState(false);
+  const { open, toggleCommandPalette, closeCommandPalette } = useCommandPalette();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const navigate = useNavigate();
@@ -44,12 +45,12 @@ export function CommandPalette() {
 
   useEffect(() => {
     const handler = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setOpen(p => !p); setQuery(''); setSelectedIndex(0); }
-      if (e.key === 'Escape') setOpen(false);
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); toggleCommandPalette(); setQuery(''); setSelectedIndex(0); }
+      if (e.key === 'Escape') closeCommandPalette();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, []);
+  }, [toggleCommandPalette, closeCommandPalette]);
 
   useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 50); }, [open]);
 
@@ -62,7 +63,7 @@ export function CommandPalette() {
   useEffect(() => { setSelectedIndex(0); }, [filtered]);
   useEffect(() => { listRef.current?.children[selectedIndex]?.scrollIntoView({ block: 'nearest' }); }, [selectedIndex]);
 
-  const select = useCallback((path) => { navigate(path); setOpen(false); setQuery(''); }, [navigate]);
+  const select = useCallback((path) => { navigate(path); closeCommandPalette(); setQuery(''); }, [navigate, closeCommandPalette]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setSelectedIndex(i => Math.min(i + 1, filtered.length - 1)); }
@@ -74,7 +75,7 @@ export function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] px-4">
-      <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
+      <div className="absolute inset-0 bg-black/50" onClick={closeCommandPalette} />
       <div className="relative w-full max-w-lg bg-background border border-border shadow-2xl overflow-hidden animate-slideUp">
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-muted-foreground shrink-0">

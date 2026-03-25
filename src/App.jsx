@@ -38,6 +38,7 @@ import { LandingPage } from './pages/landing/LandingPage';
 import { useAuth } from './auth/AuthContext';
 import { useIDB } from './hooks/useIDB';
 import { CommandPalette } from './components/CommandPalette';
+import { CommandPaletteProvider } from './components/CommandPaletteContext';
 import { ToastProvider } from './components/Toast';
 import './index.css';
 
@@ -131,6 +132,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <CommandPaletteProvider>
         <ToastProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
@@ -139,6 +141,7 @@ function App() {
             <Route path="/*" element={<AppShell />} />
           </Routes>
         </ToastProvider>
+        </CommandPaletteProvider>
       </AuthProvider>
     </BrowserRouter>
   );

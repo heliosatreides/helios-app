@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { usePWAInstall } from '../hooks/usePWAInstall';
+import { useCommandPalette } from './CommandPaletteContext';
 
 const navGroups = [
   {
@@ -63,6 +64,7 @@ const navGroups = [
 export function Sidebar({ onNavClick }) {
   const { user, logout } = useAuth();
   const { canInstall, install, isIOS, isInstalled } = usePWAInstall();
+  const { openCommandPalette } = useCommandPalette();
 
   return (
     <aside className="w-56 bg-background border-r border-border flex flex-col h-full shrink-0 overflow-hidden">
@@ -73,7 +75,7 @@ export function Sidebar({ onNavClick }) {
       {/* Search trigger */}
       <div className="px-3 pt-3 pb-1 shrink-0">
         <button
-          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+          onClick={openCommandPalette}
           className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-muted-foreground text-xs hover:bg-secondary transition-colors"
         >
           <span className="flex-1 text-left">Search...</span>

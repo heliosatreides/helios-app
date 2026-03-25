@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { AuthProvider } from '../auth/AuthContext';
+import { CommandPaletteProvider } from './CommandPaletteContext';
 
 // Mock localStorage and sessionStorage
 const makeStorageMock = () => {
@@ -25,6 +26,7 @@ function SidebarTestWrapper({ initialOpen = false }) {
   return (
     <MemoryRouter>
       <AuthProvider>
+        <CommandPaletteProvider>
         <div>
           {/* Overlay */}
           {sidebarOpen && (
@@ -49,6 +51,7 @@ function SidebarTestWrapper({ initialOpen = false }) {
             <Sidebar onNavClick={() => setSidebarOpen(false)} />
           </div>
         </div>
+        </CommandPaletteProvider>
       </AuthProvider>
     </MemoryRouter>
   );
