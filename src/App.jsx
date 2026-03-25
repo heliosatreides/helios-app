@@ -49,7 +49,7 @@ function AppShell() {
   const [portfolio] = useIDB('investments-portfolio', []);
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex bg-background overflow-hidden" style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)' }}>
       <CommandPalette />
       {sidebarOpen && (
         <div
@@ -67,7 +67,7 @@ function AppShell() {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-background safe-top">
+        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-background">
           <button
             onClick={() => setSidebarOpen(true)}
             className="text-muted-foreground hover:text-foreground p-1"

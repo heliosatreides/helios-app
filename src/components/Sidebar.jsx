@@ -64,7 +64,7 @@ export function Sidebar({ onNavClick }) {
   const { canInstall, install, isIOS, isInstalled } = usePWAInstall();
 
   return (
-    <aside className="w-56 bg-background border-r border-border flex flex-col h-full shrink-0 overflow-hidden safe-top">
+    <aside className="w-56 bg-background border-r border-border flex flex-col h-full shrink-0 overflow-hidden">
       <div className="px-4 py-4 border-b border-border shrink-0">
         <span className="text-sm font-semibold tracking-tight text-foreground">Helios</span>
       </div>

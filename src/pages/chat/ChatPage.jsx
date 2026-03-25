@@ -457,7 +457,7 @@ export function ChatPage() {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-background safe-top safe-bottom">
+    <div className="fixed inset-0 flex flex-col bg-background" style={{ paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" }}>
       {/* Reconnecting banner */}
       {reconnecting && (
         <div className="absolute top-[53px] inset-x-0 z-20 flex items-center justify-center gap-2 px-4 py-2 bg-secondary/80 border-b border-border/50 backdrop-blur-sm">
