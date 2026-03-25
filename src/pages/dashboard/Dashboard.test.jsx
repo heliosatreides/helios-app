@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { Dashboard } from './Dashboard';
@@ -262,6 +262,68 @@ test('Morning brief uses cache when today brief exists', async () => {
     expect(screen.getByText('Cached brief for today.')).toBeInTheDocument();
   });
   expect(mockGenerate).not.toHaveBeenCalled();
+});
+
+// BackupNudge tests
+test('renders backup nudge after 3 days of use with data present', () => {
+  const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
+  lsStore['helios-first-use-date'] = threeDaysAgo;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  expect(screen.getByTestId('backup-nudge')).toBeInTheDocument();
+  expect(screen.getByText(/back it up to stay safe/i)).toBeInTheDocument();
+  expect(screen.getByText('Back up now')).toBeInTheDocument();
+});
+
+test('does not render backup nudge when dismissed', () => {
+  const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
+  lsStore['helios-first-use-date'] = threeDaysAgo;
+  lsStore['helios-backup-nudge-dismissed'] = '1';
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
+});
+
+test('does not render backup nudge when isEmpty is true', () => {
+  const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
+  lsStore['helios-first-use-date'] = threeDaysAgo;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} accounts={[]} portfolio={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
+});
+
+test('does not render backup nudge before 3 days', () => {
+  const today = new Date().toISOString().split('T')[0];
+  lsStore['helios-first-use-date'] = today;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
+});
+
+test('backup nudge dismiss button sets localStorage and hides card', () => {
+  const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
+  lsStore['helios-first-use-date'] = threeDaysAgo;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  expect(screen.getByTestId('backup-nudge')).toBeInTheDocument();
+  fireEvent.click(screen.getByLabelText('Dismiss backup nudge'));
+  expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
+  expect(lsStore['helios-backup-nudge-dismissed']).toBe('1');
 });
 
 test('Morning brief does not show on empty dashboard', () => {

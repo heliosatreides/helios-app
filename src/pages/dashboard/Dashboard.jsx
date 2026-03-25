@@ -89,6 +89,42 @@ function AiNudge({ hasKey, isEmpty }) {
   );
 }
 
+function BackupNudge({ isEmpty }) {
+  const [dismissed, setDismissed] = useState(() => {
+    try { return localStorage.getItem('helios-backup-nudge-dismissed') === '1'; } catch { return false; }
+  });
+
+  // Set first-use date on first render if not already set
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('helios-first-use-date')) {
+        localStorage.setItem('helios-first-use-date', new Date().toISOString().split('T')[0]);
+      }
+    } catch {}
+  }, []);
+
+  if (isEmpty || dismissed) return null;
+
+  // Check if 3+ days since first use
+  try {
+    const firstUse = localStorage.getItem('helios-first-use-date');
+    if (!firstUse) return null;
+    const daysSince = Math.floor((new Date() - new Date(firstUse)) / 86400000);
+    if (daysSince < 3) return null;
+  } catch { return null; }
+
+  return (
+    <div className="border border-border p-4 flex items-center justify-between gap-3" data-testid="backup-nudge">
+      <p className="text-muted-foreground text-sm flex-1">Your data lives only in this browser. Back it up to stay safe.</p>
+      <div className="flex items-center gap-2 shrink-0">
+        <Link to="/settings" className="bg-foreground text-background px-3 py-1.5 text-xs font-medium min-h-[44px] flex items-center">Back up now</Link>
+        <button onClick={() => { setDismissed(true); try { localStorage.setItem('helios-backup-nudge-dismissed', '1'); } catch {} }}
+          className="text-muted-foreground hover:text-foreground text-sm min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Dismiss backup nudge">&times;</button>
+      </div>
+    </div>
+  );
+}
+
 export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
   const { generate, loading: aiLoading, hasKey } = useGemini();
   const [briefCache, setBriefCache, briefReady] = useIDB('daily-brief', null);
@@ -175,6 +211,8 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       </div>
 
       <AiNudge hasKey={hasKey} isEmpty={isEmpty} />
+
+      <BackupNudge isEmpty={isEmpty} />
 
       {!dismissed && (briefText || briefLoading) && (
         <div className="border border-border p-4" data-testid="morning-brief">
