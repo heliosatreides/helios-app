@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { EmptyState } from '../../components/ui';
@@ -11,17 +11,17 @@ function parseMarkdown(text) {
     .replace(/^# (.+)$/gm, '<h1 class="text-xl font-bold text-foreground mt-4 mb-2">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="text-foreground font-semibold">$1</strong>')
     .replace(/\*(.+?)\*/g, '<em class="text-muted-foreground italic">$1</em>')
-    .replace(/`(.+?)`/g, '<code class="bg-secondary text-amber-400 px-1 rounded text-xs font-mono">$1</code>')
+    .replace(/`(.+?)`/g, '<code class="bg-secondary text-foreground px-1 rounded text-xs font-mono">$1</code>')
     .replace(/^- (.+)$/gm, '<li class="text-muted-foreground ml-4 list-disc">$1</li>')
     .replace(/\n/g, '<br>');
 }
 
-function renderWikiLinks(content, pages, onNavigate) {
-  // [[page title]] -> clickable link
+function renderWikiLinks(content, pages) {
+  // [[page title]] -> clickable button with data attribute for event delegation
   return content.replace(/\[\[([^\]]+)\]\]/g, (_, title) => {
     const page = pages.find(p => p.title.toLowerCase() === title.toLowerCase());
     if (page) {
-      return `<button onclick="window.wikiNavigate('${page.id}')" class="text-foreground hover:underline underline">[[${title}]]</button>`;
+      return `<button data-wiki-id="${page.id}" class="text-foreground hover:underline underline cursor-pointer">[[${title}]]</button>`;
     }
     return `<span class="text-muted-foreground/80">[[${title}]]</span>`;
   });
@@ -37,13 +37,18 @@ export function WikiPage() {
   const [aiRelated, setAiRelated] = useState('');
   const { generate, loading, error } = useGemini();
 
-  // Register wiki navigation globally
-  if (typeof window !== 'undefined') {
-    window.wikiNavigate = (id) => {
+  // Handle wiki link clicks via event delegation (no window global needed)
+  const handleContentClick = useCallback((e) => {
+    const wikiLink = e.target.closest('[data-wiki-id]');
+    if (wikiLink) {
+      const id = wikiLink.getAttribute('data-wiki-id');
       const page = pages.find(p => p.id === id);
-      if (page) { setActivePage(page); setView('read'); }
-    };
-  }
+      if (page) {
+        setActivePage(page);
+        setView('read');
+      }
+    }
+  }, [pages]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return pages;
@@ -104,10 +109,7 @@ export function WikiPage() {
   }
 
   const renderContent = (content) => {
-    const withLinks = renderWikiLinks(content, pages, (id) => {
-      const page = pages.find(p => p.id === id);
-      if (page) { setActivePage(page); setView('read'); }
-    });
+    const withLinks = renderWikiLinks(content, pages);
     return parseMarkdown(withLinks);
   };
 
@@ -118,12 +120,12 @@ export function WikiPage() {
         <h1 className="text-xl font-bold text-foreground">{activePage ? 'Edit Page' : 'New Page'}</h1>
       </div>
       <div className="space-y-3">
-        <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Page title" className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500 font-semibold" />
-        <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} placeholder="Category (e.g., Projects, References)" list="wiki-cats" className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
+        <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Page title" className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-foreground font-semibold" />
+        <input value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} placeholder="Category (e.g., Projects, References)" list="wiki-cats" className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-foreground" />
         <datalist id="wiki-cats">{categories.map(c => <option key={c} value={c} />)}</datalist>
-        <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} placeholder="Write your page content... Supports # headings, **bold**, *italic*, `code`, - bullets, and [[Page Links]]" rows={16} className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500 font-mono resize-none" />
+        <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} placeholder="Write your page content... Supports # headings, **bold**, *italic*, `code`, - bullets, and [[Page Links]]" rows={16} className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-foreground font-mono resize-none" />
         <div className="flex gap-2">
-          <button onClick={activePage ? updatePage : createPage} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">
+          <button onClick={activePage ? updatePage : createPage} className="px-4 py-2 bg-foreground text-background font-semibold text-sm hover:bg-foreground/90">
             {activePage ? 'Update' : 'Create'}
           </button>
           <button onClick={() => setView(activePage ? 'read' : 'list')} className="px-4 py-2 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">Cancel</button>
@@ -144,15 +146,19 @@ export function WikiPage() {
         </div>
       </div>
       <h1 className="text-lg font-semibold text-foreground">{activePage.title}</h1>
-      <div className="bg-background border border-border p-5 prose prose-invert max-w-none text-sm text-muted-foreground leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: renderContent(activePage.content) }} />
+      <div
+        className="bg-background border border-border p-5 prose prose-invert max-w-none text-sm text-muted-foreground leading-relaxed"
+        data-testid="wiki-content"
+        onClick={handleContentClick}
+        dangerouslySetInnerHTML={{ __html: renderContent(activePage.content) }}
+      />
 
       {/* AI panel */}
       <div className="bg-background border border-border p-4 space-y-3">
-        <h3 className="text-sm font-semibold text-muted-foreground">✨ AI Tools</h3>
+        <h3 className="text-sm font-semibold text-muted-foreground">AI Tools</h3>
         <div className="flex gap-2">
-          <button onClick={summarize} disabled={loading} className="px-3 py-2 bg-purple-600 text-white text-sm hover:bg-purple-500 disabled:opacity-50">Summarize</button>
-          <button onClick={findRelated} disabled={loading} className="px-3 py-2 bg-purple-600 text-white text-sm hover:bg-purple-500 disabled:opacity-50">What's related?</button>
+          <button onClick={summarize} disabled={loading} className="px-3 py-2 bg-foreground text-background text-sm hover:bg-foreground/90 disabled:opacity-50">Summarize</button>
+          <button onClick={findRelated} disabled={loading} className="px-3 py-2 bg-foreground text-background text-sm hover:bg-foreground/90 disabled:opacity-50">What's related?</button>
         </div>
         {loading && <p className="text-sm text-muted-foreground">Thinking...</p>}
         {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -171,9 +177,9 @@ export function WikiPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold text-foreground">Personal Wiki</h1>
-        <button onClick={() => { setActivePage(null); setForm({ title: '', content: '', category: '' }); setView('edit'); }} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">+ New Page</button>
+        <button onClick={() => { setActivePage(null); setForm({ title: '', content: '', category: '' }); setView('edit'); }} className="px-4 py-2 bg-foreground text-background font-semibold text-sm hover:bg-foreground/90">+ New Page</button>
       </div>
-      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search pages..." className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
+      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search pages..." className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-foreground" />
 
       {pages.length === 0 ? (
         <EmptyState title="Your wiki is empty" description="Create your first page to start building your knowledge base." />
@@ -189,7 +195,7 @@ export function WikiPage() {
                   <div className="font-semibold text-foreground">{page.title}</div>
                   <div className="text-sm text-muted-foreground truncate mt-0.5">{page.content.replace(/[#*`\[\]]/g, '').slice(0, 100)}...</div>
                 </div>
-                <button onClick={e => { e.stopPropagation(); openEdit(page); }} className="text-xs text-muted-foreground/80 hover:text-amber-400 shrink-0">Edit</button>
+                <button onClick={e => { e.stopPropagation(); openEdit(page); }} className="text-xs text-muted-foreground/80 hover:text-foreground shrink-0">Edit</button>
               </div>
             ))}
           </div>
