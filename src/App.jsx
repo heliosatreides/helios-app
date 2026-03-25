@@ -29,6 +29,7 @@ import { MusicPage } from './pages/music/MusicPage';
 import { PackingPage } from './pages/packing/PackingPage';
 import { RegexPage } from './pages/regex/RegexPage';
 import { CalculatorPage } from './pages/calculator/CalculatorPage';
+import { PasswordGenerator } from './pages/password/PasswordGenerator';
 import { ChatPage } from './pages/chat/ChatPage';
 import { AIChatPage } from './pages/aichat/AIChatPage';
 import { AuthProvider } from './auth/AuthContext';
@@ -73,6 +74,7 @@ const ROUTE_LABELS = {
   '/wiki': 'Wiki',
   '/regex': 'Regex',
   '/calculator': 'Calculator',
+  '/password': 'Password Generator',
   '/settings': 'Settings',
 };
 
@@ -165,6 +167,7 @@ function AppShell() {
               <Route path="/packing" element={<ProtectedRoute><PackingPage /></ProtectedRoute>} />
               <Route path="/regex" element={<ProtectedRoute><RegexPage /></ProtectedRoute>} />
               <Route path="/calculator" element={<ProtectedRoute><CalculatorPage /></ProtectedRoute>} />
+              <Route path="/password" element={<ProtectedRoute><PasswordGenerator /></ProtectedRoute>} />
               <Route path="/ai" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
             </Routes>
           </div>

@@ -38,6 +38,7 @@ const navGroups = [
       { to: '/music', label: 'Music' },
       { to: '/splitter', label: 'Splitter' },
       { to: '/packing', label: 'Packing' },
+      { to: '/password', label: 'Passwords' },
     ],
   },
   {
