@@ -79,5 +79,5 @@ export function ActionButton({ children, variant = 'primary', className = '', ..
     danger: 'border border-red-800 text-red-400 hover:bg-red-950',
     ai: 'border border-border text-foreground hover:bg-secondary/50 hover:text-foreground',
   };
-  return <button className={`px-3 py-1.5 text-sm font-medium transition-colors ${v[variant] || v.primary} ${className}`} {...props}>{children}</button>;
+  return <button className={`px-3 py-1.5 min-h-[44px] text-sm font-medium transition-colors ${v[variant] || v.primary} ${className}`} {...props}>{children}</button>;
 }

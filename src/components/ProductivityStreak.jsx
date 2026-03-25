@@ -4,8 +4,10 @@
  */
 import { useMemo } from 'react';
 import { useTasks } from '../hooks/useTasks';
+import { useIDB } from '../hooks/useIDB';
 import {
   getProductiveDates,
+  mergeProductiveDates,
   calcCurrentStreak,
   calcLongestStreak,
   getLastNDays,
@@ -15,17 +17,20 @@ import {
 
 export function ProductivityStreak() {
   const { tasks } = useTasks();
+  const [pomodoroDates] = useIDB('pomodoro-completed-dates', []);
   const today = getTodayStr();
 
   const { productiveDates, currentStreak, longestStreak, last30 } = useMemo(() => {
-    const productiveDates = getProductiveDates(tasks);
+    const taskDates = getProductiveDates(tasks);
+    const pomoDates = new Set(Array.isArray(pomodoroDates) ? pomodoroDates : []);
+    const productiveDates = mergeProductiveDates(taskDates, pomoDates);
     return {
       productiveDates,
       currentStreak: calcCurrentStreak(productiveDates, today),
       longestStreak: calcLongestStreak(productiveDates),
       last30: getLastNDays(productiveDates, 30, today),
     };
-  }, [tasks, today]);
+  }, [tasks, pomodoroDates, today]);
 
   const completedToday = productiveDates.has(today);
   const message = streakMessage(currentStreak);

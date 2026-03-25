@@ -47,7 +47,7 @@ function AiResultCard({ title, content, onDismiss }) {
 
 const POMO_SESSION_KEY = 'helios-pomodoro-session';
 
-const PomodoroTimer = forwardRef(function PomodoroTimer(props, ref) {
+const PomodoroTimer = forwardRef(function PomodoroTimer({ onSessionComplete, ...props }, ref) {
   const { tasks } = useTasks();
   const today = getTodayStr();
   const todayTasks = (tasks || []).filter((t) => !t.done && t.dueDate === today);
@@ -86,6 +86,7 @@ const PomodoroTimer = forwardRef(function PomodoroTimer(props, ref) {
             clearInterval(intervalRef.current);
             if (timerState === RUNNING) {
               setSessionCount((c) => c + 1);
+              if (onSessionComplete) onSessionComplete();
               setTimerState(BREAK);
               return breakMins * 60;
             } else {
@@ -565,6 +566,16 @@ function KeyboardShortcutsHelp({ onDismiss }) {
 
 export function FocusTab() {
   const [showHelp, setShowHelp] = useState(false);
+  const [pomodoroDates, setPomodoroDates] = useIDB('pomodoro-completed-dates', []);
+
+  const handlePomodoroComplete = useCallback(() => {
+    const today = getTodayStr();
+    setPomodoroDates((prev) => {
+      const arr = Array.isArray(prev) ? prev : [];
+      if (arr.includes(today)) return arr;
+      return [...arr, today];
+    });
+  }, [setPomodoroDates]);
 
   // Expose keyboard control API from PomodoroTimer via ref callbacks
   const pomodoroRef = useRef(null);
@@ -623,7 +634,7 @@ export function FocusTab() {
           </button>
         </div>
         <CollapsibleCard title="🍅 Pomodoro Timer">
-          <PomodoroTimer ref={pomodoroRef} />
+          <PomodoroTimer ref={pomodoroRef} onSessionComplete={handlePomodoroComplete} />
         </CollapsibleCard>
         <CollapsibleCard title="✅ Habit Tracker">
           <HabitTracker />

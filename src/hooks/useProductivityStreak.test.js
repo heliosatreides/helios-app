@@ -6,6 +6,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   getProductiveDates,
+  mergeProductiveDates,
   calcCurrentStreak,
   calcLongestStreak,
   getLastNDays,
@@ -189,5 +190,58 @@ describe('streakMessage', () => {
   it('returns triple fire for 30+ day streaks', () => {
     const msg = streakMessage(30);
     expect(msg).toContain('🔥🔥🔥');
+  });
+});
+
+// ── mergeProductiveDates ───────────────────────────────────────────────────
+
+describe('mergeProductiveDates', () => {
+  it('returns empty set when no arguments', () => {
+    expect(mergeProductiveDates().size).toBe(0);
+  });
+
+  it('returns empty set when all inputs are empty', () => {
+    expect(mergeProductiveDates(new Set(), new Set()).size).toBe(0);
+  });
+
+  it('merges two disjoint sets', () => {
+    const a = new Set(['2026-03-20', '2026-03-21']);
+    const b = new Set(['2026-03-22', '2026-03-23']);
+    const merged = mergeProductiveDates(a, b);
+    expect(merged.size).toBe(4);
+    expect(merged.has('2026-03-20')).toBe(true);
+    expect(merged.has('2026-03-23')).toBe(true);
+  });
+
+  it('deduplicates overlapping dates', () => {
+    const a = new Set(['2026-03-20', '2026-03-21']);
+    const b = new Set(['2026-03-21', '2026-03-22']);
+    const merged = mergeProductiveDates(a, b);
+    expect(merged.size).toBe(3);
+  });
+
+  it('handles null/undefined inputs gracefully', () => {
+    const a = new Set(['2026-03-20']);
+    const merged = mergeProductiveDates(a, null, undefined);
+    expect(merged.size).toBe(1);
+    expect(merged.has('2026-03-20')).toBe(true);
+  });
+
+  it('merges three sets', () => {
+    const a = new Set(['2026-03-20']);
+    const b = new Set(['2026-03-21']);
+    const c = new Set(['2026-03-22']);
+    const merged = mergeProductiveDates(a, b, c);
+    expect(merged.size).toBe(3);
+  });
+
+  it('a day with only pomodoro (no tasks) counts as productive', () => {
+    const taskDates = new Set(['2026-03-20']); // task on 20th only
+    const pomoDates = new Set(['2026-03-21']); // pomodoro on 21st only
+    const merged = mergeProductiveDates(taskDates, pomoDates);
+    // 21st should count as productive even without tasks
+    expect(merged.has('2026-03-21')).toBe(true);
+    // streak should be 2 consecutive days
+    expect(calcCurrentStreak(merged, '2026-03-21')).toBe(2);
   });
 });

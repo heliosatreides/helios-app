@@ -12,6 +12,17 @@ vi.mock('../hooks/useTasks', () => ({
   useTasks: () => ({ tasks: mockTasks() }),
 }));
 
+// Mock useIDB for pomodoro-completed-dates
+const mockPomodoroDates = vi.fn();
+vi.mock('../hooks/useIDB', () => ({
+  useIDB: (key, defaultVal) => {
+    if (key === 'pomodoro-completed-dates') {
+      return [mockPomodoroDates() ?? defaultVal, vi.fn(), true];
+    }
+    return [defaultVal, vi.fn(), true];
+  },
+}));
+
 function renderStreak() {
   return render(
     <MemoryRouter>
@@ -22,6 +33,7 @@ function renderStreak() {
 
 beforeEach(() => {
   mockTasks.mockReturnValue([]);
+  mockPomodoroDates.mockReturnValue([]);
 });
 
 describe('ProductivityStreak component', () => {
@@ -108,5 +120,51 @@ describe('ProductivityStreak component', () => {
     mockTasks.mockReturnValue([]);
     renderStreak();
     expect(screen.queryByText(/done today/i)).not.toBeInTheDocument();
+  });
+
+  it('counts pomodoro-only days in streak', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const yesterday = (() => {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return d.toISOString().slice(0, 10);
+    })();
+
+    // No tasks completed, but pomodoro sessions done yesterday and today
+    mockTasks.mockReturnValue([]);
+    mockPomodoroDates.mockReturnValue([yesterday, today]);
+
+    renderStreak();
+    const currentStreak = parseInt(screen.getByTestId('current-streak').textContent, 10);
+    expect(currentStreak).toBeGreaterThanOrEqual(2);
+  });
+
+  it('merges task and pomodoro dates for combined streak', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const d = (offset) => {
+      const dt = new Date(today + 'T00:00:00');
+      dt.setDate(dt.getDate() + offset);
+      return dt.toISOString().slice(0, 10);
+    };
+
+    // Task completed 2 days ago, pomodoro yesterday, task today
+    mockTasks.mockReturnValue([
+      { completed: true, completedAt: `${d(-2)}T10:00:00Z` },
+      { completed: true, completedAt: `${today}T10:00:00Z` },
+    ]);
+    mockPomodoroDates.mockReturnValue([d(-1)]);
+
+    renderStreak();
+    const currentStreak = parseInt(screen.getByTestId('current-streak').textContent, 10);
+    expect(currentStreak).toBe(3); // 3 consecutive days
+  });
+
+  it('shows "Done today" when only pomodoro completed today (no tasks)', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    mockTasks.mockReturnValue([]);
+    mockPomodoroDates.mockReturnValue([today]);
+
+    renderStreak();
+    expect(screen.getByText(/done today/i)).toBeInTheDocument();
   });
 });

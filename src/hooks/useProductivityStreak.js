@@ -100,6 +100,21 @@ export function streakMessage(currentStreak) {
   return `${currentStreak} day streak 🔥🔥🔥 incredible!`;
 }
 
+/**
+ * Merge multiple sets of productive dates into one.
+ * Accepts any number of Set<string> arguments.
+ * A day is productive if it appears in ANY source set.
+ */
+export function mergeProductiveDates(...dateSets) {
+  const merged = new Set();
+  for (const s of dateSets) {
+    if (s && s.size) {
+      for (const d of s) merged.add(d);
+    }
+  }
+  return merged;
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 export function getTodayStr() {
