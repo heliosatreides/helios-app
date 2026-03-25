@@ -3,18 +3,20 @@ import { Modal } from '../../components/Modal';
 
 const CATEGORIES = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping', 'Salary', 'Other'];
 
-export function AddTransactionModal({ accounts, onSave, onClose }) {
+export function AddTransactionModal({ accounts, onSave, onClose, transaction }) {
   const today = new Date().toISOString().slice(0, 10);
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Food');
-  const [date, setDate] = useState(today);
-  const [accountId, setAccountId] = useState(accounts[0]?.id || '');
-  const [type, setType] = useState('expense');
+  const [amount, setAmount] = useState(transaction ? String(transaction.amount) : '');
+  const [description, setDescription] = useState(transaction?.description || '');
+  const [category, setCategory] = useState(transaction?.category || 'Food');
+  const [date, setDate] = useState(transaction?.date || today);
+  const [accountId, setAccountId] = useState(transaction?.accountId || accounts[0]?.id || '');
+  const [type, setType] = useState(transaction?.type || 'expense');
+  const isEditing = !!transaction;
 
   function handleSubmit(e) {
     e.preventDefault();
     onSave({
+      ...(transaction ? { id: transaction.id } : {}),
       amount: parseFloat(amount) || 0,
       description,
       category,
@@ -26,7 +28,7 @@ export function AddTransactionModal({ accounts, onSave, onClose }) {
 
   return (
     <Modal open={true} onClose={onClose}>
-      <h2 className="text-foreground text-lg font-semibold mb-5">Add Transaction</h2>
+      <h2 className="text-foreground text-lg font-semibold mb-5">{isEditing ? 'Edit Transaction' : 'Add Transaction'}</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="tx-amount" className="block text-muted-foreground text-sm mb-1">Amount</label>

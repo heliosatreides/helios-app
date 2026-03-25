@@ -51,6 +51,24 @@ describe('TransactionList', () => {
     fireEvent.click(screen.getByTestId('delete-transaction-t1'));
     expect(onDelete).toHaveBeenCalledWith('t1');
   });
+
+  it('renders edit button when onEdit is provided', () => {
+    const onEdit = vi.fn();
+    render(<TransactionList transactions={[mockTransactions[0]]} accounts={mockAccounts} onDelete={() => {}} onEdit={onEdit} />);
+    expect(screen.getByTestId('edit-transaction-t1')).toBeInTheDocument();
+  });
+
+  it('does not render edit button when onEdit is not provided', () => {
+    render(<TransactionList transactions={[mockTransactions[0]]} accounts={mockAccounts} onDelete={() => {}} />);
+    expect(screen.queryByTestId('edit-transaction-t1')).not.toBeInTheDocument();
+  });
+
+  it('calls onEdit with transaction when edit clicked', () => {
+    const onEdit = vi.fn();
+    render(<TransactionList transactions={[mockTransactions[0]]} accounts={mockAccounts} onDelete={() => {}} onEdit={onEdit} />);
+    fireEvent.click(screen.getByTestId('edit-transaction-t1'));
+    expect(onEdit).toHaveBeenCalledWith(mockTransactions[0]);
+  });
 });
 
 describe('AddTransactionModal', () => {
@@ -78,5 +96,29 @@ describe('AddTransactionModal', () => {
     render(<AddTransactionModal accounts={mockAccounts} onSave={() => {}} onClose={onClose} />);
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('shows "Edit Transaction" title when transaction prop is passed', () => {
+    const tx = mockTransactions[0];
+    render(<AddTransactionModal accounts={mockAccounts} onSave={() => {}} onClose={() => {}} transaction={tx} />);
+    expect(screen.getByText('Edit Transaction')).toBeInTheDocument();
+  });
+
+  it('pre-fills form with transaction data when editing', () => {
+    const tx = mockTransactions[0];
+    render(<AddTransactionModal accounts={mockAccounts} onSave={() => {}} onClose={() => {}} transaction={tx} />);
+    expect(screen.getByLabelText(/amount/i)).toHaveValue(50);
+    expect(screen.getByLabelText(/description/i)).toHaveValue('Groceries');
+  });
+
+  it('includes transaction id in save data when editing', () => {
+    const onSave = vi.fn();
+    const tx = mockTransactions[0];
+    render(<AddTransactionModal accounts={mockAccounts} onSave={onSave} onClose={() => {}} transaction={tx} />);
+    fireEvent.change(screen.getByLabelText(/description/i), { target: { value: 'Updated Groceries' } });
+    fireEvent.click(screen.getByRole('button', { name: /save/i }));
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 't1', description: 'Updated Groceries' })
+    );
   });
 });

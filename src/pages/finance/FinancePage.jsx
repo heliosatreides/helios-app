@@ -26,6 +26,7 @@ export function FinancePage() {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
   const [showTxModal, setShowTxModal] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null);
   const [showBudgetForm, setShowBudgetForm] = useState(false);
 
   // Filters for transactions
@@ -87,17 +88,45 @@ export function FinancePage() {
 
   // Transaction operations
   function handleSaveTransaction(data) {
-    const tx = { ...data, id: generateId() };
-    setTransactions((prev) => [...prev, tx]);
-    // Update account balance
-    setAccounts((prev) =>
-      prev.map((a) => {
-        if (a.id !== tx.accountId) return a;
-        const delta = tx.type === 'income' ? tx.amount : -tx.amount;
-        return { ...a, balance: a.balance + delta };
-      })
-    );
+    if (data.id) {
+      // Editing existing transaction — reverse old balance, apply new
+      const oldTx = transactions.find((t) => t.id === data.id);
+      if (oldTx) {
+        setAccounts((prev) =>
+          prev.map((a) => {
+            let balance = a.balance;
+            // Reverse old transaction's effect
+            if (a.id === oldTx.accountId) {
+              balance += oldTx.type === 'income' ? -oldTx.amount : oldTx.amount;
+            }
+            // Apply new transaction's effect
+            if (a.id === data.accountId) {
+              balance += data.type === 'income' ? data.amount : -data.amount;
+            }
+            return { ...a, balance };
+          })
+        );
+      }
+      setTransactions((prev) => prev.map((t) => (t.id === data.id ? data : t)));
+    } else {
+      const tx = { ...data, id: generateId() };
+      setTransactions((prev) => [...prev, tx]);
+      // Update account balance
+      setAccounts((prev) =>
+        prev.map((a) => {
+          if (a.id !== tx.accountId) return a;
+          const delta = tx.type === 'income' ? tx.amount : -tx.amount;
+          return { ...a, balance: a.balance + delta };
+        })
+      );
+    }
     setShowTxModal(false);
+    setEditingTransaction(null);
+  }
+
+  function handleEditTransaction(tx) {
+    setEditingTransaction(tx);
+    setShowTxModal(true);
   }
 
   function handleDeleteTransaction(id) {
@@ -234,7 +263,7 @@ export function FinancePage() {
         <button
           onClick={() => {
             if (activeTab === 'Accounts') { setEditingAccount(null); setShowAccountModal(true); }
-            else if (activeTab === 'Transactions') setShowTxModal(true);
+            else if (activeTab === 'Transactions') { setEditingTransaction(null); setShowTxModal(true); }
             else if (activeTab === 'Budget') setShowBudgetForm(true);
           }}
           className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
@@ -322,6 +351,7 @@ export function FinancePage() {
             transactions={transactions}
             accounts={accounts}
             onDelete={handleDeleteTransaction}
+            onEdit={handleEditTransaction}
             filterAccountId={filterAccountId || undefined}
             filterCategory={filterCategory || undefined}
           />
@@ -384,7 +414,8 @@ export function FinancePage() {
         <AddTransactionModal
           accounts={accounts}
           onSave={handleSaveTransaction}
-          onClose={() => setShowTxModal(false)}
+          onClose={() => { setShowTxModal(false); setEditingTransaction(null); }}
+          transaction={editingTransaction}
         />
       )}
       {showBudgetForm && (

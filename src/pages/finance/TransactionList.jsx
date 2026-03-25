@@ -1,4 +1,4 @@
-export function TransactionList({ transactions, accounts, onDelete, filterAccountId, filterCategory, filterDateFrom, filterDateTo }) {
+export function TransactionList({ transactions, accounts, onDelete, onEdit, filterAccountId, filterCategory, filterDateFrom, filterDateTo }) {
   const accountMap = Object.fromEntries(accounts.map((a) => [a.id, a]));
 
   let filtered = transactions;
@@ -65,6 +65,15 @@ export function TransactionList({ transactions, accounts, onDelete, filterAccoun
                   bal:{runningBalance >= 0 ? '' : '-'}${Math.abs(runningBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
+              {onEdit && (
+                <button
+                  data-testid={`edit-transaction-${tx.id}`}
+                  onClick={() => onEdit(tx)}
+                  className="text-muted-foreground hover:text-foreground transition-colors text-sm px-2 py-1"
+                >
+                  Edit
+                </button>
+              )}
               <button
                 data-testid={`delete-transaction-${tx.id}`}
                 onClick={() => onDelete(tx.id)}
