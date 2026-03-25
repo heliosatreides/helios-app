@@ -111,8 +111,59 @@ describe('AIChatPage mobile conversation drawer', () => {
 
   test('shows active conversation title in mobile header', () => {
     renderPage(mockConversations);
-    // Default shows AI Chat in the mobile header span
-    const headerSpans = screen.getAllByText('AI Chat');
-    expect(headerSpans.length).toBeGreaterThanOrEqual(1);
+    // Auto-selects first conversation, so title should appear (in sidebar + mobile header)
+    const matches = screen.getAllByText('First chat');
+    expect(matches.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('AIChatPage auto-select conversation', () => {
+  beforeEach(() => {
+    mockConvState = undefined;
+    mockSetConversations = undefined;
+  });
+
+  test('auto-selects the most recent conversation on load', () => {
+    renderPage(mockConversations);
+    // The first conversation (most recent in array) should be auto-selected
+    // The desktop sidebar should highlight it with bg-secondary
+    const convButtons = screen.getAllByText('First chat');
+    const sidebarBtn = convButtons.find(el => el.closest('button')?.className.includes('bg-secondary'));
+    expect(sidebarBtn).toBeTruthy();
+  });
+
+  test('does not show empty state when conversations exist', () => {
+    renderPage(mockConversations);
+    // Should NOT show the prompt suggestions since a conversation is auto-selected
+    expect(screen.queryByText('Show me my upcoming trips')).not.toBeInTheDocument();
+  });
+
+  test('shows empty state when no conversations exist', () => {
+    renderPage([]);
+    expect(screen.getByText(/Chat with Gemini/)).toBeInTheDocument();
+  });
+});
+
+describe('AIChatPage desktop sidebar delete button', () => {
+  beforeEach(() => {
+    mockConvState = undefined;
+    mockSetConversations = undefined;
+  });
+
+  test('desktop delete button uses opacity instead of hidden for accessibility', () => {
+    renderPage(mockConversations);
+    // Find delete buttons in the desktop sidebar (not the drawer)
+    // The desktop sidebar delete buttons should use opacity-0/group-hover:opacity-100, NOT hidden/group-hover:block
+    const allButtons = screen.getAllByText('×');
+    const desktopDeleteBtns = allButtons.filter(el => {
+      const btn = el.closest('button');
+      return btn && btn.className.includes('opacity-0');
+    });
+    expect(desktopDeleteBtns.length).toBe(2);
+    // Verify they have focus:opacity-100 for keyboard accessibility
+    desktopDeleteBtns.forEach(el => {
+      const btn = el.closest('button');
+      expect(btn.className).toContain('focus:opacity-100');
+    });
   });
 });

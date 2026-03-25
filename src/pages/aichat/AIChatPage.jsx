@@ -94,6 +94,13 @@ export function AIChatPage() {
   const inputRef = useRef(null);
 
   // Get or create active conversation
+  // Auto-select most recent conversation on load
+  useEffect(() => {
+    if (!activeConvId && conversations.length > 0) {
+      setActiveConvId(conversations[0].id);
+    }
+  }, [conversations, activeConvId]);
+
   const activeConv = conversations.find(c => c.id === activeConvId);
   const messages = activeConv?.messages || [];
 
@@ -258,7 +265,7 @@ export function AIChatPage() {
               </button>
               <button
                 onClick={() => requestDeleteConversation(conv.id)}
-                className="hidden group-hover:block px-2 py-1 text-muted-foreground/40 hover:text-red-400 text-xs"
+                className="opacity-0 group-hover:opacity-100 focus:opacity-100 px-2 py-1 text-muted-foreground/40 hover:text-red-400 text-xs transition-opacity"
               >
                 ×
               </button>

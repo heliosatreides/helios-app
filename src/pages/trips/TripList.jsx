@@ -51,7 +51,7 @@ function TripCard({ trip }) {
 
   return (
     <Link to={`/trips/${trip.id}`} className="block">
-      <div className="bg-background border border-border p-5 hover:border-amber-500/50 transition-colors cursor-pointer">
+      <div className="bg-background border border-border p-5 hover:border-foreground/30 transition-colors cursor-pointer">
         <div className="flex items-start justify-between mb-2 gap-2">
           <h3 className="text-foreground font-semibold text-lg leading-tight">{trip.name}</h3>
           <StatusBadge status={trip.status} />
@@ -90,7 +90,7 @@ export function TripList({ trips }) {
         <p className="text-sm mb-6">Keep track of your travel plans, budget, and itinerary in one place.</p>
         <button
           onClick={() => navigate('/trips/new')}
-          className="bg-foreground hover:bg-amber-400 text-black font-semibold px-5 py-2.5 text-sm transition-colors"
+          className="bg-foreground hover:bg-foreground/90 text-background font-semibold px-5 py-2.5 text-sm transition-colors"
         >
           + Create Trip
         </button>
