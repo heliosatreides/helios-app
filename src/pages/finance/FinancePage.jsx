@@ -201,6 +201,12 @@ export function FinancePage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-lg font-semibold text-foreground">Finance</h1>
+        <p className="text-muted-foreground text-sm mt-1">Track your accounts, transactions, and budgets</p>
+      </div>
+
       {/* Net Worth Banner */}
       {accounts.length > 0 && (
         <div className="bg-background border border-border p-6" data-testid="net-worth-banner">
@@ -253,12 +259,6 @@ export function FinancePage() {
           </div>
         </div>
       )}
-
-      {/* Header */}
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">Finance</h1>
-        <p className="text-muted-foreground text-sm mt-1">Track your accounts, transactions, and budgets</p>
-      </div>
 
       {/* Tabs */}
       <div className="flex gap-1 border border-border p-1 w-fit">

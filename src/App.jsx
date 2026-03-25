@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './pages/dashboard/Dashboard';
 import { TripsPage } from './pages/trips/TripsPage';
@@ -43,8 +43,50 @@ import { ToastProvider } from './components/Toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 
+const ROUTE_LABELS = {
+  '/dashboard': 'Dashboard',
+  '/planner': 'Planner',
+  '/goals': 'Goals',
+  '/resume': 'Resume',
+  '/trips': 'Trips',
+  '/finance': 'Finance',
+  '/investments': 'Investments',
+  '/sports': 'Sports',
+  '/health': 'Health',
+  '/meals': 'Meals',
+  '/subscriptions': 'Subscriptions',
+  '/ai': 'AI Chat',
+  '/chat': 'P2P Chat',
+  '/focus': 'Focus',
+  '/knowledge': 'Knowledge',
+  '/networking': 'Networking',
+  '/news': 'News',
+  '/flashcards': 'Flashcards',
+  '/music': 'Music',
+  '/splitter': 'Splitter',
+  '/packing': 'Packing',
+  '/devtools': 'Dev Tools',
+  '/converter': 'Converter',
+  '/worldclock': 'World Clock',
+  '/apiplayground': 'API Playground',
+  '/colors': 'Colors',
+  '/wiki': 'Wiki',
+  '/regex': 'Regex',
+  '/calculator': 'Calculator',
+  '/settings': 'Settings',
+};
+
+function getPageLabel(pathname) {
+  if (ROUTE_LABELS[pathname]) return ROUTE_LABELS[pathname];
+  // Match base path for nested routes like /trips/123
+  const basePath = '/' + pathname.split('/').filter(Boolean)[0];
+  return ROUTE_LABELS[basePath] || 'Helios';
+}
+
 function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const pageLabel = getPageLabel(location.pathname);
   const [trips] = useIDB('helios-trips', []);
   const [accounts] = useIDB('finance-accounts', []);
   const [transactions] = useIDB('finance-transactions', []);
@@ -79,7 +121,7 @@ function AppShell() {
               <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <span className="text-foreground font-semibold text-sm">Helios</span>
+          <span className="text-foreground font-semibold text-sm" data-testid="mobile-header-title">{pageLabel}</span>
           <div className="w-6" />
         </header>
 
