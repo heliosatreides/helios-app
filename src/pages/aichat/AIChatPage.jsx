@@ -69,6 +69,10 @@ export function AIChatPage() {
     if (activeConvId === id) setActiveConvId(null);
   }, [setConversations, activeConvId]);
 
+  // Use a ref to always have current conversations without stale closures
+  const conversationsRef = useRef(conversations);
+  conversationsRef.current = conversations;
+
   const handleSend = useCallback(async () => {
     const text = input.trim();
     if (!text || sending) return;
@@ -80,26 +84,29 @@ export function AIChatPage() {
 
     const userMsg = { role: 'user', content: text, timestamp: Date.now(), animate: true };
 
-    // Update conversation with user message
-    setConversations(prev => prev.map(c =>
-      c.id === convId
-        ? {
-            ...c,
-            messages: [...c.messages, userMsg],
-            title: c.messages.length === 0 ? text.slice(0, 50) : c.title,
-          }
-        : c
-    ));
+    // Add user message to conversation
+    setConversations(prev => {
+      const exists = prev.find(c => c.id === convId);
+      if (!exists) {
+        // Conversation was just created but state hasn't flushed yet
+        const newConv = { id: convId, title: text.slice(0, 50), messages: [userMsg], createdAt: new Date().toISOString() };
+        return [newConv, ...prev];
+      }
+      return prev.map(c =>
+        c.id === convId
+          ? { ...c, messages: [...c.messages, userMsg], title: c.messages.length === 0 ? text.slice(0, 50) : c.title }
+          : c
+      );
+    });
     setInput('');
     setSending(true);
 
     try {
-      // Build conversation history for context
-      const conv = conversations.find(c => c.id === convId);
-      const history = conv ? conv.messages : [];
-      const allMessages = [...history, userMsg];
+      // Read history from ref (always current) + include the new user message
+      const conv = conversationsRef.current.find(c => c.id === convId);
+      const prevMessages = conv?.messages || [];
+      const allMessages = [...prevMessages, userMsg];
 
-      // Build the full prompt with conversation history
       const contextParts = allMessages.map(m =>
         `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
       ).join('\n\n');
@@ -111,7 +118,7 @@ export function AIChatPage() {
       const assistantMsg = { role: 'assistant', content: response, timestamp: Date.now(), animate: true };
 
       setConversations(prev => prev.map(c =>
-        c.id === convId ? { ...c, messages: [...c.messages.filter(m => m !== userMsg), userMsg, assistantMsg] } : c
+        c.id === convId ? { ...c, messages: [...c.messages, assistantMsg] } : c
       ));
     } catch (err) {
       const errorMsg = { role: 'assistant', content: `Error: ${err.message}`, timestamp: Date.now(), animate: true };
@@ -121,7 +128,7 @@ export function AIChatPage() {
     } finally {
       setSending(false);
     }
-  }, [input, sending, activeConvId, createConversation, conversations, setConversations, generate]);
+  }, [input, sending, activeConvId, createConversation, setConversations, generate]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
