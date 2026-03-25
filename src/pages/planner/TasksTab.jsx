@@ -160,7 +160,7 @@ function TaskGroup({ title, tasks, onToggle, onDelete, onUpdate, onBreakDown, ha
 
 export function TasksTab() {
   const { tasks, addTask, toggleComplete, deleteTask, updateTask, reorderTasks } = useTasks();
-  const { generate, loading: aiLoading, hasKey } = useGemini();
+  const { generate, generateStructured, loading: aiLoading, hasKey } = useGemini();
   const today = getTodayStr();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -182,8 +182,18 @@ export function TasksTab() {
     const incompleteTasks = tasks.filter((t) => !t.completed);
     try {
       const prompt = buildPrioritizePrompt(incompleteTasks);
-      const raw = await generate(prompt);
-      const result = parsePrioritizeResponse(raw);
+      const result = await generateStructured({
+        system: 'You are a productivity assistant. Prioritize tasks by urgency, deadlines, and impact.',
+        prompt,
+        schema: {
+          type: 'OBJECT',
+          properties: {
+            order: { type: 'ARRAY', items: { type: 'STRING' }, description: 'Task IDs in priority order' },
+            reasoning: { type: 'ARRAY', items: { type: 'STRING' }, description: 'Brief explanation for top 3 tasks' },
+          },
+          required: ['order', 'reasoning'],
+        },
+      });
       setAiPrioritySuggestion(result);
     } catch {}
   };
@@ -198,11 +208,18 @@ export function TasksTab() {
   const handleBreakDown = async (task) => {
     setBreakDownLoading(task.id);
     try {
-      const prompt = buildBreakDownPrompt(task.title, task.notes);
-      const raw = await generate(prompt);
-      const subtasks = parseBreakDownResponse(raw);
-      for (const st of subtasks) {
-        addTask({ title: st, priority: task.priority, parentId: task.id, dueDate: task.dueDate });
+      const subtasks = await generateStructured({
+        system: 'You break down tasks into concrete, actionable sub-tasks. Each should be completable in one sitting.',
+        prompt: `Break down this task into 3-5 sub-tasks:\n\nTask: "${task.title}"\nNotes: "${task.notes || 'none'}"`,
+        schema: {
+          type: 'ARRAY',
+          items: { type: 'STRING' },
+        },
+      });
+      if (Array.isArray(subtasks)) {
+        for (const st of subtasks) {
+          addTask({ title: st, priority: task.priority, parentId: task.id, dueDate: task.dueDate });
+        }
       }
     } catch {}
     setBreakDownLoading(null);

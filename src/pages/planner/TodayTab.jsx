@@ -33,7 +33,7 @@ const TIME_SLOTS = generateTimeSlots();
 
 export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
   const { schedule, addEvent, updateEvent, deleteEvent, setScheduleForDate } = useTodaySchedule(dateStr);
-  const { generate, loading: aiLoading, hasKey } = useGemini();
+  const { generate, generateStructured, loading: aiLoading, hasKey } = useGemini();
 
   const [activeSlot, setActiveSlot] = useState(null); // slot time string or event id being edited
   const [editMode, setEditMode] = useState(null); // 'add' | 'edit'
@@ -99,9 +99,24 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
   const handlePlanMyDay = async () => {
     try {
       const prompt = buildPlanMyDayPrompt(tasks, schedule);
-      const raw = await generate(prompt);
-      const events = parseScheduleResponse(raw);
-      if (events.length > 0) {
+      const events = await generateStructured({
+        system: 'You are a productivity assistant. Create realistic time-blocked schedules. Only use times between 06:00 and 23:00.',
+        prompt,
+        schema: {
+          type: 'ARRAY',
+          items: {
+            type: 'OBJECT',
+            properties: {
+              slotTime: { type: 'STRING', description: 'HH:MM in 24-hour format' },
+              title: { type: 'STRING' },
+              duration: { type: 'INTEGER', description: '30, 60, or 120 minutes' },
+              color: { type: 'STRING', enum: ['amber', 'blue', 'green', 'red'] },
+            },
+            required: ['slotTime', 'title', 'duration', 'color'],
+          },
+        },
+      });
+      if (Array.isArray(events) && events.length > 0) {
         setAiSuggestion(events);
         setShowConfirm(true);
       }

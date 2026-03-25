@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useGemini } from '../../hooks/useGemini';
-import { buildScoreResumePrompt, parseScoreResponse, resumeToText } from './resumeGemini';
+import { buildScoreResumePrompt, SCORE_SCHEMA, parseScoreResponse, resumeToText } from './resumeGemini';
 
 export function ResumePreview({ resumeData }) {
-  const { generate, loading, hasKey } = useGemini();
+  const { generateStructured, loading, hasKey } = useGemini();
   const [scoreResult, setScoreResult] = useState(null);
   const [scoring, setScoring] = useState(false);
 
@@ -13,8 +13,11 @@ export function ResumePreview({ resumeData }) {
     setScoring(true);
     try {
       const text = resumeToText(resumeData);
-      const prompt = buildScoreResumePrompt(text);
-      const result = await generate(prompt);
+      const result = await generateStructured({
+        system: 'You are an expert resume reviewer. Be specific and actionable in your feedback.',
+        prompt: buildScoreResumePrompt(text),
+        schema: SCORE_SCHEMA,
+      });
       setScoreResult(parseScoreResponse(result));
     } catch {
       // ignore

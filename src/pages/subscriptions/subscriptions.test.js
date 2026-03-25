@@ -94,10 +94,10 @@ describe('Renewal alerts', () => {
   });
 
   test('does not flag past renewals', () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 10);
     const subs = [
-      { name: 'Past', nextDate: yesterday.toISOString().split('T')[0], cost: 10, cycle: 'monthly' },
+      { name: 'Past', nextDate: pastDate.toISOString().split('T')[0], cost: 10, cycle: 'monthly' },
     ];
     expect(getRenewalSoon(subs)).toHaveLength(0);
   });

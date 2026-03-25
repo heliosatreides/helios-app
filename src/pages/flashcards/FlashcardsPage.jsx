@@ -139,7 +139,7 @@ function CardManager({ deck, onUpdate, onBack }) {
   const [aiText, setAiText] = useState('');
   const [aiError, setAiError] = useState(null);
   const [studying, setStudying] = useState(false);
-  const { generate, hasKey } = useGemini();
+  const { generateStructured, hasKey } = useGemini();
 
   const today = new Date().toISOString().slice(0, 10);
   const due = getCardsDueToday(deck.cards || [], today);
@@ -164,12 +164,21 @@ function CardManager({ deck, onUpdate, onBack }) {
     setAiLoading(true);
     setAiError(null);
     try {
-      const raw = await generate(
-        `Based on this content, generate exactly 5 flashcard question-answer pairs:\n\n${aiText}\n\nReturn ONLY a JSON array like: [{"front":"Q1","back":"A1"},{"front":"Q2","back":"A2"},...]`
-      );
-      const match = raw.match(/\[[\s\S]*\]/);
-      if (!match) throw new Error('Could not parse response');
-      const cards = JSON.parse(match[0]);
+      const cards = await generateStructured({
+        system: 'You generate flashcard question-answer pairs from study material. Be concise and test key concepts.',
+        prompt: `Generate exactly 5 flashcard question-answer pairs from this content:\n\n${aiText}`,
+        schema: {
+          type: 'ARRAY',
+          items: {
+            type: 'OBJECT',
+            properties: {
+              front: { type: 'STRING', description: 'The question' },
+              back: { type: 'STRING', description: 'The answer' },
+            },
+            required: ['front', 'back'],
+          },
+        },
+      });
       let updatedDeck = deck;
       cards.slice(0, 5).forEach((c) => {
         updatedDeck = addCardToDeck(updatedDeck, { front: c.front, back: c.back });

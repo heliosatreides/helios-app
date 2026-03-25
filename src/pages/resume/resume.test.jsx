@@ -156,13 +156,13 @@ describe('Gemini prompt builders', () => {
     expect(prompt).toContain('Led a team of 5');
     expect(prompt).toContain('Acme');
     expect(prompt).toContain('Engineer');
-    expect(prompt).toContain('3 alternatives');
+    expect(prompt).toContain('3 more impactful alternatives');
   });
 
   test('buildBulletRewritePrompt works without job context', () => {
     const prompt = buildBulletRewritePrompt('Improved performance by 20%');
     expect(prompt).toContain('Improved performance by 20%');
-    expect(prompt).toContain('1.');
+    expect(prompt).toContain('Rewrite');
   });
 
   test('buildJobTailoringPrompt includes resume summary and job description', () => {

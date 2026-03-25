@@ -1,19 +1,54 @@
 /**
- * Prompt builders for Resume Gemini integration.
+ * Resume Gemini integration — schemas and helpers.
  */
+
+// ── Schemas for structured output ──
+
+export const SCORE_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    score: { type: 'NUMBER', description: 'Score out of 10' },
+    suggestions: {
+      type: 'ARRAY',
+      items: { type: 'STRING' },
+      description: 'Exactly 3 specific, actionable improvement suggestions',
+    },
+  },
+  required: ['score', 'suggestions'],
+};
+
+export const BULLET_ALTERNATIVES_SCHEMA = {
+  type: 'ARRAY',
+  items: { type: 'STRING', description: 'Rewritten bullet point' },
+};
+
+export const JOB_TAILORING_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    summary: { type: 'STRING', description: 'Tailored 2-4 sentence summary' },
+    relevantBullets: {
+      type: 'ARRAY',
+      items: { type: 'STRING' },
+      description: 'Top 3 most relevant experience bullet points',
+    },
+  },
+  required: ['summary', 'relevantBullets'],
+};
+
+// ── Prompt builders ──
 
 export function buildBulletRewritePrompt(bullet, jobContext = {}) {
   const { company = '', role = '' } = jobContext;
-  return `You are a professional resume writer. Rewrite the following resume bullet point to be more impactful, quantified, and action-verb-led. Return exactly 3 alternatives, each on its own line, prefixed with a number (1., 2., 3.). Do not add any other text.
+  return `Rewrite this resume bullet point into 3 more impactful alternatives. Each should be quantified, action-verb-led, and concise.
 
 Job context: ${role}${company ? ` at ${company}` : ''}
-Original bullet: ${bullet}`;
+Original: ${bullet}`;
 }
 
 export function buildSummaryImprovePrompt(summary) {
-  return `You are a professional resume writer. Rewrite the following professional summary to be more impactful, concise (2-4 sentences), and compelling to hiring managers. Return only the improved summary text with no additional commentary.
+  return `Rewrite this professional summary to be more compelling, concise (2-4 sentences), and impactful for hiring managers. Return only the improved text.
 
-Original summary: ${summary}`;
+Original: ${summary}`;
 }
 
 export function buildJobTailoringPrompt(resumeData, jobDescription) {
@@ -23,7 +58,7 @@ export function buildJobTailoringPrompt(resumeData, jobDescription) {
     .map((e) => `${e.role} at ${e.company}: ${(e.bullets || []).join('; ')}`)
     .join('\n');
 
-  return `You are a professional resume writer helping tailor a resume for a specific job.
+  return `Tailor this resume for the job description below.
 
 Candidate: ${name}
 Current Summary: ${currentSummary}
@@ -31,61 +66,31 @@ Experience:
 ${experience}
 
 Job Description:
-${jobDescription}
-
-Please provide:
-1. A tailored summary (2-4 sentences) that aligns with this job
-2. The top 3 experience bullet points from the resume that are most relevant to this role
-
-Format your response as:
-SUMMARY:
-[tailored summary here]
-
-RELEVANT BULLETS:
-- [bullet 1]
-- [bullet 2]
-- [bullet 3]`;
+${jobDescription}`;
 }
 
 export function buildScoreResumePrompt(resumeText) {
-  return `You are an expert resume reviewer. Analyze the following resume and provide:
-1. A score out of 10
-2. Exactly 3 specific, actionable improvement suggestions
-
-Format your response as:
-SCORE: [number]/10
-
-SUGGESTIONS:
-1. [suggestion 1]
-2. [suggestion 2]
-3. [suggestion 3]
+  return `Analyze this resume and provide a score out of 10 with exactly 3 specific, actionable suggestions.
 
 Resume:
 ${resumeText}`;
 }
 
-export function parseScoreResponse(text) {
-  const scoreMatch = text.match(/SCORE:\s*(\d+(?:\.\d+)?)\s*\/\s*10/i);
+// ── Legacy parsers (kept for backward compat but structured output makes these unnecessary) ──
+
+export function parseScoreResponse(data) {
+  if (typeof data === 'object' && data.score !== undefined) return data;
+  // Fallback text parsing
+  const text = String(data);
+  const scoreMatch = text.match(/(\d+(?:\.\d+)?)\s*\/\s*10/i);
   const score = scoreMatch ? parseFloat(scoreMatch[1]) : null;
-
-  const suggestionsMatch = text.match(/SUGGESTIONS:\s*([\s\S]+)/i);
-  const suggestions = suggestionsMatch
-    ? suggestionsMatch[1]
-        .split('\n')
-        .filter((l) => l.match(/^\d+\./))
-        .map((l) => l.replace(/^\d+\.\s*/, '').trim())
-    : [];
-
+  const suggestions = text.split('\n').filter(l => l.match(/^\d+\./)).map(l => l.replace(/^\d+\.\s*/, '').trim());
   return { score, suggestions };
 }
 
-export function parseBulletAlternatives(text) {
-  return text
-    .split('\n')
-    .filter((l) => l.match(/^\d+\./))
-    .map((l) => l.replace(/^\d+\.\s*/, '').trim())
-    .filter(Boolean)
-    .slice(0, 3);
+export function parseBulletAlternatives(data) {
+  if (Array.isArray(data)) return data.slice(0, 3);
+  return String(data).split('\n').filter(l => l.match(/^\d+\./)).map(l => l.replace(/^\d+\.\s*/, '').trim()).filter(Boolean).slice(0, 3);
 }
 
 export function resumeToText(resumeData) {
@@ -95,22 +100,17 @@ export function resumeToText(resumeData) {
   const h = resumeData.header || {};
   if (h.fullName) lines.push(h.fullName);
   if (h.jobTitle) lines.push(h.jobTitle);
-  const contact = [h.email, h.phone, h.location, h.linkedin, h.github, h.website]
-    .filter(Boolean)
-    .join(' | ');
+  const contact = [h.email, h.phone, h.location, h.linkedin, h.github, h.website].filter(Boolean).join(' | ');
   if (contact) lines.push(contact);
 
-  if (resumeData.summary) {
-    lines.push('\nSUMMARY');
-    lines.push(resumeData.summary);
-  }
+  if (resumeData.summary) { lines.push('\nSUMMARY'); lines.push(resumeData.summary); }
 
   if (resumeData.experience?.length) {
     lines.push('\nEXPERIENCE');
     resumeData.experience.forEach((e) => {
       lines.push(`${e.role} at ${e.company}`);
       lines.push(`${e.startDate} - ${e.present ? 'Present' : e.endDate}`);
-      (e.bullets || []).forEach((b) => lines.push(`• ${b}`));
+      (e.bullets || []).forEach((b) => lines.push(`- ${b}`));
     });
   }
 
@@ -123,21 +123,12 @@ export function resumeToText(resumeData) {
   }
 
   const skills = resumeData.skills || {};
-  const allSkills = [
-    ...(skills.technical || []),
-    ...(skills.tools || []),
-    ...(skills.soft || []),
-  ];
-  if (allSkills.length) {
-    lines.push('\nSKILLS');
-    lines.push(allSkills.join(', '));
-  }
+  const allSkills = [...(skills.technical || []), ...(skills.tools || []), ...(skills.soft || [])];
+  if (allSkills.length) { lines.push('\nSKILLS'); lines.push(allSkills.join(', ')); }
 
   if (resumeData.certifications?.length) {
     lines.push('\nCERTIFICATIONS');
-    resumeData.certifications.forEach((c) => {
-      lines.push(`${c.name} - ${c.issuer} (${c.year})`);
-    });
+    resumeData.certifications.forEach((c) => lines.push(`${c.name} - ${c.issuer} (${c.year})`));
   }
 
   if (resumeData.projects?.length) {
@@ -145,7 +136,6 @@ export function resumeToText(resumeData) {
     resumeData.projects.forEach((p) => {
       lines.push(`${p.name}: ${p.description}`);
       if (p.url) lines.push(p.url);
-      if (p.tags?.length) lines.push(p.tags.join(', '));
     });
   }
 

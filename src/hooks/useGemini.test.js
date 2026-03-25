@@ -106,7 +106,7 @@ describe('useGemini', () => {
 
     const { result } = renderHook(() => useGemini());
     let genPromise;
-    act(() => { genPromise = result.current.generate('test'); });
+    await act(async () => { genPromise = result.current.generate('test'); await new Promise(r => setTimeout(r, 0)); });
 
     expect(result.current.loading).toBe(true);
 
@@ -129,5 +129,47 @@ describe('useGemini', () => {
 
     const url = mockFetch.mock.calls[0][0];
     expect(url).toContain('key=AIza_MY_KEY_XYZ');
+  });
+
+  it('generateStructured sends schema and system instruction', async () => {
+    storageMock.setItem('helios-gemini-key', 'AIzaFake');
+    mockFetch.mockResolvedValueOnce(geminiOkResponse('[{"q":"What?","a":"Yes"}]'));
+
+    const { result } = renderHook(() => useGemini());
+    let data;
+    await act(async () => {
+      data = await result.current.generateStructured({
+        prompt: 'Generate flashcards',
+        system: 'You are a teacher',
+        schema: { type: 'ARRAY', items: { type: 'OBJECT', properties: { q: { type: 'STRING' }, a: { type: 'STRING' } } } },
+      });
+    });
+
+    // Should parse JSON when schema is provided
+    expect(Array.isArray(data)).toBe(true);
+    expect(data[0].q).toBe('What?');
+
+    // Check request body
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(body.systemInstruction).toBeDefined();
+    expect(body.systemInstruction.parts[0].text).toBe('You are a teacher');
+    expect(body.generationConfig.responseMimeType).toBe('application/json');
+    expect(body.generationConfig.responseSchema).toBeDefined();
+  });
+
+  it('generateStructured returns text when JSON parse fails', async () => {
+    storageMock.setItem('helios-gemini-key', 'AIzaFake');
+    mockFetch.mockResolvedValueOnce(geminiOkResponse('not json'));
+
+    const { result } = renderHook(() => useGemini());
+    let data;
+    await act(async () => {
+      data = await result.current.generateStructured({
+        prompt: 'test',
+        schema: { type: 'OBJECT', properties: {} },
+      });
+    });
+
+    expect(data).toBe('not json');
   });
 });

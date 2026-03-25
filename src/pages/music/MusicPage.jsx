@@ -45,7 +45,7 @@ export function MusicPage() {
   });
   const [songs, setSongs] = useState([]);
   const [rawText, setRawText] = useState('');
-  const { generate, loading, error } = useGemini();
+  const { generateStructured, loading, error } = useGemini();
 
   function toggleGenre(g) {
     setGenres(prev => {
@@ -58,10 +58,30 @@ export function MusicPage() {
   async function getSuggestions() {
     if (!mood) return;
     const genreStr = genres.length > 0 ? `Genre preferences: ${genres.join(', ')}.` : '';
-    const resp = await generate(`You are a music recommendation expert. Suggest exactly 5 songs for someone who is feeling "${mood}". ${genreStr}\n\nFor each song, use this format:\n1. Song Title - Artist\n   Why it fits: Brief reason (1-2 sentences)\n\n2. Song Title - Artist\n   Why it fits: Brief reason\n\n(continue for 5 songs)\n\nBe specific with real songs and artists.`);
-    setRawText(resp);
-    const parsed = parseSongs(resp);
-    setSongs(parsed || []);
+    try {
+      const result = await generateStructured({
+        system: 'You are a music recommendation expert. Only suggest real, well-known songs and artists.',
+        prompt: `Suggest exactly 5 songs for someone feeling "${mood}". ${genreStr}`,
+        schema: {
+          type: 'ARRAY',
+          items: {
+            type: 'OBJECT',
+            properties: {
+              song: { type: 'STRING', description: 'Song title' },
+              artist: { type: 'STRING', description: 'Artist name' },
+              reason: { type: 'STRING', description: 'Why this fits the mood (1-2 sentences)' },
+            },
+            required: ['song', 'artist', 'reason'],
+          },
+        },
+      });
+      if (Array.isArray(result)) {
+        setSongs(result);
+        setRawText('');
+      }
+    } catch {
+      setSongs([]);
+    }
   }
 
   function likeSong(song) {

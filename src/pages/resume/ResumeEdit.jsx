@@ -4,6 +4,8 @@ import {
   buildBulletRewritePrompt,
   buildSummaryImprovePrompt,
   buildJobTailoringPrompt,
+  BULLET_ALTERNATIVES_SCHEMA,
+  JOB_TAILORING_SCHEMA,
   parseBulletAlternatives,
 } from './resumeGemini';
 
@@ -75,15 +77,18 @@ function SkillTagInput({ label, skills, onAdd, onRemove }) {
 
 // ── Bullet row with optional Gemini rewrite ──────────────────────────────────
 function BulletRow({ bullet, index, expId, jobContext, onUpdate, onRemove, hasKey }) {
-  const { generate } = useGemini();
+  const { generateStructured } = useGemini();
   const [alts, setAlts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   async function handleRewrite() {
     setLoading(true);
     try {
-      const prompt = buildBulletRewritePrompt(bullet, jobContext);
-      const result = await generate(prompt);
+      const result = await generateStructured({
+        system: 'You are a professional resume writer. Rewrite bullet points to be impactful, quantified, and action-verb-led.',
+        prompt: buildBulletRewritePrompt(bullet, jobContext),
+        schema: BULLET_ALTERNATIVES_SCHEMA,
+      });
       setAlts(parseBulletAlternatives(result));
     } catch {
       // ignore
@@ -144,24 +149,30 @@ function BulletRow({ bullet, index, expId, jobContext, onUpdate, onRemove, hasKe
 
 // ── Main Edit component ──────────────────────────────────────────────────────
 export function ResumeEdit({ resumeData, actions }) {
-  const { generate, hasKey } = useGemini();
+  const { generate, generateStructured, hasKey } = useGemini();
   const [tailorOpen, setTailorOpen] = useState(false);
   const [jobDesc, setJobDesc] = useState('');
   const [tailoring, setTailoring] = useState(false);
+  const [tailorResult, setTailorResult] = useState(null);
   const [improvingSummary, setImprovingSummary] = useState(false);
 
   async function handleTailor() {
     if (!jobDesc.trim()) return;
     setTailoring(true);
     try {
-      const prompt = buildJobTailoringPrompt(resumeData, jobDesc);
-      await generate(prompt);
-      // Response is shown as info; could parse and apply
+      const result = await generateStructured({
+        system: 'You are a professional resume writer helping tailor resumes for specific jobs.',
+        prompt: buildJobTailoringPrompt(resumeData, jobDesc),
+        schema: JOB_TAILORING_SCHEMA,
+      });
+      setTailorResult(result);
+      if (result?.summary) {
+        actions.updateSummary(result.summary);
+      }
     } catch {
       // ignore
     } finally {
       setTailoring(false);
-      setTailorOpen(false);
     }
   }
 
@@ -169,8 +180,7 @@ export function ResumeEdit({ resumeData, actions }) {
     if (!resumeData.summary) return;
     setImprovingSummary(true);
     try {
-      const prompt = buildSummaryImprovePrompt(resumeData.summary);
-      const result = await generate(prompt);
+      const result = await generate(buildSummaryImprovePrompt(resumeData.summary));
       actions.updateSummary(result.trim());
     } catch {
       // ignore
