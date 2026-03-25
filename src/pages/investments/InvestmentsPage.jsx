@@ -8,9 +8,9 @@ import { AiSuggestion } from '../../components/AiSuggestion';
 import { calculateAssetAllocation } from './investments.utils';
 
 const TABS = [
-  { id: 'portfolio', label: '📊 Portfolio' },
-  { id: 'watchlist', label: '👀 Watchlist' },
-  { id: 'strategy', label: '📝 Strategy' },
+  { id: 'portfolio', label: 'Portfolio' },
+  { id: 'watchlist', label: 'Watchlist' },
+  { id: 'strategy', label: 'Strategy' },
 ];
 
 export function InvestmentsPage() {

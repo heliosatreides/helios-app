@@ -133,14 +133,14 @@ export function WaterTracker({ goal = 8 }) {
             onClick={decrement}
             data-testid="water-decrement"
             disabled={glasses === 0}
-            className="w-8 h-8 rounded-full bg-secondary hover:bg-[#3f3f46] text-foreground font-bold disabled:opacity-30 transition-colors"
+            className="w-11 h-11 bg-secondary hover:bg-secondary/80 text-foreground font-bold disabled:opacity-30 transition-colors"
           >
             −
           </button>
           <button
             onClick={increment}
             data-testid="water-increment"
-            className="w-8 h-8 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold transition-colors"
+            className="w-11 h-11 bg-foreground hover:bg-foreground/90 text-background font-bold transition-colors"
           >
             +
           </button>
@@ -209,7 +209,7 @@ export function MoodJournal() {
               className={`px-3 py-1.5 text-sm border transition-colors ${
                 selectedMood === m.value
                   ? 'border-amber-500 bg-amber-500/20 text-amber-300'
-                  : 'border-border text-muted-foreground hover:border-[#3f3f46]'
+                  : 'border-border text-muted-foreground hover:border-muted-foreground'
               }`}
             >
               {m.label}
@@ -225,7 +225,7 @@ export function MoodJournal() {
             onChange={(e) => setNote(e.target.value)}
             placeholder="Optional note (1-2 sentences)…"
             rows={2}
-            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none resize-none"
           />
           <button
             onClick={handleSave}

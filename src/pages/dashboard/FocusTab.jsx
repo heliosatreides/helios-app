@@ -206,7 +206,7 @@ const PomodoroTimer = forwardRef(function PomodoroTimer(props, ref) {
           <button
             type="button"
             onClick={handlePause}
-            className="bg-secondary hover:bg-[#3f3f46] text-foreground font-semibold px-5 py-2 text-sm transition-colors"
+            className="bg-secondary hover:bg-secondary/80 text-foreground font-semibold px-5 py-2 text-sm transition-colors"
           >
             ⏸ Pause
           </button>
@@ -250,7 +250,7 @@ const PomodoroTimer = forwardRef(function PomodoroTimer(props, ref) {
             max="60"
             value={workMins}
             onChange={(e) => { const v = Number(e.target.value); setWorkMins(v); if (timerState === IDLE) setSecondsLeft(v * 60); }}
-            className="w-12 bg-background border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-12 bg-background border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:border-foreground"
           />
           min
         </label>
@@ -262,7 +262,7 @@ const PomodoroTimer = forwardRef(function PomodoroTimer(props, ref) {
             max="30"
             value={breakMins}
             onChange={(e) => setBreakMins(Number(e.target.value))}
-            className="w-12 bg-background border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-12 bg-background border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:border-foreground"
           />
           min
         </label>
@@ -320,7 +320,7 @@ function HabitTracker() {
     }
   };
 
-  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:border-foreground w-full';
 
   return (
     <div className="space-y-4">
@@ -340,7 +340,7 @@ function HabitTracker() {
                     <button
                       type="button"
                       onClick={() => handleToggle(habit.id)}
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${doneToday ? 'bg-opacity-100 border-opacity-100' : 'bg-transparent border-[#3f3f46]'}`}
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${doneToday ? 'bg-opacity-100 border-opacity-100' : 'bg-transparent border-muted-foreground'}`}
                       style={doneToday ? { backgroundColor: habit.color, borderColor: habit.color } : {}}
                       aria-label={doneToday ? 'Mark incomplete' : 'Mark complete'}
                     >
@@ -443,7 +443,7 @@ function HabitTracker() {
             value={goalsInput}
             onChange={(e) => setGoalsInput(e.target.value)}
             placeholder="What are your main goals? (e.g. get fit, read more, learn coding)"
-            className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:border-foreground"
           />
           <button
             type="button"
@@ -514,7 +514,7 @@ function QuickNotes({ onAddTasks }) {
         onChange={(e) => setNotes(e.target.value)}
         placeholder="Start writing… (auto-saved)"
         rows={8}
-        className="w-full bg-background border border-border px-4 py-3 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none font-mono"
+        className="w-full bg-background border border-border px-4 py-3 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:border-foreground resize-none font-mono"
       />
 
       {/* Markdown-ish preview */}

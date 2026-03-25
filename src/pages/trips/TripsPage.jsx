@@ -64,7 +64,7 @@ export function TripsPage() {
               <h2 className="text-lg font-semibold text-foreground">Trips</h2>
               <Link
                 to="/trips/new"
-                className="bg-foreground hover:bg-[#d97706] text-black font-semibold px-4 py-2 transition-colors"
+                className="bg-foreground hover:bg-foreground/90 text-background font-semibold px-4 py-2 transition-colors"
               >
                 + New Trip
               </Link>

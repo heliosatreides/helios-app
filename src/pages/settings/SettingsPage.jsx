@@ -257,7 +257,7 @@ export function SettingsPage() {
     showExportFlash('trips');
   };
 
-  const inputCls = 'bg-background border border-border px-4 py-2.5 text-foreground text-sm placeholder-[#3f3f46] focus:outline-none focus:ring-1 focus:ring-ring transition-all w-full';
+  const inputCls = 'bg-background border border-border px-4 py-2.5 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-all w-full';
 
   // Developer settings
   const [githubUsername, setGithubUsername] = useState(() => localStorage.getItem('settings-github-username') || '');
@@ -283,10 +283,10 @@ export function SettingsPage() {
   };
 
   const tabs = [
-    { id: 'ai', label: '✨ AI Integration' },
-    { id: 'export', label: '📦 Export Data' },
-    { id: 'developer', label: '🛠️ Developer' },
-    { id: 'health', label: '💚 Health' },
+    { id: 'ai', label: 'AI Integration' },
+    { id: 'export', label: 'Export Data' },
+    { id: 'developer', label: 'Developer' },
+    { id: 'health', label: 'Health' },
   ];
 
   return (
@@ -332,7 +332,7 @@ export function SettingsPage() {
               </p>
               <div className="flex gap-2">
                 <input
-                  className="bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:ring-1 focus:ring-ring flex-1"
+                  className="bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring flex-1"
                   type="password"
                   placeholder="Password"
                   value={reAuthPwd}

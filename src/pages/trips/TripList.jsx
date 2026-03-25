@@ -10,7 +10,7 @@ const STATUS_COLORS = {
 
 function StatusBadge({ status }) {
   return (
-    <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${STATUS_COLORS[status] || 'bg-zinc-800 text-zinc-400'}`}>
+    <span className={`px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLORS[status] || 'bg-zinc-800 text-zinc-400'}`}>
       {status}
     </span>
   );
