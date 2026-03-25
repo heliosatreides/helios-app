@@ -5,6 +5,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { exportAllAsJSON, exportAsCSV } from '../../utils/exportData';
 import { ImportButton } from '../../components/ImportButton';
 import { mergeById, mergeByTicker } from '../../utils/importData';
+import { TabBar } from '../../components/ui';
 
 const AI_KEY_ENC_LS = 'helios-gemini-key-enc';
 
@@ -297,21 +298,7 @@ export function SettingsPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 border-b border-border">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2.5 text-sm font-medium rounded-t-xl transition-all ${
-              activeTab === tab.id
-                ? 'text-foreground border-b-2 border-foreground -mb-px'
-                : 'text-muted-foreground/80 hover:text-muted-foreground'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <TabBar tabs={tabs} active={activeTab} onChange={setActiveTab} />
 
       {/* AI Integration Tab */}
       {activeTab === 'ai' && (

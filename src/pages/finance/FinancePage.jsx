@@ -3,6 +3,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { ActionButton } from '../../components/ui';
 import { AccountList } from './AccountList';
 import { AddAccountModal } from './AddAccountModal';
 import { TransactionList } from './TransactionList';
@@ -386,13 +387,9 @@ export function FinancePage() {
           </div>
           {hasKey && (
             <div>
-              <button
-                onClick={handleAiInsights}
-                disabled={aiInsightsLoading}
-                className="flex items-center gap-2 text-sm text-foreground hover:underline disabled:opacity-40 border border-amber-500/30 px-4 py-2 transition-colors"
-              >
+              <ActionButton variant="ai" onClick={handleAiInsights} disabled={aiInsightsLoading}>
                 {aiInsightsLoading ? '⏳ Analyzing…' : '✨ Monthly insights'}
-              </button>
+              </ActionButton>
               <AiSuggestion loading={aiInsightsLoading} result={aiInsights} error={aiInsightsError} />
             </div>
           )}

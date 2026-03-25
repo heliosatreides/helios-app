@@ -4,6 +4,7 @@ import { useResumeVersions } from './useResumeVersions';
 import { ResumeEdit } from './ResumeEdit';
 import { ResumePreview } from './ResumePreview';
 import { ResumeVersions } from './ResumeVersions';
+import { TabBar } from '../../components/ui';
 
 const TABS = ['Edit', 'Preview', 'Versions'];
 
@@ -91,21 +92,7 @@ export function ResumePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-secondary border border-border p-1 w-fit">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === tab
-                ? 'bg-amber-500 text-black'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
       {/* Tab content */}
       {activeTab === 'Edit' && <ResumeEdit resumeData={resumeData} actions={actions} />}

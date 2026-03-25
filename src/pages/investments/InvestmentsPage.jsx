@@ -3,6 +3,7 @@ import { Portfolio } from './Portfolio';
 import { Watchlist } from './Watchlist';
 import { StrategyNotes } from './StrategyNotes';
 import { useGemini } from '../../hooks/useGemini';
+import { ActionButton } from '../../components/ui';
 import { useIDB } from '../../hooks/useIDB';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { calculateAssetAllocation } from './investments.utils';
@@ -66,13 +67,9 @@ export function InvestmentsPage() {
       {/* AI Analyze Portfolio — shown in portfolio tab when key is set */}
       {activeTab === 'portfolio' && hasKey && (
         <div>
-          <button
-            onClick={handleAiAnalysis}
-            disabled={aiAnalysisLoading}
-            className="flex items-center gap-2 text-sm text-foreground hover:underline disabled:opacity-40 border border-amber-500/30 px-4 py-2 transition-colors"
-          >
+          <ActionButton variant="ai" onClick={handleAiAnalysis} disabled={aiAnalysisLoading}>
             {aiAnalysisLoading ? '⏳ Analyzing…' : '✨ Analyze portfolio'}
-          </button>
+          </ActionButton>
           <AiSuggestion loading={aiAnalysisLoading} result={aiAnalysis} error={aiError} />
         </div>
       )}

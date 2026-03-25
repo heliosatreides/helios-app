@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGemini } from '../../hooks/useGemini';
 import { buildFeedUrl, formatRelativeTime, FEED_TOPICS, parseRssResponse } from './newsUtils';
+import { EmptyState } from '../../components/ui';
 
 const PAGE_SIZE = 10;
 const REFRESH_INTERVAL_MS = 10 * 60 * 1000;
@@ -266,7 +267,7 @@ export function NewsPage() {
       )}
 
       {!loading && !error && articles.length === 0 && (
-        <p className="text-muted-foreground/60 text-sm text-center py-12">No articles found.</p>
+        <EmptyState title="No articles found" description="Try selecting a different topic or check back later." />
       )}
     </div>
   );

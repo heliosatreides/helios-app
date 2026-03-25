@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { EmptyState } from '../../components/ui';
 import {
   createDeck,
   createCard,
@@ -306,7 +307,7 @@ function CardManager({ deck, onUpdate, onBack }) {
 
       {/* Card list */}
       {(deck.cards || []).length === 0 && (
-        <p className="text-muted-foreground/80 text-sm text-center py-6">No cards yet. Add some to get started!</p>
+        <EmptyState title="No cards yet" description="Add some to get started!" />
       )}
       <div className="space-y-2">
         {(deck.cards || []).map((card) => (

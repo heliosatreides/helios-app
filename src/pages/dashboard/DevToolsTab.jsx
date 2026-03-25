@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { EmptyState } from '../../components/ui';
 import { formatGitHubEventType, eventTypeBadgeClass, searchSnippets, getSnippetLanguages, createSnippet } from './devtools.utils';
 import { PasswordGenerator } from '../password/PasswordGenerator';
 
@@ -284,7 +285,7 @@ function SnippetManager() {
 
       {/* Snippet list */}
       {filtered.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No snippets yet. Add one to get started.</p>
+        <EmptyState title="No snippets yet" description="Add one to get started." />
       ) : (
         <div className="space-y-3">
           {filtered.map((s) => {

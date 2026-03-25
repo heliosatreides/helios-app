@@ -1,3 +1,5 @@
+import { EmptyState } from '../../components/ui';
+
 export function AccountList({ accounts, onEdit, onDelete }) {
   const netWorth = accounts.reduce((sum, a) => sum + a.balance, 0);
 
@@ -10,11 +12,7 @@ export function AccountList({ accounts, onEdit, onDelete }) {
 
   if (accounts.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <div className="text-5xl mb-4">💰</div>
-        <p className="text-lg text-foreground mb-2">Add your first account to get started</p>
-        <p className="text-sm">Track checking, savings, credit cards, and more.</p>
-      </div>
+      <EmptyState title="Add your first account to get started" description="Track checking, savings, credit cards, and more." />
     );
   }
 

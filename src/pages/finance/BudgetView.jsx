@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGemini } from '../../hooks/useGemini';
+import { EmptyState } from '../../components/ui';
 
 export function BudgetView({ budgets, transactions, month }) {
   const { generate, loading: aiLoading, hasKey } = useGemini();
@@ -8,10 +9,7 @@ export function BudgetView({ budgets, transactions, month }) {
 
   if (budgets.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <p className="text-lg">No budget set yet.</p>
-        <p className="text-sm mt-1">Add a budget category to get started.</p>
-      </div>
+      <EmptyState title="No budget set yet" description="Add a budget category to get started." />
     );
   }
 

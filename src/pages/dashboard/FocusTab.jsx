@@ -3,6 +3,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { useTasks, getTodayStr } from '../../hooks/useTasks';
 import { Modal } from '../../components/Modal';
+import { CollapsibleCard, ActionButton } from '../../components/ui';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import {
   pomodoroTransition,
@@ -40,22 +41,7 @@ function AiResultCard({ title, content, onDismiss }) {
 
 // ── Collapsible card wrapper ──────────────────────────────────────────────
 
-function CollapsibleCard({ title, children, defaultOpen = true }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="bg-background border border-border overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-background transition-colors"
-      >
-        <span className="text-foreground font-semibold">{title}</span>
-        <span className="text-muted-foreground/80 text-xs">{open ? '▲' : '▼'}</span>
-      </button>
-      {open && <div className="px-5 pb-5">{children}</div>}
-    </div>
-  );
-}
+// CollapsibleCard imported from ui.jsx
 
 // ── Pomodoro Timer ────────────────────────────────────────────────────────
 
@@ -426,13 +412,9 @@ function HabitTracker() {
           + Add habit
         </button>
         {hasKey && (
-          <button
-            type="button"
-            onClick={() => setShowGoalsInput((s) => !s)}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors"
-          >
+          <ActionButton variant="ai" onClick={() => setShowGoalsInput((s) => !s)}>
             ✨ Suggest habits
-          </button>
+          </ActionButton>
         )}
       </div>
 
@@ -445,14 +427,9 @@ function HabitTracker() {
             placeholder="What are your main goals? (e.g. get fit, read more, learn coding)"
             className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:border-foreground"
           />
-          <button
-            type="button"
-            onClick={handleSuggest}
-            disabled={aiLoading || !goalsInput.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
-          >
+          <ActionButton variant="ai" onClick={handleSuggest} disabled={aiLoading || !goalsInput.trim()}>
             {aiLoading ? '⏳ Thinking…' : '✨ Suggest for me'}
-          </button>
+          </ActionButton>
         </div>
       )}
 
@@ -536,22 +513,12 @@ function QuickNotes({ onAddTasks }) {
 
       {hasKey && (
         <div className="flex gap-2 flex-wrap">
-          <button
-            type="button"
-            onClick={handleSummarize}
-            disabled={aiLoading || !notes?.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
-          >
+          <ActionButton variant="ai" onClick={handleSummarize} disabled={aiLoading || !notes?.trim()}>
             {aiLoading ? '⏳…' : '✨ Summarize'}
-          </button>
-          <button
-            type="button"
-            onClick={handleCreateTasks}
-            disabled={aiLoading || !notes?.trim()}
-            className="bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-foreground text-xs font-medium px-3 py-1.5 transition-colors disabled:opacity-50"
-          >
+          </ActionButton>
+          <ActionButton variant="ai" onClick={handleCreateTasks} disabled={aiLoading || !notes?.trim()}>
             {aiLoading ? '⏳…' : '✨ Create tasks from notes'}
-          </button>
+          </ActionButton>
         </div>
       )}
 

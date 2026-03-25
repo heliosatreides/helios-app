@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { EmptyState } from '../../components/ui';
 
 function parseMarkdown(text) {
   // Basic markdown: headings, bold, italic, code, bullets
@@ -175,7 +176,7 @@ export function WikiPage() {
       <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search pages..." className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
 
       {pages.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground/80">Your wiki is empty. Create your first page!</div>
+        <EmptyState title="Your wiki is empty" description="Create your first page to start building your knowledge base." />
       ) : filtered.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground/80">No pages match "{search}"</div>
       ) : (

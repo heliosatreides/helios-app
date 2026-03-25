@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 export function PageHeader({ title, subtitle, children }) {
   return (
     <div className="flex items-center justify-between mb-6">
@@ -16,14 +18,14 @@ export function Card({ children, className = '', ...props }) {
 
 export function TabBar({ tabs, active, onChange }) {
   return (
-    <div className="flex gap-1 border-b border-border mb-6">
+    <div className="flex gap-1 border border-border p-1 w-fit mb-6">
       {tabs.map((tab) => {
         const label = typeof tab === 'string' ? tab : tab.label;
         const id = typeof tab === 'string' ? tab : tab.id;
         return (
           <button key={id} onClick={() => onChange(id)}
-            className={`px-3 py-2 text-sm font-medium transition-colors ${
-              active === id ? 'text-foreground border-b-2 border-foreground -mb-px' : 'text-muted-foreground hover:text-foreground'
+            className={`px-4 py-2 text-sm font-medium transition-all ${
+              active === id ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
             }`}>{label}</button>
         );
       })}
@@ -39,6 +41,24 @@ export function Badge({ children, variant = 'default', className = '' }) {
     amber: 'bg-secondary text-foreground',
   };
   return <span className={`text-xs px-2 py-0.5 font-medium ${v[variant] || v.default} ${className}`}>{children}</span>;
+}
+
+export function CollapsibleCard({ title, children, defaultOpen = true }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="bg-background border border-border overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-secondary/30 transition-colors"
+        data-testid="collapsible-toggle"
+      >
+        <span className="text-foreground font-semibold">{title}</span>
+        <span className="text-muted-foreground text-xs">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && <div className="px-5 pb-5">{children}</div>}
+    </div>
+  );
 }
 
 export function EmptyState({ title, description, action }) {
@@ -57,6 +77,7 @@ export function ActionButton({ children, variant = 'primary', className = '', ..
     secondary: 'border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50',
     ghost: 'text-muted-foreground hover:text-foreground hover:bg-secondary/50',
     danger: 'border border-red-800 text-red-400 hover:bg-red-950',
+    ai: 'border border-border text-foreground hover:bg-secondary/50 hover:text-foreground',
   };
   return <button className={`px-3 py-1.5 text-sm font-medium transition-colors ${v[variant] || v.primary} ${className}`} {...props}>{children}</button>;
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { createWatchlistItem } from './investments.utils';
+import { EmptyState } from '../../components/ui';
 
 function AddWatchForm({ onAdd, onCancel }) {
   const [form, setForm] = useState({ ticker: '', name: '', targetPrice: '', notes: '' });
@@ -120,11 +121,7 @@ export function Watchlist() {
       )}
 
       {items.length === 0 ? (
-        <div className="text-center py-10 text-muted-foreground">
-          <div className="text-4xl mb-3">👀</div>
-          <p className="text-foreground mb-1">Your watchlist is empty</p>
-          <p className="text-sm">Add tickers to watch for your next investment opportunity.</p>
-        </div>
+        <EmptyState title="Your watchlist is empty" description="Add tickers to watch for your next investment opportunity." />
       ) : (
         <>
           {watching.length > 0 && (

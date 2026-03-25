@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { CollapsibleCard, ActionButton } from '../../components/ui';
 
 // ── Utils ─────────────────────────────────────────────────────────────────
 
@@ -62,23 +63,7 @@ const MOOD_COLORS = {
   rough: 'bg-red-500',
 };
 
-// ── Collapsible card ──────────────────────────────────────────────────────
-function Card({ title, children }) {
-  const [open, setOpen] = useState(true);
-  return (
-    <div className="bg-background border border-border overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-background transition-colors"
-      >
-        <span className="text-foreground font-semibold">{title}</span>
-        <span className="text-muted-foreground/80 text-xs">{open ? '▲' : '▼'}</span>
-      </button>
-      {open && <div className="px-5 pb-5">{children}</div>}
-    </div>
-  );
-}
+// CollapsibleCard imported from ui.jsx
 
 // ── Water Tracker ─────────────────────────────────────────────────────────
 export function WaterTracker({ goal = 8 }) {
@@ -414,31 +399,25 @@ Be encouraging and specific.`;
               <p className="text-foreground text-sm">{digest}</p>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={handleWeeklyDigest}
-              disabled={aiLoading}
-              data-testid="health-digest-btn"
-              className="border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 text-sm font-semibold px-4 py-2 transition-colors disabled:opacity-50"
-            >
+            <ActionButton variant="ai" onClick={handleWeeklyDigest} disabled={aiLoading} data-testid="health-digest-btn">
               {aiLoading ? '⏳ Generating…' : '✨ Weekly Health Digest'}
-            </button>
+            </ActionButton>
           )}
           {digestError && <p className="text-red-400 text-xs mt-1">❌ {digestError}</p>}
         </div>
       )}
 
-      <Card title="💧 Water Tracker">
+      <CollapsibleCard title="💧 Water Tracker">
         <WaterTracker goal={goal} />
-      </Card>
+      </CollapsibleCard>
 
-      <Card title="🧠 Mood Journal">
+      <CollapsibleCard title="🧠 Mood Journal">
         <MoodJournal />
-      </Card>
+      </CollapsibleCard>
 
-      <Card title="😴 Sleep Tracker">
+      <CollapsibleCard title="😴 Sleep Tracker">
         <SleepTracker />
-      </Card>
+      </CollapsibleCard>
     </div>
   );
 }
