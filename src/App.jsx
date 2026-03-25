@@ -40,6 +40,7 @@ import { useIDB } from './hooks/useIDB';
 import { CommandPalette } from './components/CommandPalette';
 import { CommandPaletteProvider } from './components/CommandPaletteContext';
 import { ToastProvider } from './components/Toast';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 
 function AppShell() {
@@ -83,6 +84,7 @@ function AppShell() {
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">
+          <ErrorBoundary>
           <div className="max-w-5xl mx-auto">
             <Routes>
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard trips={trips} accounts={accounts} transactions={transactions} budgets={budgets} portfolio={portfolio} /></ProtectedRoute>} />
@@ -116,6 +118,7 @@ function AppShell() {
               <Route path="/ai" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
             </Routes>
           </div>
+          </ErrorBoundary>
         </main>
       </div>
     </div>
