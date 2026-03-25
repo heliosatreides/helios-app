@@ -6,6 +6,7 @@ import { exportAllAsJSON, exportAsCSV } from '../../utils/exportData';
 import { ImportButton } from '../../components/ImportButton';
 import { mergeById, mergeByTicker } from '../../utils/importData';
 import { TabBar } from '../../components/ui';
+import { useToast } from '../../components/Toast';
 
 const AI_KEY_ENC_LS = 'helios-gemini-key-enc';
 
@@ -54,6 +55,7 @@ export async function callGemini(apiKey, prompt) {
 }
 
 export function SettingsPage() {
+  const toast = useToast();
   const { user, password, needsReauth, login } = useAuth();
   const [activeTab, setActiveTab] = useState('ai');
 
@@ -153,6 +155,7 @@ export function SettingsPage() {
   const showExportFlash = (label) => {
     setExportFlash(label);
     setTimeout(() => setExportFlash(null), 2000);
+    toast.success('Exported successfully');
   };
 
   const handleImportAllJSON = (data) => {
@@ -203,6 +206,7 @@ export function SettingsPage() {
 
     setImportFlash(messages.length ? messages.join(', ') : 'Nothing to import');
     setTimeout(() => setImportFlash(null), 5000);
+    if (messages.length) toast.success('Data imported');
   };
 
   const handleExportJSON = () => {

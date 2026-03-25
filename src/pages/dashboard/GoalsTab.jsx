@@ -5,6 +5,7 @@ import { AiSuggestion } from '../../components/AiSuggestion';
 import { Modal } from '../../components/Modal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { filterObjectivesByTimeframe, getObjectiveStats, getActiveTimeframes } from './goals.utils';
+import { useToast } from '../../components/Toast';
 
 function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -458,6 +459,7 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
 }
 
 export function GoalsTab({ trips = [], budgets = [] }) {
+  const toast = useToast();
   const [objectives, setObjectives] = useIDB('goals-objectives', []);
   const [showAddObjective, setShowAddObjective] = useState(false);
   const [rateResult, setRateResult] = useState(null);
@@ -473,6 +475,7 @@ export function GoalsTab({ trips = [], budgets = [] }) {
   function handleAddObjective(data) {
     setObjectives((prev) => [...prev, { ...data, id: generateId() }]);
     setShowAddObjective(false);
+    toast.success('Objective added');
   }
 
   function handleAddKR(objectiveId, kr) {
@@ -506,6 +509,7 @@ export function GoalsTab({ trips = [], budgets = [] }) {
   function confirmDeleteObjective() {
     setObjectives((prev) => prev.filter((o) => o.id !== deleteTarget));
     setDeleteTarget(null);
+    toast.info('Objective deleted');
   }
 
   async function handleRateProgress() {

@@ -143,7 +143,7 @@ export function Sidebar({ onNavClick }) {
       <div className="px-3 pt-3 pb-1 shrink-0">
         <button
           onClick={openCommandPalette}
-          className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md border border-border text-muted-foreground text-xs hover:bg-secondary transition-colors"
+          className="w-full flex items-center gap-2 px-3 py-2 md:py-1.5 min-h-[44px] md:min-h-0 rounded-md border border-border text-muted-foreground text-xs hover:bg-secondary transition-colors"
         >
           <span className="flex-1 text-left">Search...</span>
           <kbd className="text-[10px] text-muted-foreground font-mono">⌘K</kbd>
@@ -174,7 +174,7 @@ export function Sidebar({ onNavClick }) {
                       to={to}
                       onClick={onNavClick}
                       className={({ isActive }) =>
-                        `block px-3 py-1.5 rounded-md text-[13px] transition-colors ${
+                        `block px-3 py-2 md:py-1.5 rounded-md text-[13px] transition-colors ${
                           isActive
                             ? 'bg-secondary text-foreground font-medium'
                             : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -212,7 +212,7 @@ export function Sidebar({ onNavClick }) {
 
       {user && (
         <div className="px-3 py-3 border-t border-border shrink-0">
-          <div className="flex items-center justify-between px-3 py-1.5">
+          <div className="flex items-center justify-between px-3 py-2 md:py-1.5">
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-6 h-6 rounded-full bg-secondary text-foreground flex items-center justify-center text-[11px] font-medium shrink-0">
                 {user.username[0].toUpperCase()}

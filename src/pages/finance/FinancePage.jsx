@@ -13,6 +13,7 @@ import { BudgetForm } from './BudgetForm';
 import { SpendingChart } from './SpendingChart';
 import { ImportButton } from '../../components/ImportButton';
 import { mergeById, csvRowToTransaction } from '../../utils/importData';
+import { useToast } from '../../components/Toast';
 
 function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -21,6 +22,7 @@ function generateId() {
 const TABS = ['Accounts', 'Transactions', 'Budget'];
 
 export function FinancePage() {
+  const toast = useToast();
   const [accounts, setAccounts] = useIDB('finance-accounts', []);
   const [transactions, setTransactions] = useIDB('finance-transactions', []);
   const [budgets, setBudgets] = useIDB('finance-budgets', []);
@@ -80,6 +82,7 @@ export function FinancePage() {
     }
     setShowAccountModal(false);
     setEditingAccount(null);
+    toast.success(data.id ? 'Account updated' : 'Account added');
   }
 
   function handleDeleteAccount(id) {
@@ -88,6 +91,7 @@ export function FinancePage() {
   function confirmDeleteAccount() {
     setAccounts((prev) => prev.filter((a) => a.id !== deleteAccountTarget));
     setDeleteAccountTarget(null);
+    toast.info('Account deleted');
   }
 
   function handleEditAccount(account) {
@@ -131,6 +135,7 @@ export function FinancePage() {
     }
     setShowTxModal(false);
     setEditingTransaction(null);
+    toast.success(data.id ? 'Transaction updated' : 'Transaction added');
   }
 
   function handleEditTransaction(tx) {
@@ -154,6 +159,7 @@ export function FinancePage() {
     );
     setTransactions((prev) => prev.filter((t) => t.id !== deleteTxTarget));
     setDeleteTxTarget(null);
+    toast.info('Transaction deleted');
   }
 
   // Budget operations
@@ -166,6 +172,7 @@ export function FinancePage() {
       return [...prev, data];
     });
     setShowBudgetForm(false);
+    toast.success('Budget saved');
   }
 
   function handleDeleteBudget(category) {
@@ -174,6 +181,7 @@ export function FinancePage() {
   function confirmDeleteBudget() {
     setBudgets((prev) => prev.filter((b) => b.category !== deleteBudgetTarget));
     setDeleteBudgetTarget(null);
+    toast.info('Budget removed');
   }
 
   async function handleAiInsights() {
@@ -228,7 +236,7 @@ export function FinancePage() {
       {accounts.length > 0 && (
         <div className="bg-background border border-border p-6" data-testid="net-worth-banner">
           <p className="text-muted-foreground text-sm mb-1">Net Worth</p>
-          <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-amber-400' : 'text-red-400'}`} data-testid="net-worth-value">
+          <p className={`text-3xl font-bold ${netWorth >= 0 ? 'text-green-400' : 'text-red-400'}`} data-testid="net-worth-value">
             {netWorth < 0 ? '-' : ''}${Math.abs(netWorth).toLocaleString('en-US', { maximumFractionDigits: 2 })}
           </p>
         </div>

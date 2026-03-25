@@ -41,7 +41,7 @@ export function PlannerPage() {
         ))}
       </div>
 
-      <div className="border border-border p-5">
+      <div className="border-0 md:border md:border-border p-3 md:p-5">
         {activeTab === 'Today' && <TodayTab dateStr={today} tripActivities={todayTripActivities} />}
         {activeTab === 'Tasks' && <TasksTab />}
         {activeTab === 'Calendar' && <CalendarTab />}
