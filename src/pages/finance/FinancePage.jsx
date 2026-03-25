@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { AccountList } from './AccountList';
 import { AddAccountModal } from './AddAccountModal';
 import { TransactionList } from './TransactionList';
@@ -28,6 +29,9 @@ export function FinancePage() {
   const [showTxModal, setShowTxModal] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [showBudgetForm, setShowBudgetForm] = useState(false);
+  const [deleteAccountTarget, setDeleteAccountTarget] = useState(null);
+  const [deleteTxTarget, setDeleteTxTarget] = useState(null);
+  const [deleteBudgetTarget, setDeleteBudgetTarget] = useState(null);
 
   // Filters for transactions
   const [filterAccountId, setFilterAccountId] = useState('');
@@ -78,7 +82,11 @@ export function FinancePage() {
   }
 
   function handleDeleteAccount(id) {
-    setAccounts((prev) => prev.filter((a) => a.id !== id));
+    setDeleteAccountTarget(id);
+  }
+  function confirmDeleteAccount() {
+    setAccounts((prev) => prev.filter((a) => a.id !== deleteAccountTarget));
+    setDeleteAccountTarget(null);
   }
 
   function handleEditAccount(account) {
@@ -130,8 +138,11 @@ export function FinancePage() {
   }
 
   function handleDeleteTransaction(id) {
-    const tx = transactions.find((t) => t.id === id);
-    if (!tx) return;
+    setDeleteTxTarget(id);
+  }
+  function confirmDeleteTransaction() {
+    const tx = transactions.find((t) => t.id === deleteTxTarget);
+    if (!tx) { setDeleteTxTarget(null); return; }
     // Reverse the balance change
     setAccounts((prev) =>
       prev.map((a) => {
@@ -140,7 +151,8 @@ export function FinancePage() {
         return { ...a, balance: a.balance + delta };
       })
     );
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    setTransactions((prev) => prev.filter((t) => t.id !== deleteTxTarget));
+    setDeleteTxTarget(null);
   }
 
   // Budget operations
@@ -156,7 +168,11 @@ export function FinancePage() {
   }
 
   function handleDeleteBudget(category) {
-    setBudgets((prev) => prev.filter((b) => b.category !== category));
+    setDeleteBudgetTarget(category);
+  }
+  function confirmDeleteBudget() {
+    setBudgets((prev) => prev.filter((b) => b.category !== deleteBudgetTarget));
+    setDeleteBudgetTarget(null);
   }
 
   async function handleAiInsights() {
@@ -432,6 +448,28 @@ export function FinancePage() {
           onClose={() => setShowBudgetForm(false)}
         />
       )}
+
+      <ConfirmDialog
+        open={deleteAccountTarget !== null}
+        onClose={() => setDeleteAccountTarget(null)}
+        onConfirm={confirmDeleteAccount}
+        title="Delete account?"
+        message="This will permanently delete this account. Transactions linked to it will remain."
+      />
+      <ConfirmDialog
+        open={deleteTxTarget !== null}
+        onClose={() => setDeleteTxTarget(null)}
+        onConfirm={confirmDeleteTransaction}
+        title="Delete transaction?"
+        message="This will permanently delete this transaction and reverse the balance change."
+      />
+      <ConfirmDialog
+        open={deleteBudgetTarget !== null}
+        onClose={() => setDeleteBudgetTarget(null)}
+        onConfirm={confirmDeleteBudget}
+        title="Delete budget?"
+        message="This will remove this budget category."
+      />
     </div>
   );
 }

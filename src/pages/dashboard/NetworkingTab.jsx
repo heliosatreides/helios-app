@@ -3,6 +3,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { Modal } from '../../components/Modal';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 
 function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -343,6 +344,7 @@ export function NetworkingTab() {
   const [showAdd, setShowAdd] = useState(false);
   const [search, setSearch] = useState('');
   const [filterTag, setFilterTag] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   function handleAddContact(data) {
     setContacts((prev) => [...prev, { ...data, id: generateId() }]);
@@ -350,7 +352,11 @@ export function NetworkingTab() {
   }
 
   function handleDeleteContact(id) {
-    setContacts((prev) => prev.filter((c) => c.id !== id));
+    setDeleteTarget(id);
+  }
+  function confirmDeleteContact() {
+    setContacts((prev) => prev.filter((c) => c.id !== deleteTarget));
+    setDeleteTarget(null);
   }
 
   function handleLogInteraction(contactId, interaction) {
@@ -488,6 +494,14 @@ export function NetworkingTab() {
           onClose={() => setShowAdd(false)}
         />
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeleteContact}
+        title="Delete contact?"
+        message="This will permanently delete this contact and their interaction history."
+      />
     </div>
   );
 }

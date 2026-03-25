@@ -3,6 +3,7 @@ import { useGemini } from '../../hooks/useGemini';
 import { useIDB } from '../../hooks/useIDB';
 import { buildToolSystemPrompt, executeActions } from '../../hooks/useHeliosTools';
 import { Modal } from '../../components/Modal';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
@@ -88,6 +89,7 @@ export function AIChatPage() {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -112,10 +114,19 @@ export function AIChatPage() {
     return id;
   }, [setConversations]);
 
+  const requestDeleteConversation = useCallback((id) => {
+    setDeleteTarget(id);
+  }, []);
+
   const deleteConversation = useCallback((id) => {
     setConversations(prev => prev.filter(c => c.id !== id));
     if (activeConvId === id) setActiveConvId(null);
   }, [setConversations, activeConvId]);
+
+  const confirmDeleteConversation = useCallback(() => {
+    deleteConversation(deleteTarget);
+    setDeleteTarget(null);
+  }, [deleteConversation, deleteTarget]);
 
   // Use a ref to always have current conversations without stale closures
   const conversationsRef = useRef(conversations);
@@ -246,7 +257,7 @@ export function AIChatPage() {
                 {conv.title}
               </button>
               <button
-                onClick={() => deleteConversation(conv.id)}
+                onClick={() => requestDeleteConversation(conv.id)}
                 className="hidden group-hover:block px-2 py-1 text-muted-foreground/40 hover:text-red-400 text-xs"
               >
                 ×
@@ -287,7 +298,7 @@ export function AIChatPage() {
           conversations={conversations}
           activeConvId={activeConvId}
           onSelect={setActiveConvId}
-          onDelete={deleteConversation}
+          onDelete={requestDeleteConversation}
           onCreate={createConversation}
         />
 
@@ -342,6 +353,14 @@ export function AIChatPage() {
           </button>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeleteConversation}
+        title="Delete conversation?"
+        message="This will permanently delete this conversation and its messages."
+      />
     </div>
   );
 }

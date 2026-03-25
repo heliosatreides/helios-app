@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 
 // ── Utils ─────────────────────────────────────────────────────────────────
 
@@ -59,6 +60,7 @@ export function ReadingList() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: '', author: '', url: '', type: 'Book', status: 'Want to Read' });
 
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [aiQuery, setAiQuery] = useState('');
   const [aiResult, setAiResult] = useState(null);
   const [aiError, setAiError] = useState(null);
@@ -87,7 +89,11 @@ export function ReadingList() {
   };
 
   const handleDelete = (id) => {
-    setItems((prev) => (prev || []).filter((i) => i.id !== id));
+    setDeleteTarget(id);
+  };
+  const confirmDelete = () => {
+    setItems((prev) => (prev || []).filter((i) => i.id !== deleteTarget));
+    setDeleteTarget(null);
   };
 
   const handleShouldIRead = async () => {
@@ -208,6 +214,14 @@ export function ReadingList() {
           {aiError && <p className="text-red-400 text-xs">❌ {aiError}</p>}
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Delete item?"
+        message="This will permanently delete this entry."
+      />
     </div>
   );
 }
@@ -221,6 +235,7 @@ export function TILLog() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: '', note: '', tags: '' });
   const [tagFilter, setTagFilter] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [connectResult, setConnectResult] = useState(null);
   const [connectError, setConnectError] = useState(null);
 
@@ -235,7 +250,11 @@ export function TILLog() {
   };
 
   const handleDelete = (id) => {
-    setEntries((prev) => (prev || []).filter((e) => e.id !== id));
+    setDeleteTarget(id);
+  };
+  const confirmDelete = () => {
+    setEntries((prev) => (prev || []).filter((e) => e.id !== deleteTarget));
+    setDeleteTarget(null);
   };
 
   const allTags = useMemo(() => {
@@ -366,6 +385,14 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Delete entry?"
+        message="This will permanently delete this entry."
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 
 function downloadJSON(data, filename) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -13,6 +14,7 @@ function downloadJSON(data, filename) {
 export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
   const [saving, setSaving] = useState(false);
   const [versionName, setVersionName] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   function handleSave() {
     const name = versionName.trim();
@@ -109,7 +111,7 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
                   ⬇️ JSON
                 </button>
                 <button
-                  onClick={() => onDelete(v.id)}
+                  onClick={() => setDeleteTarget(v.id)}
                   className="px-3 py-1.5 text-muted-foreground/80 hover:text-red-400 text-xs transition-colors"
                 >
                   Delete
@@ -119,6 +121,14 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => { onDelete(deleteTarget); setDeleteTarget(null); }}
+        title="Delete version?"
+        message="This will permanently delete this saved version."
+      />
     </div>
   );
 }

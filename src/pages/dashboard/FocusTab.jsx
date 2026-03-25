@@ -3,6 +3,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { useTasks, getTodayStr } from '../../hooks/useTasks';
 import { Modal } from '../../components/Modal';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import {
   pomodoroTransition,
   POMODORO_STATES,
@@ -277,6 +278,7 @@ function HabitTracker() {
   const { generate, loading: aiLoading, hasKey } = useGemini();
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: '', frequency: 'daily', color: '#f59e0b' });
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [aiResult, setAiResult] = useState(null);
   const [aiError, setAiError] = useState(null);
   const [goalsInput, setGoalsInput] = useState('');
@@ -299,7 +301,11 @@ function HabitTracker() {
   };
 
   const handleDelete = (id) => {
-    setHabits((prev) => (prev || []).filter((h) => h.id !== id));
+    setDeleteTarget(id);
+  };
+  const confirmDelete = () => {
+    setHabits((prev) => (prev || []).filter((h) => h.id !== deleteTarget));
+    setDeleteTarget(null);
   };
 
   const handleSuggest = async () => {
@@ -452,6 +458,14 @@ function HabitTracker() {
 
       {aiError && <p className="text-red-400 text-xs">❌ {aiError}</p>}
       {aiResult && <AiResultCard title="Habit Suggestions" content={aiResult} onDismiss={() => setAiResult(null)} />}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Delete habit?"
+        message="This will permanently delete this habit and its tracking data."
+      />
     </div>
   );
 }

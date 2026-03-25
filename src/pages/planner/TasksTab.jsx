@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
 import { useGemini } from '../../hooks/useGemini';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { buildPrioritizePrompt, parsePrioritizeResponse, buildBreakDownPrompt, parseBreakDownResponse } from './geminiUtils';
 
 const PRIORITY_COLORS = {
@@ -165,6 +166,7 @@ export function TasksTab() {
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTask, setNewTask] = useState({ title: '', priority: 'Medium', dueDate: '', notes: '', recurring: 'None' });
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [aiPrioritySuggestion, setAiPrioritySuggestion] = useState(null);
   const [breakDownLoading, setBreakDownLoading] = useState(null);
 
@@ -225,9 +227,17 @@ export function TasksTab() {
     setBreakDownLoading(null);
   };
 
+  const handleDeleteTask = (id) => {
+    setDeleteTarget(id);
+  };
+  const confirmDeleteTask = () => {
+    deleteTask(deleteTarget);
+    setDeleteTarget(null);
+  };
+
   const commonProps = {
     onToggle: toggleComplete,
-    onDelete: deleteTask,
+    onDelete: handleDeleteTask,
     onUpdate: updateTask,
     onBreakDown: handleBreakDown,
     hasKey,
@@ -355,6 +365,14 @@ export function TasksTab() {
           +
         </button>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeleteTask}
+        title="Delete task?"
+        message="This will permanently delete this task."
+      />
     </div>
   );
 }

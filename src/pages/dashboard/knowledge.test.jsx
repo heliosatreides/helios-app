@@ -122,6 +122,10 @@ describe('ReadingList', () => {
     const id = items[0].dataset.testid.replace('reading-item-', '');
     fireEvent.click(screen.getByTestId(`reading-delete-${id}`));
 
+    // Confirm the deletion dialog
+    await waitFor(() => expect(screen.getByTestId('confirm-delete')).toBeTruthy());
+    fireEvent.click(screen.getByTestId('confirm-delete'));
+
     await waitFor(() => {
       expect(screen.queryByText('To Delete')).toBeNull();
     });
@@ -209,6 +213,10 @@ describe('TILLog', () => {
     const entries = screen.getAllByTestId(/^til-entry-/);
     const id = entries[0].dataset.testid.replace('til-entry-', '');
     fireEvent.click(within(entries[0]).getByRole('button'));
+
+    // Confirm the deletion dialog
+    await waitFor(() => expect(screen.getByTestId('confirm-delete')).toBeTruthy());
+    fireEvent.click(screen.getByTestId('confirm-delete'));
 
     await waitFor(() => {
       expect(screen.queryByText('Delete me')).toBeNull();

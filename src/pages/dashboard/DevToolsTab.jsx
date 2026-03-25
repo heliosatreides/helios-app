@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { formatGitHubEventType, eventTypeBadgeClass, searchSnippets, getSnippetLanguages, createSnippet } from './devtools.utils';
 import { PasswordGenerator } from '../password/PasswordGenerator';
 
@@ -173,6 +174,7 @@ function SnippetManager() {
   const [langFilter, setLangFilter] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ title: '', language: '', code: '', notes: '' });
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [aiResults, setAiResults] = useState({});
   const [copied, setCopied] = useState(null);
 
@@ -188,7 +190,11 @@ function SnippetManager() {
   };
 
   const handleDelete = (id) => {
-    setSnippets((prev) => (prev || []).filter((s) => s.id !== id));
+    setDeleteTarget(id);
+  };
+  const confirmDelete = () => {
+    setSnippets((prev) => (prev || []).filter((s) => s.id !== deleteTarget));
+    setDeleteTarget(null);
   };
 
   const handleCopy = async (id, code) => {
@@ -332,6 +338,14 @@ function SnippetManager() {
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Delete snippet?"
+        message="This will permanently delete this entry."
+      />
     </div>
   );
 }

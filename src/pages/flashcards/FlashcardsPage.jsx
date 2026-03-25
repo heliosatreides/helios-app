@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import {
   createDeck,
   createCard,
@@ -446,6 +447,7 @@ function StudyMode({ deck, dueCards, onUpdate, onExit }) {
 export function FlashcardsPage() {
   const [decks, setDecks] = useIDB('flashcard-decks', []);
   const [selectedDeckId, setSelectedDeckId] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const allDecks = decks || [];
 
@@ -455,7 +457,11 @@ export function FlashcardsPage() {
   };
 
   const handleDelete = (id) => {
-    setDecks(allDecks.filter((d) => d.id !== id));
+    setDeleteTarget(id);
+  };
+  const confirmDelete = () => {
+    setDecks(allDecks.filter((d) => d.id !== deleteTarget));
+    setDeleteTarget(null);
   };
 
   const handleUpdateDeck = (updated) => {
@@ -485,6 +491,14 @@ export function FlashcardsPage() {
           onCreate={handleCreate}
         />
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        title="Delete deck?"
+        message="This will permanently delete this deck and all its cards."
+      />
     </div>
   );
 }

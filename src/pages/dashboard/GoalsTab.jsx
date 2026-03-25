@@ -3,6 +3,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { Modal } from '../../components/Modal';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { filterObjectivesByTimeframe, getObjectiveStats, getActiveTimeframes } from './goals.utils';
 
 function generateId() {
@@ -462,6 +463,7 @@ export function GoalsTab({ trips = [], budgets = [] }) {
   const [rateLoading, setRateLoading] = useState(false);
   const [rateError, setRateError] = useState(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState('All');
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const { generate, hasKey } = useGemini();
 
   const activeTimeframes = getActiveTimeframes(objectives || []);
@@ -498,7 +500,11 @@ export function GoalsTab({ trips = [], budgets = [] }) {
   }
 
   function handleDeleteObjective(id) {
-    setObjectives((prev) => prev.filter((o) => o.id !== id));
+    setDeleteTarget(id);
+  }
+  function confirmDeleteObjective() {
+    setObjectives((prev) => prev.filter((o) => o.id !== deleteTarget));
+    setDeleteTarget(null);
   }
 
   async function handleRateProgress() {
@@ -619,6 +625,14 @@ export function GoalsTab({ trips = [], budgets = [] }) {
           onClose={() => setShowAddObjective(false)}
         />
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeleteObjective}
+        title="Delete objective?"
+        message="This will permanently delete this objective and all its key results."
+      />
     </div>
   );
 }
