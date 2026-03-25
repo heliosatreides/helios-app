@@ -286,8 +286,7 @@ export function SettingsPage() {
   const tabs = [
     { id: 'ai', label: 'AI Integration' },
     { id: 'export', label: 'Export Data' },
-    { id: 'developer', label: 'Developer' },
-    { id: 'health', label: 'Health' },
+    { id: 'preferences', label: 'Preferences' },
   ];
 
   return (
@@ -434,14 +433,14 @@ export function SettingsPage() {
           {/* Success flash */}
           {exportFlash && (
             <div className="text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
-              ✅ Exported!
+              Exported successfully
             </div>
           )}
 
           {/* Import flash */}
           {importFlash && (
             <div className="text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
-              ✅ Imported: {importFlash}
+              Imported: {importFlash}
             </div>
           )}
 
@@ -506,62 +505,62 @@ export function SettingsPage() {
         </div>
       )}
 
-      {/* Developer Tab */}
-      {activeTab === 'developer' && (
-        <div className="bg-background border border-border p-6 space-y-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg">🛠️</span>
-            <h2 className="text-foreground font-semibold">Developer Settings</h2>
-          </div>
-          <p className="text-muted-foreground text-sm">Settings used by the Dev Tools widget on the dashboard.</p>
+      {/* Preferences Tab (Developer + Health consolidated) */}
+      {activeTab === 'preferences' && (
+        <div className="bg-background border border-border p-6 space-y-6">
           <div>
-            <label className="block text-muted-foreground text-xs mb-1.5">GitHub Username</label>
-            <input
-              className={inputCls}
-              type="text"
-              placeholder="your-github-username"
-              value={githubUsername}
-              onChange={(e) => setGithubUsername(e.target.value)}
-              data-testid="settings-github-username"
-            />
-            <p className="text-muted-foreground/80 text-xs mt-1">Used to display your GitHub contribution graph on the Dev Tools tab.</p>
+            <h2 className="text-foreground font-semibold">Preferences</h2>
+            <p className="text-muted-foreground text-sm mt-1">Developer tools and health settings.</p>
           </div>
-          <button
-            onClick={handleSaveGithub}
-            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
-          >
-            {ghSaved ? '✓ Saved' : 'Save'}
-          </button>
-        </div>
-      )}
 
-      {/* Health Tab */}
-      {activeTab === 'health' && (
-        <div className="bg-background border border-border p-6 space-y-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg">💚</span>
-            <h2 className="text-foreground font-semibold">Health Settings</h2>
+          {/* Developer section */}
+          <div className="space-y-3">
+            <h3 className="text-muted-foreground text-sm font-medium">Developer</h3>
+            <div>
+              <label className="block text-muted-foreground text-xs mb-1.5">GitHub Username</label>
+              <input
+                className={inputCls}
+                type="text"
+                placeholder="your-github-username"
+                value={githubUsername}
+                onChange={(e) => setGithubUsername(e.target.value)}
+                data-testid="settings-github-username"
+              />
+              <p className="text-muted-foreground/80 text-xs mt-1">Used to display your GitHub contribution graph on the Dev Tools tab.</p>
+            </div>
+            <button
+              onClick={handleSaveGithub}
+              className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
+            >
+              {ghSaved ? '✓ Saved' : 'Save'}
+            </button>
           </div>
-          <p className="text-muted-foreground text-sm">Configure your health & wellness goals.</p>
-          <div>
-            <label className="block text-muted-foreground text-xs mb-1.5">Daily Water Goal (glasses)</label>
-            <input
-              className={inputCls}
-              type="number"
-              min="1"
-              max="20"
-              value={waterGoal}
-              onChange={(e) => setWaterGoal(e.target.value)}
-              data-testid="settings-water-goal"
-            />
-            <p className="text-muted-foreground/80 text-xs mt-1">Default is 8 glasses per day.</p>
+
+          <div className="border-t border-border" />
+
+          {/* Health section */}
+          <div className="space-y-3">
+            <h3 className="text-muted-foreground text-sm font-medium">Health</h3>
+            <div>
+              <label className="block text-muted-foreground text-xs mb-1.5">Daily Water Goal (glasses)</label>
+              <input
+                className={inputCls}
+                type="number"
+                min="1"
+                max="20"
+                value={waterGoal}
+                onChange={(e) => setWaterGoal(e.target.value)}
+                data-testid="settings-water-goal"
+              />
+              <p className="text-muted-foreground/80 text-xs mt-1">Default is 8 glasses per day.</p>
+            </div>
+            <button
+              onClick={handleSaveWater}
+              className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
+            >
+              {waterSaved ? '✓ Saved' : 'Save'}
+            </button>
           </div>
-          <button
-            onClick={handleSaveWater}
-            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-4 py-2 text-sm transition-colors"
-          >
-            {waterSaved ? '✓ Saved' : 'Save'}
-          </button>
         </div>
       )}
 

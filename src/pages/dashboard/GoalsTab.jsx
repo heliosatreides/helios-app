@@ -10,7 +10,8 @@ function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-const TIMEFRAMES = ['Q1 2026', 'Q2 2026', 'Q3 2026', 'Q4 2026', 'This Year', 'Ongoing'];
+const currentYear = new Date().getFullYear();
+const TIMEFRAMES = [`Q1 ${currentYear}`, `Q2 ${currentYear}`, `Q3 ${currentYear}`, `Q4 ${currentYear}`, 'This Year', 'Ongoing'];
 const COLOR_TAGS = [
   { label: 'Amber', value: 'amber', cls: 'bg-amber-500' },
   { label: 'Blue', value: 'blue', cls: 'bg-blue-500' },

@@ -174,17 +174,25 @@ describe('WaterTracker', () => {
     expect(localStorage.getItem(`helios-water-${todayKey}`)).toBe('1');
   });
 
-  it('daily reset: old date keys are purged', async () => {
-    // Simulate a yesterday key
+  it('keeps water keys from last 7 days but purges older ones', async () => {
+    // Yesterday key should be kept (within 7 days)
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yKey = `helios-water-${yesterday.toISOString().slice(0, 10)}`;
     localStorage.setItem(yKey, '5');
 
+    // 10-day-old key should be purged
+    const oldDate = new Date();
+    oldDate.setDate(oldDate.getDate() - 10);
+    const oldKey = `helios-water-${oldDate.toISOString().slice(0, 10)}`;
+    localStorage.setItem(oldKey, '3');
+
     await act(async () => { render(<WaterTracker goal={8} />); });
 
-    // After render + effects, old key should be removed
-    expect(localStorage.getItem(yKey)).toBeNull();
+    // Yesterday's key should still exist (within 7-day window)
+    expect(localStorage.getItem(yKey)).toBe('5');
+    // Old key should be removed
+    expect(localStorage.getItem(oldKey)).toBeNull();
   });
 });
 

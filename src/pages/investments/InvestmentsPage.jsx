@@ -56,7 +56,7 @@ export function InvestmentsPage() {
             className={`px-4 py-2 text-sm font-medium transition-all ${
               activeTab === tab.id
                 ? 'bg-foreground text-background'
-                : 'text-muted-foreground/80 hover:text-muted-foreground border border-transparent'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {tab.label}

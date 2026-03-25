@@ -79,11 +79,18 @@ export function WaterTracker({ goal = 8 }) {
     }
   });
 
-  // Reset daily: if the stored date differs from today, clear
+  // Purge water keys older than 7 days (keep recent for health insights)
   useEffect(() => {
-    // Purge old keys
     try {
-      const keys = Object.keys(localStorage).filter((k) => k.startsWith('helios-water-') && k !== storageKey);
+      const keep = new Set();
+      for (let i = 0; i < 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        keep.add(`helios-water-${d.toISOString().slice(0, 10)}`);
+      }
+      const keys = Object.keys(localStorage).filter(
+        (k) => k.startsWith('helios-water-') && !keep.has(k)
+      );
       keys.forEach((k) => localStorage.removeItem(k));
     } catch { /* */ }
   }, [storageKey]);
