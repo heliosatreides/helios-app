@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
 import { useTodaySchedule } from '../../hooks/useTodaySchedule';
 import { useGemini } from '../../hooks/useGemini';
+import { ProductivityStreak } from '../../components/ProductivityStreak';
 
 function StatCard({ label, value, color = 'text-foreground', sub, linkTo }) {
   const content = (
@@ -163,6 +164,8 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       )}
 
       <TodayFocusCard />
+
+      <ProductivityStreak />
 
       {!isEmpty && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border">
