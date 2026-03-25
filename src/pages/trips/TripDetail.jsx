@@ -101,6 +101,14 @@ export function TripDetail({ trips, onUpdate }) {
     setNewExpense({ description: '', amount: '', category: '' });
   };
 
+  const handleRemoveExpense = (expId) => {
+    if (!window.confirm('Delete this expense? This cannot be undone.')) return;
+    onUpdate({
+      ...trip,
+      expenses: (trip.expenses || []).filter((e) => e.id !== expId),
+    });
+  };
+
   const handleNotesBlur = () => {
     onUpdate({ ...trip, notes });
   };
@@ -251,13 +259,13 @@ export function TripDetail({ trips, onUpdate }) {
           })()}
 
           {/* Add expense */}
-          <form onSubmit={handleAddExpense} className="mt-4 flex gap-2">
+          <form onSubmit={handleAddExpense} className="mt-4 flex flex-wrap gap-2">
             <input
               type="text"
               placeholder="Description"
               value={newExpense.description}
               onChange={(e) => setNewExpense((p) => ({ ...p, description: e.target.value }))}
-              className="flex-1 bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+              className="flex-1 min-w-[120px] bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
             />
             <input
               type="number"
@@ -275,9 +283,17 @@ export function TripDetail({ trips, onUpdate }) {
           {(trip.expenses || []).length > 0 && (
             <div className="mt-3 space-y-1">
               {trip.expenses.map((exp) => (
-                <div key={exp.id} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{exp.description}</span>
-                  <span className="text-foreground">${exp.amount}</span>
+                <div key={exp.id} className="flex items-center justify-between text-sm gap-2">
+                  <span className="text-muted-foreground flex-1 min-w-0 truncate">{exp.description}</span>
+                  <span className="text-foreground shrink-0">${exp.amount}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExpense(exp.id)}
+                    aria-label="Remove expense"
+                    className="opacity-30 hover:opacity-100 focus:opacity-100 text-muted-foreground/80 hover:text-red-400 transition-opacity shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  >
+                    ✕
+                  </button>
                 </div>
               ))}
             </div>
@@ -337,7 +353,7 @@ export function TripDetail({ trips, onUpdate }) {
                           <button
                             onClick={() => handleRemoveActivity(a.id)}
                             aria-label="Remove activity"
-                            className="opacity-0 group-hover:opacity-100 text-muted-foreground/80 hover:text-red-400 transition-opacity shrink-0"
+                            className="opacity-30 hover:opacity-100 focus:opacity-100 text-muted-foreground/80 hover:text-red-400 transition-opacity shrink-0"
                           >
                             ✕
                           </button>
@@ -347,7 +363,7 @@ export function TripDetail({ trips, onUpdate }) {
                   )}
 
                   {/* Add activity for this day */}
-                  <form onSubmit={(e) => handleAddActivity(e, date)} className="flex gap-2">
+                  <form onSubmit={(e) => handleAddActivity(e, date)} className="flex flex-wrap gap-2">
                     <input
                       type="time"
                       value={act.time}
@@ -361,7 +377,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.title}
                       onChange={(e) => handleActivityChange(date, 'title', e.target.value)}
                       aria-label="Activity title"
-                      className="flex-1 bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 min-w-[120px] bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                     />
                     <input
                       type="text"
@@ -369,7 +385,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.notes}
                       onChange={(e) => handleActivityChange(date, 'notes', e.target.value)}
                       aria-label="Activity notes"
-                      className="flex-1 bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 min-w-[120px] bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
                     />
                     <button
                       type="submit"
