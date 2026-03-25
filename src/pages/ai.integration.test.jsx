@@ -5,11 +5,26 @@
  * - BudgetView (Find Savings)
  * - Portfolio (Assess Risk)
  * - ScoreCard (Game Preview)
- * - Dashboard (Weekly Digest)
+ * - Dashboard (Morning Brief)
  */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// ─── localStorage polyfill ────────────────────────────────────────────────────
+if (!window.localStorage || typeof window.localStorage.getItem !== 'function') {
+  const _ls = {};
+  Object.defineProperty(window, 'localStorage', {
+    value: {
+      getItem: (key) => _ls[key] ?? null,
+      setItem: (key, value) => { _ls[key] = String(value); },
+      removeItem: (key) => { delete _ls[key]; },
+      clear: () => { for (const k in _ls) delete _ls[k]; },
+    },
+    writable: true,
+    configurable: true,
+  });
+}
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
@@ -42,8 +57,12 @@ vi.mock('../hooks/useStockSearch', () => ({
   useStockSearch: () => ({ validate: vi.fn(), loading: false }),
 }));
 
+const { _mockIdbStore } = vi.hoisted(() => ({ _mockIdbStore: {} }));
 vi.mock('../hooks/useIDB', () => ({
-  useIDB: (key, initial) => [initial, vi.fn()],
+  useIDB: (key, initial) => {
+    const val = _mockIdbStore[key] !== undefined ? _mockIdbStore[key] : initial;
+    return [val, (v) => { _mockIdbStore[key] = v instanceof Function ? v(_mockIdbStore[key]) : v; }, true];
+  },
 }));
 
 // ─── Import components ────────────────────────────────────────────────────────
@@ -194,15 +213,13 @@ const mockHoldings = [
   { id: 'h2', ticker: 'MSFT', name: 'Microsoft', shares: 5, costBasis: 200, currentPrice: 420, assetClass: 'Stocks' },
 ];
 
-vi.mock('../hooks/useIDB', () => ({
-  useIDB: (key) => {
-    if (key === 'investments-portfolio') return [mockHoldings, vi.fn()];
-    return [[], vi.fn()];
-  },
-}));
+// useIDB mock is defined at the top of the file — seed _mockIdbStore for portfolio tests
 
 describe('Portfolio - Assess Risk', () => {
-  beforeEach(() => mockGenerate.mockReset());
+  beforeEach(() => {
+    mockGenerate.mockReset();
+    _mockIdbStore['investments-portfolio'] = mockHoldings;
+  });
 
   it('shows Assess Risk button when hasKey', () => {
     render(<Portfolio />);
@@ -267,68 +284,71 @@ describe('ScoreCard - Game Preview', () => {
   });
 });
 
-// ─── Dashboard: Weekly Digest ─────────────────────────────────────────────────
+// ─── Dashboard: Morning Brief (auto-daily) ───────────────────────────────────
 
-describe('Dashboard - Weekly Digest', () => {
-  beforeEach(() => mockGenerate.mockReset());
-
-  it('shows Weekly Digest button when hasKey', () => {
-    render(
-      <MemoryRouter>
-        <Dashboard trips={[trip]} />
-      </MemoryRouter>
-    );
-    expect(screen.getByTestId('weekly-digest-btn')).toBeInTheDocument();
+describe('Dashboard - Morning Brief', () => {
+  beforeEach(() => {
+    mockGenerate.mockReset();
+    delete _mockIdbStore['daily-brief'];
   });
 
-  it('sends prompt with summary stats', async () => {
+  it('auto-generates morning brief on mount when hasKey and data exists', async () => {
     mockGenerate.mockResolvedValue('You have 1 trip coming up, spending is on track.');
     render(
       <MemoryRouter>
         <Dashboard trips={[trip]} transactions={mockTransactions} budgets={mockBudgets} />
       </MemoryRouter>
     );
-    fireEvent.click(screen.getByTestId('weekly-digest-btn'));
     await waitFor(() => expect(mockGenerate).toHaveBeenCalled());
     const prompt = mockGenerate.mock.calls[0][0];
-    expect(prompt).toContain('upcoming trips');
-    expect(prompt).toContain('weekly digest');
+    expect(prompt).toContain('morning brief');
+    expect(prompt).toContain('tasks due today');
   });
 
-  it('shows digest card with result after success', async () => {
-    mockGenerate.mockResolvedValue('Your week looks productive with 1 upcoming trip!');
+  it('shows morning brief card with result after auto-generation', async () => {
+    mockGenerate.mockResolvedValue('Your day looks productive with 1 upcoming trip!');
     render(
       <MemoryRouter>
         <Dashboard trips={[trip]} />
       </MemoryRouter>
     );
-    fireEvent.click(screen.getByTestId('weekly-digest-btn'));
-    await waitFor(() => expect(screen.getByTestId('digest-card')).toBeInTheDocument());
-    expect(screen.getByText(/Your week looks productive/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('morning-brief')).toBeInTheDocument());
+    expect(screen.getByText(/Your day looks productive/i)).toBeInTheDocument();
   });
 
-  it('hides digest button once digest is shown', async () => {
-    mockGenerate.mockResolvedValue('Great week ahead!');
+  it('dismisses morning brief card when Dismiss clicked', async () => {
+    mockGenerate.mockResolvedValue('All good today!');
     render(
       <MemoryRouter>
         <Dashboard trips={[trip]} />
       </MemoryRouter>
     );
-    fireEvent.click(screen.getByTestId('weekly-digest-btn'));
-    await waitFor(() => expect(screen.getByTestId('digest-card')).toBeInTheDocument());
-    expect(screen.queryByTestId('weekly-digest-btn')).not.toBeInTheDocument();
-  });
-
-  it('dismisses digest card when Dismiss clicked', async () => {
-    mockGenerate.mockResolvedValue('All good this week!');
-    render(
-      <MemoryRouter>
-        <Dashboard trips={[trip]} />
-      </MemoryRouter>
-    );
-    fireEvent.click(screen.getByTestId('weekly-digest-btn'));
-    await waitFor(() => screen.getByTestId('digest-card'));
+    await waitFor(() => screen.getByTestId('morning-brief'));
     fireEvent.click(screen.getByText('Dismiss'));
-    expect(screen.queryByTestId('digest-card')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('morning-brief')).not.toBeInTheDocument();
+  });
+
+  it('shows Refresh button on morning brief', async () => {
+    mockGenerate.mockResolvedValue('Brief text here.');
+    render(
+      <MemoryRouter>
+        <Dashboard trips={[trip]} />
+      </MemoryRouter>
+    );
+    await waitFor(() => screen.getByTestId('morning-brief'));
+    expect(screen.getByText('Refresh')).toBeInTheDocument();
+  });
+
+  it('uses cached brief for today instead of regenerating', async () => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    _mockIdbStore['daily-brief'] = { date: todayStr, text: 'Cached brief from earlier.' };
+    render(
+      <MemoryRouter>
+        <Dashboard trips={[trip]} />
+      </MemoryRouter>
+    );
+    await waitFor(() => expect(screen.getByTestId('morning-brief')).toBeInTheDocument());
+    expect(screen.getByText('Cached brief from earlier.')).toBeInTheDocument();
+    expect(mockGenerate).not.toHaveBeenCalled();
   });
 });

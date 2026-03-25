@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
 import { useTodaySchedule } from '../../hooks/useTodaySchedule';
 import { useGemini } from '../../hooks/useGemini';
+import { useIDB } from '../../hooks/useIDB';
+import { isOverdue } from '../dashboard/NetworkingTab';
 import { ProductivityStreak } from '../../components/ProductivityStreak';
 
 function StatCard({ label, value, color = 'text-foreground', sub, linkTo }) {
@@ -70,10 +72,32 @@ function TodayFocusCard() {
   );
 }
 
+function AiNudge({ hasKey, isEmpty }) {
+  const [dismissed, setDismissed] = useState(() => {
+    try { return localStorage.getItem('helios-ai-nudge-dismissed') === '1'; } catch { return false; }
+  });
+  if (hasKey || isEmpty || dismissed) return null;
+  return (
+    <div className="border border-border p-4 flex items-center justify-between gap-3" data-testid="ai-nudge">
+      <p className="text-muted-foreground text-sm flex-1">Unlock AI features — add your Gemini API key in Settings to enable morning briefs, AI insights, and smart suggestions.</p>
+      <div className="flex items-center gap-2 shrink-0">
+        <Link to="/settings" className="bg-foreground text-background px-3 py-1.5 text-xs font-medium min-h-[44px] flex items-center">Setup</Link>
+        <button onClick={() => { setDismissed(true); try { localStorage.setItem('helios-ai-nudge-dismissed', '1'); } catch {} }}
+          className="text-muted-foreground hover:text-foreground text-sm min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Dismiss AI nudge">&times;</button>
+      </div>
+    </div>
+  );
+}
+
 export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
   const { generate, loading: aiLoading, hasKey } = useGemini();
-  const [digest, setDigest] = useState(null);
-  const [digestError, setDigestError] = useState(null);
+  const [briefCache, setBriefCache, briefReady] = useIDB('daily-brief', null);
+  const [contacts] = useIDB('contacts', []);
+  const [briefText, setBriefText] = useState(null);
+  const [briefLoading, setBriefLoading] = useState(false);
+  const [briefError, setBriefError] = useState(null);
+  const [dismissed, setDismissed] = useState(false);
+  const briefTriggered = useRef(false);
 
   const upcomingTrips = trips.filter((t) => t.status === 'Upcoming' || t.status === 'Planning');
   const totalBudget = upcomingTrips.reduce((sum, t) => sum + t.budget, 0);
@@ -98,31 +122,48 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
 
   const { tasks } = useTasks();
   const today = getTodayStr();
-  const tasksThisWeek = (() => {
+  const tasksDueToday = (() => {
     try {
-      const d = new Date(today);
-      const end = new Date(d);
-      end.setDate(d.getDate() + 7);
-      const endStr = end.toISOString().slice(0, 10);
-      return (tasks || []).filter((t) => !t.done && t.dueDate >= today && t.dueDate <= endStr).length;
+      const grouped = groupTasks(tasks, today);
+      return [...grouped.overdue, ...grouped.today].length;
     } catch { return 0; }
   })();
 
-  const handleWeeklyDigest = async () => {
-    setDigestError(null);
-    const totalBudgetLimit = budgets.reduce((s, b) => s + b.limit, 0);
-    const spendPct = totalBudgetLimit > 0 ? ((monthlySpend / totalBudgetLimit) * 100).toFixed(0) : null;
-    const portPct = portfolioCost > 0 ? (((portfolioValue - portfolioCost) / portfolioCost) * 100).toFixed(1) : null;
-    const prompt = `Give me a brief personalized weekly digest (3-4 sentences) based on these stats: ${upcomingTrips.length} upcoming trips, monthly spending ${spendPct !== null ? spendPct + '% of budget' : 'no budget set'}, portfolio ${portPct !== null ? portPct + '% gain/loss' : 'no investments'}, ${tasksThisWeek} tasks due this week.`;
-    try {
-      const text = await generate(prompt);
-      setDigest(text);
-    } catch (err) {
-      setDigestError(err.message);
-    }
-  };
-
   const isEmpty = trips.length === 0 && accounts.length === 0 && portfolio.length === 0;
+
+  const generateBrief = useCallback(async () => {
+    setBriefError(null);
+    setBriefLoading(true);
+    try {
+      const totalBudgetLimit = budgets.reduce((s, b) => s + b.limit, 0);
+      const spendPct = totalBudgetLimit > 0 ? ((monthlySpend / totalBudgetLimit) * 100).toFixed(0) : null;
+      const portPct = portfolioCost > 0 ? (((portfolioValue - portfolioCost) / portfolioCost) * 100).toFixed(1) : null;
+      const nextTrip = upcomingTrips.sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
+      const tripCountdown = nextTrip ? Math.ceil((new Date(nextTrip.startDate) - new Date(today)) / 86400000) : null;
+      const overdueContacts = (contacts || []).filter(isOverdue);
+      const prompt = `Give me a brief daily morning brief (3-4 sentences max) based on these stats: ${tasksDueToday} tasks due today, monthly spending ${spendPct !== null ? spendPct + '% of budget' : 'no budget set'}, portfolio ${portPct !== null ? portPct + '% gain/loss' : 'no investments'}${tripCountdown !== null ? `, next trip "${nextTrip.name}" in ${tripCountdown} days` : ''}${overdueContacts.length > 0 ? `, ${overdueContacts.length} overdue contact${overdueContacts.length > 1 ? 's' : ''} to follow up with` : ''}. Be concise and actionable.`;
+      const text = await generate(prompt);
+      setBriefText(text);
+      await setBriefCache({ date: today, text });
+    } catch (err) {
+      setBriefError(err.message);
+    } finally {
+      setBriefLoading(false);
+    }
+  }, [generate, budgets, monthlySpend, portfolioCost, portfolioValue, upcomingTrips, today, tasksDueToday, contacts, setBriefCache]);
+
+  // Auto-generate brief on mount
+  useEffect(() => {
+    if (!briefReady || briefTriggered.current) return;
+    if (!hasKey || isEmpty) return;
+    if (briefCache && briefCache.date === today) {
+      setBriefText(briefCache.text);
+      briefTriggered.current = true;
+      return;
+    }
+    briefTriggered.current = true;
+    generateBrief();
+  }, [briefReady, hasKey, isEmpty, briefCache, today, generateBrief]);
 
   return (
     <div className="space-y-6">
@@ -131,25 +172,31 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
           <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground text-sm">{isEmpty ? 'Your personal command center' : "Here's what's happening"}</p>
         </div>
-        {hasKey && !digest && (
-          <button onClick={handleWeeklyDigest} disabled={aiLoading}
-            className="border border-border text-muted-foreground text-xs px-3 py-1.5 hover:text-foreground hover:bg-secondary/50 transition-colors disabled:opacity-50"
-            data-testid="weekly-digest-btn">
-            {aiLoading ? 'Generating...' : 'Weekly Digest'}
-          </button>
-        )}
       </div>
 
-      {digest && (
-        <div className="border border-border p-4 animate-fadeIn" data-testid="digest-card">
+      <AiNudge hasKey={hasKey} isEmpty={isEmpty} />
+
+      {!dismissed && (briefText || briefLoading) && (
+        <div className="border border-border p-4" data-testid="morning-brief">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-foreground">Weekly Digest</span>
-            <button onClick={() => setDigest(null)} className="text-muted-foreground hover:text-foreground text-xs transition-colors">Dismiss</button>
+            <span className="text-xs font-medium text-foreground">Morning Brief</span>
+            <div className="flex items-center gap-2">
+              <button onClick={() => generateBrief()} disabled={briefLoading}
+                className="text-muted-foreground hover:text-foreground text-xs transition-colors disabled:opacity-50">Refresh</button>
+              <button onClick={() => setDismissed(true)} className="text-muted-foreground hover:text-foreground text-xs transition-colors">Dismiss</button>
+            </div>
           </div>
-          <p className="text-muted-foreground text-sm leading-relaxed">{digest}</p>
+          {briefLoading ? (
+            <div className="space-y-2" data-testid="brief-loading">
+              <div className="h-3 bg-secondary animate-pulse w-3/4" />
+              <div className="h-3 bg-secondary animate-pulse w-1/2" />
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-sm leading-relaxed">{briefText}</p>
+          )}
         </div>
       )}
-      {digestError && <p className="text-red-400 text-xs">{digestError}</p>}
+      {briefError && <p className="text-red-400 text-xs">{briefError}</p>}
 
       {isEmpty && (
         <div className="space-y-6">
@@ -208,20 +255,18 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
         </div>
       )}
 
-      <div className="border border-border p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-foreground font-medium text-sm">Sports</h3>
-          <Link to="/sports" className="text-xs text-muted-foreground hover:text-foreground transition-colors">View</Link>
-        </div>
-        {sportsGameCount !== null ? (
+      {sportsGameCount !== null && (
+        <div className="border border-border p-4" data-testid="sports-card">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-foreground font-medium text-sm">Sports</h3>
+            <Link to="/sports" className="text-xs text-muted-foreground hover:text-foreground transition-colors">View</Link>
+          </div>
           <div>
             <p className="text-2xl font-semibold text-green-400">{sportsGameCount}</p>
             <p className="text-muted-foreground/60 text-xs mt-1">games today</p>
           </div>
-        ) : (
-          <p className="text-muted-foreground text-sm">Live scores, standings & favorites</p>
-        )}
-      </div>
+        </div>
+      )}
 
       {trips.length > 0 && (
         <div className="border border-border p-5">

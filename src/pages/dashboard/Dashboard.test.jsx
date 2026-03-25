@@ -1,16 +1,37 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { Dashboard } from './Dashboard';
 
+const mockGenerate = vi.fn();
+let mockHasKey = false;
+
 vi.mock('../../hooks/useGemini', () => ({
   useGemini: () => ({
-    generate: vi.fn(),
+    generate: mockGenerate,
     loading: false,
     error: null,
-    hasKey: false,
+    hasKey: mockHasKey,
   }),
 }));
+
+const lsStore = {};
+Object.defineProperty(window, 'localStorage', {
+  value: {
+    getItem: (key) => lsStore[key] ?? null,
+    setItem: (key, value) => { lsStore[key] = String(value); },
+    removeItem: (key) => { delete lsStore[key]; },
+    clear: () => { for (const k in lsStore) delete lsStore[k]; },
+  },
+  writable: true,
+  configurable: true,
+});
+
+beforeEach(() => {
+  mockGenerate.mockReset();
+  mockHasKey = false;
+  for (const k in lsStore) delete lsStore[k];
+});
 
 const mockTrips = [
   {
@@ -138,4 +159,117 @@ test('Dashboard empty state shows subtitle', () => {
     </MemoryRouter>
   );
   expect(screen.getByText(/27 features/i)).toBeInTheDocument();
+});
+
+// --- Gemini nudge tests ---
+
+test('Gemini nudge shows when hasKey=false and dashboard has data', () => {
+  mockHasKey = false;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  expect(screen.getByTestId('ai-nudge')).toBeInTheDocument();
+  expect(screen.getByText(/Unlock AI features/)).toBeInTheDocument();
+  expect(screen.getByText('Setup').closest('a')).toHaveAttribute('href', '/settings');
+});
+
+test('Gemini nudge does NOT show when hasKey=true', () => {
+  mockHasKey = true;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('ai-nudge')).not.toBeInTheDocument();
+});
+
+test('Gemini nudge does NOT show on empty dashboard', () => {
+  mockHasKey = false;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('ai-nudge')).not.toBeInTheDocument();
+});
+
+test('Gemini nudge dismiss button hides it and persists to localStorage', async () => {
+  mockHasKey = false;
+  const { act } = await import('react');
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  expect(screen.getByTestId('ai-nudge')).toBeInTheDocument();
+  const dismissBtn = screen.getByLabelText('Dismiss AI nudge');
+  await act(() => { dismissBtn.click(); });
+  expect(screen.queryByTestId('ai-nudge')).not.toBeInTheDocument();
+  expect(localStorage.getItem('helios-ai-nudge-dismissed')).toBe('1');
+});
+
+// --- Sports card conditional tests ---
+
+test('Sports card renders when sportsGameCount is provided', () => {
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} sportsGameCount={5} />
+    </MemoryRouter>
+  );
+  expect(screen.getByTestId('sports-card')).toBeInTheDocument();
+  expect(screen.getByText('5')).toBeInTheDocument();
+});
+
+test('Sports card does NOT render when sportsGameCount is null', () => {
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} sportsGameCount={null} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('sports-card')).not.toBeInTheDocument();
+});
+
+test('Morning brief auto-generates when no cache exists', async () => {
+  mockHasKey = true;
+  mockGenerate.mockResolvedValue('Your morning brief text here.');
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  await waitFor(() => {
+    expect(mockGenerate).toHaveBeenCalledTimes(1);
+  });
+  await waitFor(() => {
+    expect(screen.getByTestId('morning-brief')).toBeInTheDocument();
+    expect(screen.getByText('Your morning brief text here.')).toBeInTheDocument();
+  });
+});
+
+test('Morning brief uses cache when today brief exists', async () => {
+  mockHasKey = true;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  globalThis.__idbStore['daily-brief'] = { date: todayStr, text: 'Cached brief for today.' };
+  render(
+    <MemoryRouter>
+      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
+    </MemoryRouter>
+  );
+  await waitFor(() => {
+    expect(screen.getByTestId('morning-brief')).toBeInTheDocument();
+    expect(screen.getByText('Cached brief for today.')).toBeInTheDocument();
+  });
+  expect(mockGenerate).not.toHaveBeenCalled();
+});
+
+test('Morning brief does not show on empty dashboard', () => {
+  mockHasKey = true;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('morning-brief')).not.toBeInTheDocument();
 });
