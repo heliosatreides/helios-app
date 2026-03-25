@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { Modal } from '../../components/Modal';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const SLOTS = ['Breakfast', 'Lunch', 'Dinner'];
@@ -195,9 +196,9 @@ export function MealsPage() {
       )}
 
       {/* Edit modal */}
-      {editCell && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border p-6 w-full max-w-md space-y-4">
+      <Modal open={!!editCell} onClose={() => setEditCell(null)}>
+        {editCell && (
+          <div className="space-y-4">
             <h2 className="font-semibold text-foreground">{editCell.day} – {editCell.slot}</h2>
             {[
               { label: 'Meal Name', key: 'name', placeholder: 'e.g., Oatmeal with Berries' },
@@ -216,8 +217,8 @@ export function MealsPage() {
               <button onClick={() => setEditCell(null)} className="flex-1 py-2 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">Cancel</button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
     </div>
   );
 }

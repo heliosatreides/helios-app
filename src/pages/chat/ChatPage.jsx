@@ -4,6 +4,7 @@ import { usePeer } from './usePeer';
 import { ChatMessage } from './ChatMessage';
 import { useAIControl } from './useAIControl';
 import { useAuth } from '../../auth/AuthContext';
+import { Modal } from '../../components/Modal';
 
 function CopyButton({ text, label = 'Copy' }) {
   const [copied, setCopied] = useState(false);
@@ -62,46 +63,44 @@ function LoginModal({ onSuccess, onCancel }) {
   }, [login, username, pw, onSuccess]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="w-full max-w-sm bg-background border border-border p-6 shadow-2xl">
-        <h2 className="text-foreground font-semibold text-base mb-1">Log in to use AI Control</h2>
-        <p className="text-muted-foreground text-sm mb-5">Enter your credentials to enable AI-powered commands.</p>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            autoFocus
-            className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={pw}
-            onChange={e => setPw(e.target.value)}
-            className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
-          />
-          {error && <p className="text-red-400 text-xs">{error}</p>}
-          <div className="flex gap-2 pt-1">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 py-2.5 border border-border text-muted-foreground text-sm hover:text-foreground hover:border-border transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading || !username || !pw}
-              className="flex-1 py-2.5 bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? 'Logging in…' : 'Log in'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Modal open={true} onClose={onCancel} className="max-w-sm">
+      <h2 className="text-foreground font-semibold text-base mb-1">Log in to use AI Control</h2>
+      <p className="text-muted-foreground text-sm mb-5">Enter your credentials to enable AI-powered commands.</p>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          autoFocus
+          className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={pw}
+          onChange={e => setPw(e.target.value)}
+          className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
+        />
+        {error && <p className="text-red-400 text-xs">{error}</p>}
+        <div className="flex gap-2 pt-1">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 py-2.5 border border-border text-muted-foreground text-sm hover:text-foreground hover:border-border transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={loading || !username || !pw}
+            className="flex-1 py-2.5 bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? 'Logging in…' : 'Log in'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }
 

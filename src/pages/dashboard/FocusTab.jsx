@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHand
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { useTasks, getTodayStr } from '../../hooks/useTasks';
+import { Modal } from '../../components/Modal';
 import {
   pomodoroTransition,
   POMODORO_STATES,
@@ -550,43 +551,32 @@ function QuickNotes({ onAddTasks }) {
 
 function KeyboardShortcutsHelp({ onDismiss }) {
   return (
-    <div
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
-      onClick={onDismiss}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Keyboard shortcuts"
-    >
-      <div
-        className="bg-background border border-border p-6 w-full max-w-sm"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-foreground font-bold text-base">⌨️ Keyboard Shortcuts</h2>
-          <button
-            type="button"
-            onClick={onDismiss}
-            className="text-muted-foreground hover:text-foreground text-lg leading-none"
-            aria-label="Close"
-          >
-            ×
-          </button>
-        </div>
-        <div className="space-y-2">
-          {FOCUS_KEY_HELP.map(({ key, description }) => (
-            <div key={key} className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm">{description}</span>
-              <kbd className="bg-secondary border border-border text-foreground text-xs font-mono px-2 py-0.5 rounded">
-                {key}
-              </kbd>
-            </div>
-          ))}
-        </div>
-        <p className="text-muted-foreground/60 text-xs mt-4">
-          Shortcuts are disabled while typing in input fields.
-        </p>
+    <Modal open={true} onClose={onDismiss} className="max-w-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-foreground font-bold text-base">Keyboard Shortcuts</h2>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="text-muted-foreground hover:text-foreground text-lg leading-none min-w-[44px] min-h-[44px] flex items-center justify-center"
+          aria-label="Close"
+        >
+          ×
+        </button>
       </div>
-    </div>
+      <div className="space-y-2">
+        {FOCUS_KEY_HELP.map(({ key, description }) => (
+          <div key={key} className="flex items-center justify-between">
+            <span className="text-muted-foreground text-sm">{description}</span>
+            <kbd className="bg-secondary border border-border text-foreground text-xs font-mono px-2 py-0.5 rounded">
+              {key}
+            </kbd>
+          </div>
+        ))}
+      </div>
+      <p className="text-muted-foreground/60 text-xs mt-4">
+        Shortcuts are disabled while typing in input fields.
+      </p>
+    </Modal>
   );
 }
 

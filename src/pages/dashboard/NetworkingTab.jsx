@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
+import { Modal } from '../../components/Modal';
 
 function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -51,8 +52,8 @@ function AddContactModal({ onSave, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-contact-modal">
-      <div className="bg-background border border-border p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <Modal open={true} onClose={onClose} className="max-h-[90vh] overflow-y-auto">
+      <div data-testid="add-contact-modal">
         <h2 className="text-lg font-bold text-foreground mb-4">Add Contact</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           {[
@@ -98,7 +99,7 @@ function AddContactModal({ onSave, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -113,8 +114,8 @@ function LogInteractionModal({ contact, onSave, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="log-interaction-modal">
-      <div className="bg-background border border-border p-6 w-full max-w-md">
+    <Modal open={true} onClose={onClose}>
+      <div data-testid="log-interaction-modal">
         <h2 className="text-lg font-bold text-foreground mb-1">Log Interaction</h2>
         <p className="text-muted-foreground text-sm mb-4">with {contact.name}</p>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -148,7 +149,7 @@ function LogInteractionModal({ contact, onSave, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 

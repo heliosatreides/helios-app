@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
+import { Modal } from '../../components/Modal';
 import { filterObjectivesByTimeframe, getObjectiveStats, getActiveTimeframes } from './goals.utils';
 
 function generateId() {
@@ -115,8 +116,8 @@ function AddObjectiveForm({ onSave, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-objective-modal">
-      <div className="bg-background border border-border p-6 w-full max-w-md">
+    <Modal open={true} onClose={onClose}>
+      <div data-testid="add-objective-modal">
         <h2 className="text-lg font-bold text-foreground mb-4">New Objective</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -163,7 +164,7 @@ function AddObjectiveForm({ onSave, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -187,8 +188,8 @@ function AddKRForm({ onSave, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" data-testid="add-kr-modal">
-      <div className="bg-background border border-border p-6 w-full max-w-md">
+    <Modal open={true} onClose={onClose}>
+      <div data-testid="add-kr-modal">
         <h2 className="text-lg font-bold text-foreground mb-4">Add Key Result</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -246,7 +247,7 @@ function AddKRForm({ onSave, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 
