@@ -1,6 +1,7 @@
 {
   "short_name": "Helios",
   "name": "Helios — Personal Life Dashboard",
+  "description": "27+ personal tools. Finance, trips, investments, planner, news, dev tools. 100% private.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +11,21 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/dashboard",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#0a0a0b",
-  "background_color": "#0a0a0b"
+  "orientation": "any",
+  "theme_color": "#09090b",
+  "background_color": "#09090b",
+  "categories": ["productivity", "finance", "utilities"]
 }

@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 
 const navGroups = [
   {
@@ -60,6 +61,7 @@ const navGroups = [
 
 export function Sidebar({ onNavClick }) {
   const { user, logout } = useAuth();
+  const { canInstall, install, isIOS, isInstalled } = usePWAInstall();
 
   return (
     <aside className="w-56 bg-background border-r border-border flex flex-col h-full shrink-0 overflow-hidden">
@@ -105,6 +107,25 @@ export function Sidebar({ onNavClick }) {
           </div>
         ))}
       </nav>
+
+      {/* Install PWA prompt */}
+      {!isInstalled && (canInstall || isIOS) && (
+        <div className="px-3 pb-1 shrink-0">
+          {canInstall ? (
+            <button
+              onClick={install}
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground border border-border hover:bg-secondary/50 transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Install App
+            </button>
+          ) : isIOS ? (
+            <div className="px-3 py-2 text-[11px] text-muted-foreground/60 leading-relaxed">
+              Tap the share button, then "Add to Home Screen" to install.
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {user && (
         <div className="px-3 py-3 border-t border-border shrink-0">
