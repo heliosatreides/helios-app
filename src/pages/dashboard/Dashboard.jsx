@@ -168,7 +168,7 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
                 { title: 'Build Habits', desc: 'Daily habit streaks and consistency tracking', to: '/health' },
                 { title: 'Study with Flashcards', desc: 'Spaced repetition for learning anything', to: '/flashcards' },
                 { title: 'Manage Contacts', desc: 'CRM-style networking and relationship notes', to: '/networking' },
-                { title: 'AI Assistant', desc: 'Chat with AI connected to all your data', to: '/settings' },
+                { title: 'AI Assistant', desc: 'Chat with AI connected to all your data', to: '/ai' },
                 { title: 'Track Health', desc: 'Meals, nutrition, and wellness logging', to: '/meals' },
               ].map((card) => (
                 <Link key={card.to} to={card.to} data-testid="feature-card"
