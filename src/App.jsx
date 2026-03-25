@@ -30,6 +30,7 @@ import { PackingPage } from './pages/packing/PackingPage';
 import { RegexPage } from './pages/regex/RegexPage';
 import { CalculatorPage } from './pages/calculator/CalculatorPage';
 import { ChatPage } from './pages/chat/ChatPage';
+import { AIChatPage } from './pages/aichat/AIChatPage';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
@@ -111,6 +112,7 @@ function AppShell() {
               <Route path="/packing" element={<ProtectedRoute><PackingPage /></ProtectedRoute>} />
               <Route path="/regex" element={<ProtectedRoute><RegexPage /></ProtectedRoute>} />
               <Route path="/calculator" element={<ProtectedRoute><CalculatorPage /></ProtectedRoute>} />
+              <Route path="/ai" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
             </Routes>
           </div>
         </main>

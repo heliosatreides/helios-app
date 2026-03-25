@@ -13,6 +13,7 @@ const PAGES = [
   { path: '/health', label: 'Health & Wellness', keywords: 'water mood sleep tracker' },
   { path: '/meals', label: 'Meal Planner', keywords: 'food diet grocery' },
   { path: '/subscriptions', label: 'Subscriptions', keywords: 'recurring payments' },
+  { path: '/ai', label: 'AI Chat', keywords: 'gemini assistant conversation' },
   { path: '/chat', label: 'P2P Chat', keywords: 'message encrypted peer' },
   { path: '/focus', label: 'Focus Mode', keywords: 'pomodoro timer habits' },
   { path: '/knowledge', label: 'Knowledge Base', keywords: 'reading books articles' },
