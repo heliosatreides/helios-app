@@ -152,14 +152,35 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       {digestError && <p className="text-red-400 text-xs">{digestError}</p>}
 
       {isEmpty && (
-        <div className="border border-dashed border-border p-10 text-center">
-          <h3 className="text-foreground font-medium mb-2">Welcome to Helios</h3>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">Your dashboard will come alive as you add data. Start with a trip, set up your finances, or add investments.</p>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <Link to="/trips/new" className="px-3 py-1.5 border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors">Plan a Trip</Link>
-            <Link to="/finance" className="px-3 py-1.5 border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors">Add Accounts</Link>
-            <Link to="/planner" className="px-3 py-1.5 border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors">Start Planning</Link>
+        <div className="space-y-6">
+          <div className="border border-border p-6">
+            <h2 className="text-lg font-semibold text-foreground" data-testid="onboarding-welcome">Welcome to Helios</h2>
+            <p className="text-muted-foreground text-sm mt-1">Your personal command center — 27 features, all local, all private.</p>
           </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-foreground mb-3">Quick Start</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-border">
+              {[
+                { title: 'Plan Your Day', desc: 'Schedule tasks, time blocks, and priorities', to: '/planner' },
+                { title: 'Track Finances', desc: 'Accounts, budgets, and spending analytics', to: '/finance' },
+                { title: 'Set Goals', desc: 'OKRs and goal tracking with progress metrics', to: '/goals' },
+                { title: 'Build Habits', desc: 'Daily habit streaks and consistency tracking', to: '/health' },
+                { title: 'Study with Flashcards', desc: 'Spaced repetition for learning anything', to: '/flashcards' },
+                { title: 'Manage Contacts', desc: 'CRM-style networking and relationship notes', to: '/networking' },
+                { title: 'AI Assistant', desc: 'Chat with AI connected to all your data', to: '/settings' },
+                { title: 'Track Health', desc: 'Meals, nutrition, and wellness logging', to: '/meals' },
+              ].map((card) => (
+                <Link key={card.to} to={card.to} data-testid="feature-card"
+                  className="block bg-background p-4 min-h-[44px] hover:bg-secondary/30 transition-colors">
+                  <p className="text-sm font-medium text-foreground">{card.title}</p>
+                  <p className="text-muted-foreground text-xs mt-1">{card.desc}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-muted-foreground text-xs text-center">All data stays on your device. Nothing leaves your browser.</p>
         </div>
       )}
 

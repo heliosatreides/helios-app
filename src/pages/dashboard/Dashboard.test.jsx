@@ -96,3 +96,46 @@ test('Dashboard shows empty state when no data', () => {
   );
   expect(screen.getByText(/Welcome to Helios/i)).toBeInTheDocument();
 });
+
+test('Dashboard empty state renders feature discovery cards', () => {
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  const cards = screen.getAllByTestId('feature-card');
+  expect(cards.length).toBeGreaterThanOrEqual(6);
+});
+
+test('Dashboard feature cards link to correct routes', () => {
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  const cards = screen.getAllByTestId('feature-card');
+  const hrefs = cards.map((card) => card.getAttribute('href'));
+  expect(hrefs).toContain('/planner');
+  expect(hrefs).toContain('/finance');
+  expect(hrefs).toContain('/goals');
+  expect(hrefs).toContain('/flashcards');
+  expect(hrefs).toContain('/networking');
+});
+
+test('Dashboard empty state shows privacy note', () => {
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.getByText(/all data stays on your device/i)).toBeInTheDocument();
+});
+
+test('Dashboard empty state shows subtitle', () => {
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.getByText(/27 features/i)).toBeInTheDocument();
+});
