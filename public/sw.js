@@ -1,43 +1,33 @@
-const CACHE_NAME = 'helios-v1';
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-];
+// Version is updated on each deploy — triggers cache refresh
+const CACHE_VERSION = 'helios-v2';
 
-// Install: cache the shell
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
+  // Skip waiting immediately so new SW activates right away
   self.skipWaiting();
 });
 
-// Activate: clean old caches
 self.addEventListener('activate', (event) => {
+  // Delete all old caches
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+      Promise.all(keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch: network-first for navigation, cache-first for static assets
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
-  // Skip non-GET and cross-origin
   if (request.method !== 'GET') return;
   if (!request.url.startsWith(self.location.origin)) return;
 
-  // Navigation requests: network-first with cache fallback
+  // Navigation: network-first, cache fallback for offline
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          caches.open(CACHE_VERSION).then((cache) => cache.put(request, clone));
           return response;
         })
         .catch(() => caches.match('/index.html'))
@@ -45,15 +35,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets (JS, CSS, images): cache-first
-  if (request.url.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?)$/)) {
+  // Hashed static assets (main.abc123.js): cache-first, they're immutable
+  if (request.url.match(/\/static\/.*\.[a-f0-9]{8}\./)) {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;
         return fetch(request).then((response) => {
           if (response.ok) {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            caches.open(CACHE_VERSION).then((cache) => cache.put(request, clone));
           }
           return response;
         });
@@ -62,6 +52,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // API calls (RSS feeds, Gemini, etc.): network only, no caching
-  event.respondWith(fetch(request));
+  // Everything else: network-first (don't serve stale content)
+  event.respondWith(
+    fetch(request)
+      .then((response) => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_VERSION).then((cache) => cache.put(request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(request))
+  );
 });
