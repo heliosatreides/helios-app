@@ -128,6 +128,60 @@ export function toggleHabitCompletion(habit, dateStr) {
 }
 
 /**
+ * Keyboard shortcuts help entries.
+ * Each entry: { key: string, description: string }
+ */
+export const FOCUS_KEY_HELP = [
+  { key: 'Space', description: 'Start / Pause timer' },
+  { key: 'r', description: 'Reset timer' },
+  { key: 's', description: 'Skip break' },
+  { key: 'n', description: 'Next task' },
+  { key: 'p', description: 'Previous task' },
+  { key: '?', description: 'Show keyboard shortcuts' },
+  { key: 'Esc', description: 'Dismiss overlay' },
+];
+
+/**
+ * Map a keyboard event key + target tag name to a focus action string.
+ *
+ * Returns one of:
+ *   'toggle-timer' | 'reset-timer' | 'skip-break' |
+ *   'next-task'    | 'prev-task'   | 'show-help'  |
+ *   'dismiss'      | null
+ *
+ * Returns null when the event originates from an interactive input field
+ * (INPUT, TEXTAREA, SELECT) to avoid hijacking text entry, EXCEPT for
+ * Escape which always works.
+ */
+export function getFocusKeyAction(key, targetTagName) {
+  const tag = (targetTagName || '').toUpperCase();
+  const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+  // Escape always works (dismiss modal/overlay)
+  if (key === 'Escape') return 'dismiss';
+
+  // All other shortcuts are suppressed while user is typing in a field
+  if (isInput) return null;
+
+  switch (key) {
+    case ' ':
+      return 'toggle-timer';
+    case 'r':
+      return 'reset-timer';
+    case 's':
+      return 'skip-break';
+    case 'n':
+      return 'next-task';
+    case 'p':
+      return 'prev-task';
+    case '?':
+      return 'show-help';
+    default:
+      return null;
+  }
+}
+
+/**
  * Simple markdown-ish renderer: bold, italic, bullet list items.
  * Returns an array of { type, content } objects for rendering.
  */

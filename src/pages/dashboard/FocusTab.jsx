@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { useTasks, getTodayStr } from '../../hooks/useTasks';
@@ -10,6 +10,8 @@ import {
   createHabit,
   toggleHabitCompletion,
   parseMarkdownish,
+  getFocusKeyAction,
+  FOCUS_KEY_HELP,
 } from './focus.utils';
 
 const { IDLE, RUNNING, PAUSED, BREAK } = POMODORO_STATES;
@@ -57,7 +59,7 @@ function CollapsibleCard({ title, children, defaultOpen = true }) {
 
 const POMO_SESSION_KEY = 'helios-pomodoro-session';
 
-function PomodoroTimer() {
+const PomodoroTimer = forwardRef(function PomodoroTimer(props, ref) {
   const { tasks } = useTasks();
   const today = getTodayStr();
   const todayTasks = (tasks || []).filter((t) => !t.done && t.dueDate === today);
@@ -130,6 +132,18 @@ function PomodoroTimer() {
   const secs = (secondsLeft % 60).toString().padStart(2, '0');
   const isBreak = timerState === BREAK;
   const currentTask = todayTasks[currentTaskIdx];
+
+  // Expose keyboard control API to parent via ref
+  useImperativeHandle(ref, () => ({
+    toggleTimer() {
+      if (timerState === IDLE || timerState === PAUSED) handleStart();
+      else if (timerState === RUNNING) handlePause();
+    },
+    resetTimer() { handleReset(); },
+    skipBreak() { if (timerState === BREAK) handleReset(); },
+    nextTask() { setCurrentTaskIdx((i) => Math.min(todayTasks.length - 1, i + 1)); },
+    prevTask() { setCurrentTaskIdx((i) => Math.max(0, i - 1)); },
+  }), [timerState, todayTasks.length, handleStart, handlePause, handleReset]);
 
   return (
     <div className="space-y-4">
@@ -253,7 +267,7 @@ function PomodoroTimer() {
       </div>
     </div>
   );
-}
+});
 
 // ── Habit Tracker ─────────────────────────────────────────────────────────
 
@@ -532,20 +546,121 @@ function QuickNotes({ onAddTasks }) {
   );
 }
 
+// ── Keyboard Shortcuts Help Overlay ──────────────────────────────────────
+
+function KeyboardShortcutsHelp({ onDismiss }) {
+  return (
+    <div
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+      onClick={onDismiss}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Keyboard shortcuts"
+    >
+      <div
+        className="bg-background border border-border p-6 w-full max-w-sm"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-foreground font-bold text-base">⌨️ Keyboard Shortcuts</h2>
+          <button
+            type="button"
+            onClick={onDismiss}
+            className="text-muted-foreground hover:text-foreground text-lg leading-none"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <div className="space-y-2">
+          {FOCUS_KEY_HELP.map(({ key, description }) => (
+            <div key={key} className="flex items-center justify-between">
+              <span className="text-muted-foreground text-sm">{description}</span>
+              <kbd className="bg-secondary border border-border text-foreground text-xs font-mono px-2 py-0.5 rounded">
+                {key}
+              </kbd>
+            </div>
+          ))}
+        </div>
+        <p className="text-muted-foreground/60 text-xs mt-4">
+          Shortcuts are disabled while typing in input fields.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ── FocusTab ──────────────────────────────────────────────────────────────
 
 export function FocusTab() {
+  const [showHelp, setShowHelp] = useState(false);
+
+  // Expose keyboard control API from PomodoroTimer via ref callbacks
+  const pomodoroRef = useRef(null);
+
+  const handleKeyDown = useCallback((e) => {
+    const action = getFocusKeyAction(e.key, e.target.tagName);
+    if (!action) return;
+
+    switch (action) {
+      case 'toggle-timer':
+        e.preventDefault();
+        pomodoroRef.current?.toggleTimer();
+        break;
+      case 'reset-timer':
+        pomodoroRef.current?.resetTimer();
+        break;
+      case 'skip-break':
+        pomodoroRef.current?.skipBreak();
+        break;
+      case 'next-task':
+        pomodoroRef.current?.nextTask();
+        break;
+      case 'prev-task':
+        pomodoroRef.current?.prevTask();
+        break;
+      case 'show-help':
+        setShowHelp(true);
+        break;
+      case 'dismiss':
+        setShowHelp(false);
+        break;
+      default:
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   return (
-    <div className="space-y-4">
-      <CollapsibleCard title="🍅 Pomodoro Timer">
-        <PomodoroTimer />
-      </CollapsibleCard>
-      <CollapsibleCard title="✅ Habit Tracker">
-        <HabitTracker />
-      </CollapsibleCard>
-      <CollapsibleCard title="📓 Quick Notes">
-        <QuickNotes />
-      </CollapsibleCard>
-    </div>
+    <>
+      {showHelp && <KeyboardShortcutsHelp onDismiss={() => setShowHelp(false)} />}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <span />
+          <button
+            type="button"
+            onClick={() => setShowHelp(true)}
+            className="text-muted-foreground/60 hover:text-muted-foreground text-xs flex items-center gap-1 transition-colors"
+            title="Keyboard shortcuts (?)"
+          >
+            <kbd className="bg-secondary border border-border px-1.5 py-0.5 text-xs rounded font-mono">?</kbd>
+            shortcuts
+          </button>
+        </div>
+        <CollapsibleCard title="🍅 Pomodoro Timer">
+          <PomodoroTimer ref={pomodoroRef} />
+        </CollapsibleCard>
+        <CollapsibleCard title="✅ Habit Tracker">
+          <HabitTracker />
+        </CollapsibleCard>
+        <CollapsibleCard title="📓 Quick Notes">
+          <QuickNotes />
+        </CollapsibleCard>
+      </div>
+    </>
   );
 }

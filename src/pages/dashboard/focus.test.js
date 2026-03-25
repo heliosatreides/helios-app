@@ -197,3 +197,66 @@ describe('parseMarkdownish', () => {
     expect(result[1].type).toBe('bullet');
   });
 });
+
+// ── Keyboard shortcuts utility ─────────────────────────────────────────────
+
+import {
+  getFocusKeyAction,
+  FOCUS_KEY_HELP,
+} from './focus.utils';
+
+describe('getFocusKeyAction', () => {
+  it('Space → toggle-timer when not in an input/textarea', () => {
+    expect(getFocusKeyAction(' ', 'DIV')).toBe('toggle-timer');
+  });
+
+  it('Space → null when target is input (should not fire)', () => {
+    expect(getFocusKeyAction(' ', 'INPUT')).toBe(null);
+  });
+
+  it('Space → null when target is textarea', () => {
+    expect(getFocusKeyAction(' ', 'TEXTAREA')).toBe(null);
+  });
+
+  it('r → reset-timer when not in input', () => {
+    expect(getFocusKeyAction('r', 'DIV')).toBe('reset-timer');
+  });
+
+  it('r → null when in input', () => {
+    expect(getFocusKeyAction('r', 'INPUT')).toBe(null);
+  });
+
+  it('s → skip-break when not in input', () => {
+    expect(getFocusKeyAction('s', 'BUTTON')).toBe('skip-break');
+  });
+
+  it('n → next-task', () => {
+    expect(getFocusKeyAction('n', 'DIV')).toBe('next-task');
+  });
+
+  it('p → prev-task', () => {
+    expect(getFocusKeyAction('p', 'DIV')).toBe('prev-task');
+  });
+
+  it('? → show-help', () => {
+    expect(getFocusKeyAction('?', 'DIV')).toBe('show-help');
+  });
+
+  it('Escape → dismiss', () => {
+    expect(getFocusKeyAction('Escape', 'DIV')).toBe('dismiss');
+  });
+
+  it('returns null for unrecognized keys', () => {
+    expect(getFocusKeyAction('z', 'DIV')).toBe(null);
+    expect(getFocusKeyAction('Enter', 'BUTTON')).toBe(null);
+  });
+
+  it('FOCUS_KEY_HELP is an array of shortcut descriptors', () => {
+    expect(Array.isArray(FOCUS_KEY_HELP)).toBe(true);
+    expect(FOCUS_KEY_HELP.length).toBeGreaterThan(0);
+    FOCUS_KEY_HELP.forEach((item) => {
+      expect(item).toHaveProperty('key');
+      expect(item).toHaveProperty('description');
+    });
+  });
+});
