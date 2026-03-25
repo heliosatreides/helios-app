@@ -6,6 +6,7 @@ import { useGemini } from '../../hooks/useGemini';
 import { useIDB } from '../../hooks/useIDB';
 import { isOverdue } from '../dashboard/NetworkingTab';
 import { ProductivityStreak } from '../../components/ProductivityStreak';
+import { WeeklyDigest } from '../../components/WeeklyDigest';
 
 function StatCard({ label, value, color = 'text-foreground', sub, linkTo }) {
   const content = (
@@ -235,6 +236,8 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
         </div>
       )}
       {briefError && <p className="text-red-400 text-xs">{briefError}</p>}
+
+      <WeeklyDigest />
 
       {isEmpty && (
         <div className="space-y-6">
