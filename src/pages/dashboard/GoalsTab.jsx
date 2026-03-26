@@ -317,7 +317,7 @@ function KRItem({ kr, onUpdateCurrent, objectiveId }) {
   );
 }
 
-function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips, budgets }) {
+function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips, budgets, tasks = [] }) {
   const [expanded, setExpanded] = useState(true);
   const [showAddKR, setShowAddKR] = useState(false);
   const [showSuggestKR, setShowSuggestKR] = useState(false);
@@ -406,6 +406,35 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
             )}
           </div>
 
+          {/* Linked tasks */}
+          {(() => {
+            const linkedTasks = (tasks || []).filter(t => t.goalId === objective.id);
+            const completedCount = linkedTasks.filter(t => t.completed).length;
+            if (linkedTasks.length === 0) return null;
+            return (
+              <div className="mt-3 border-t border-border pt-3" data-testid={`objective-linked-tasks-${objective.id}`}>
+                <p className="text-muted-foreground/80 text-xs uppercase tracking-wider mb-2">
+                  Linked Tasks ({completedCount}/{linkedTasks.length} done)
+                </p>
+                <div className="space-y-1">
+                  {linkedTasks.slice(0, 5).map(t => (
+                    <div key={t.id} className="flex items-center gap-2 text-sm">
+                      <span className={`w-3 h-3 border shrink-0 flex items-center justify-center text-[8px] ${t.completed ? 'bg-foreground border-foreground text-background' : 'border-border'}`}>
+                        {t.completed && '✓'}
+                      </span>
+                      <span className={`truncate ${t.completed ? 'text-muted-foreground/60 line-through' : 'text-muted-foreground'}`}>
+                        {t.title}
+                      </span>
+                    </div>
+                  ))}
+                  {linkedTasks.length > 5 && (
+                    <p className="text-xs text-muted-foreground/60">+{linkedTasks.length - 5} more</p>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Cross-app suggestions */}
           {upcomingTripsWithBudget.length > 0 && (
             <div className="mt-3 space-y-1">
@@ -458,7 +487,7 @@ function ObjectiveCard({ objective, onAddKR, onUpdateKRCurrent, onDelete, trips,
   );
 }
 
-export function GoalsTab({ trips = [], budgets = [] }) {
+export function GoalsTab({ trips = [], budgets = [], tasks = [] }) {
   const toast = useToast();
   const [objectives, setObjectives] = useIDB('goals-objectives', []);
   const [showAddObjective, setShowAddObjective] = useState(false);
@@ -619,6 +648,7 @@ export function GoalsTab({ trips = [], budgets = [] }) {
               onDelete={handleDeleteObjective}
               trips={trips}
               budgets={budgets}
+              tasks={tasks}
             />
           ))}
         </div>

@@ -18,6 +18,7 @@ export function PlannerPage() {
   }, [setSearchParams]);
   const today = getTodayStr();
   const [trips] = useIDB('helios-trips', []);
+  const [objectives] = useIDB('goals-objectives', []);
 
   const todayTripActivities = useMemo(() => {
     if (!trips || trips.length === 0) return [];
@@ -38,7 +39,7 @@ export function PlannerPage() {
 
       <div className="border-0 md:border md:border-border p-3 md:p-5">
         {activeTab === 'Today' && <TodayTab dateStr={today} tripActivities={todayTripActivities} />}
-        {activeTab === 'Tasks' && <TasksTab />}
+        {activeTab === 'Tasks' && <TasksTab objectives={objectives || []} />}
         {activeTab === 'Calendar' && <CalendarTab />}
       </div>
     </div>

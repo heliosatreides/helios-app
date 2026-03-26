@@ -71,6 +71,7 @@ export function useTasks() {
         completed: false,
         recurring: 'None',
         parentId: null,
+        goalId: null,
         createdAt: new Date().toISOString(),
         ...task,
       };

@@ -3,6 +3,7 @@ import { useTasks, groupTasks, getTodayStr } from '../../hooks/useTasks';
 import { useGemini } from '../../hooks/useGemini';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { buildPrioritizePrompt, parsePrioritizeResponse, buildBreakDownPrompt, parseBreakDownResponse } from './geminiUtils';
+import { objectiveProgress } from '../dashboard/GoalsTab';
 
 const PRIORITY_COLORS = {
   High: 'text-red-400',
@@ -18,7 +19,7 @@ const PRIORITY_BG = {
 
 const RECURRING_OPTIONS = ['None', 'Daily', 'Weekly'];
 
-function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
+function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey, objectives }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -54,6 +55,14 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
             {task.parentId && (
               <span className="text-xs text-muted-foreground/80">↳ subtask</span>
             )}
+            {task.goalId && objectives && (() => {
+              const linked = (objectives || []).find(o => o.id === task.goalId);
+              return linked ? (
+                <span className="text-xs text-amber-400/80 bg-amber-500/10 px-1.5 py-0.5" data-testid={`task-goal-badge-${task.id}`}>
+                  {linked.title}
+                </span>
+              ) : null;
+            })()}
           </div>
           {task.dueDate && (
             <p className="text-xs text-muted-foreground/80 mt-0.5">Due: {task.dueDate}</p>
@@ -123,6 +132,17 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
             >
               {RECURRING_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
+            {objectives && objectives.length > 0 && (
+              <select
+                value={task.goalId || ''}
+                onChange={(e) => onUpdate(task.id, { goalId: e.target.value || null })}
+                className="bg-background border border-border px-2 py-1 text-xs text-foreground focus:outline-none"
+                data-testid={`task-goal-select-${task.id}`}
+              >
+                <option value="">No goal</option>
+                {objectives.map((o) => <option key={o.id} value={o.id}>{o.title}</option>)}
+              </select>
+            )}
           </div>
           <textarea
             value={task.notes || ''}
@@ -143,7 +163,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey }) {
   );
 }
 
-function TaskGroup({ title, tasks, onToggle, onDelete, onUpdate, onBreakDown, hasKey, accent = '' }) {
+function TaskGroup({ title, tasks, onToggle, onDelete, onUpdate, onBreakDown, hasKey, accent = '', objectives }) {
   if (tasks.length === 0) return null;
   return (
     <div>
@@ -152,20 +172,20 @@ function TaskGroup({ title, tasks, onToggle, onDelete, onUpdate, onBreakDown, ha
       </h4>
       <div className="space-y-2">
         {tasks.map((t) => (
-          <TaskItem key={t.id} task={t} onToggle={onToggle} onDelete={onDelete} onUpdate={onUpdate} onBreakDown={onBreakDown} hasKey={hasKey} />
+          <TaskItem key={t.id} task={t} onToggle={onToggle} onDelete={onDelete} onUpdate={onUpdate} onBreakDown={onBreakDown} hasKey={hasKey} objectives={objectives} />
         ))}
       </div>
     </div>
   );
 }
 
-export function TasksTab() {
+export function TasksTab({ objectives = [] }) {
   const { tasks, addTask, toggleComplete, deleteTask, updateTask, reorderTasks } = useTasks();
   const { generate, generateStructured, loading: aiLoading, hasKey } = useGemini();
   const today = getTodayStr();
 
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newTask, setNewTask] = useState({ title: '', priority: 'Medium', dueDate: '', notes: '', recurring: 'None' });
+  const [newTask, setNewTask] = useState({ title: '', priority: 'Medium', dueDate: '', notes: '', recurring: 'None', goalId: '' });
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [aiPrioritySuggestion, setAiPrioritySuggestion] = useState(null);
   const [breakDownLoading, setBreakDownLoading] = useState(null);
@@ -175,8 +195,8 @@ export function TasksTab() {
   const handleAdd = (e) => {
     e.preventDefault();
     if (!newTask.title.trim()) return;
-    addTask({ ...newTask, dueDate: newTask.dueDate || null });
-    setNewTask({ title: '', priority: 'Medium', dueDate: '', notes: '', recurring: 'None' });
+    addTask({ ...newTask, dueDate: newTask.dueDate || null, goalId: newTask.goalId || null });
+    setNewTask({ title: '', priority: 'Medium', dueDate: '', notes: '', recurring: 'None', goalId: '' });
     setShowAddForm(false);
   };
 
@@ -241,6 +261,7 @@ export function TasksTab() {
     onUpdate: updateTask,
     onBreakDown: handleBreakDown,
     hasKey,
+    objectives,
   };
 
   return (
@@ -293,6 +314,17 @@ export function TasksTab() {
             >
               {RECURRING_OPTIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
+            {objectives.length > 0 && (
+              <select
+                value={newTask.goalId}
+                onChange={(e) => setNewTask((p) => ({ ...p, goalId: e.target.value }))}
+                className="bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none"
+                data-testid="new-task-goal-select"
+              >
+                <option value="">No goal</option>
+                {objectives.map((o) => <option key={o.id} value={o.id}>{o.title}</option>)}
+              </select>
+            )}
           </div>
           <textarea
             placeholder="Notes (optional)…"
