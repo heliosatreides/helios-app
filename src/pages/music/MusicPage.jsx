@@ -1,50 +1,24 @@
 import { useState } from 'react';
-import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { PageHeader } from '../../components/ui';
 
 const MOODS = [
-  { id: 'energetic', label: '⚡ Energetic', color: 'text-yellow-400' },
-  { id: 'focused', label: '🎯 Focused', color: 'text-blue-400' },
-  { id: 'relaxed', label: '🌊 Relaxed', color: 'text-teal-400' },
-  { id: 'happy', label: '😊 Happy', color: 'text-green-400' },
-  { id: 'melancholic', label: '🌧️ Melancholic', color: 'text-purple-400' },
-  { id: 'pumpup', label: '🔥 Pump Up', color: 'text-red-400' },
+  { id: 'energetic', label: 'Energetic' },
+  { id: 'focused', label: 'Focused' },
+  { id: 'relaxed', label: 'Relaxed' },
+  { id: 'happy', label: 'Happy' },
+  { id: 'melancholic', label: 'Melancholic' },
+  { id: 'pumpup', label: 'Pump Up' },
 ];
 
 const ALL_GENRES = ['Pop', 'Rock', 'Hip-Hop', 'Electronic', 'Jazz', 'Classical', 'R&B', 'Country', 'Metal', 'Indie', 'Lo-Fi', 'EDM'];
 
-function parseSongs(text) {
-  // Parse songs from AI response — try to extract structured song data
-  const songs = [];
-  const lines = text.split('\n');
-  let current = null;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    // Match "1. Song Title - Artist" or "**Song Title** by Artist" patterns
-    const numbered = trimmed.match(/^\d+\.\s+\*?\*?(.+?)\*?\*?\s*[-–]\s*\*?\*?(.+?)\*?\*?$/);
-    const byPattern = trimmed.match(/^\d+\.\s+\*?\*?(.+?)\*?\*?\s+by\s+\*?\*?(.+?)\*?\*?$/i);
-
-    if (numbered || byPattern) {
-      const match = byPattern || numbered;
-      if (current) songs.push(current);
-      current = { song: match[1].trim(), artist: match[2].trim(), reason: '' };
-    } else if (current && trimmed && !trimmed.match(/^\d+\./)) {
-      current.reason += (current.reason ? ' ' : '') + trimmed.replace(/^[-–•*]\s*/, '');
-    }
-  }
-  if (current) songs.push(current);
-  return songs.length > 0 ? songs : null;
-}
-
 export function MusicPage() {
-  const [likes, setLikes] = useIDB('music-likes', []);
   const [mood, setMood] = useState(null);
   const [genres, setGenres] = useState(() => {
     try { return JSON.parse(localStorage.getItem('helios-music-genres') || '[]'); } catch { return []; }
   });
   const [songs, setSongs] = useState([]);
-  const [rawText, setRawText] = useState('');
   const { generateStructured, loading, error } = useGemini();
 
   function toggleGenre(g) {
@@ -77,18 +51,10 @@ export function MusicPage() {
       });
       if (Array.isArray(result)) {
         setSongs(result);
-        setRawText('');
       }
     } catch {
       setSongs([]);
     }
-  }
-
-  function likeSong(song) {
-    setLikes(prev => {
-      if (prev.some(s => s.song === song.song && s.artist === song.artist)) return prev;
-      return [...prev, { ...song, mood, likedAt: new Date().toISOString(), id: Date.now().toString() }];
-    });
   }
 
   function searchUrl(platform, song, artist) {
@@ -100,14 +66,25 @@ export function MusicPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-lg font-semibold text-foreground">Music Recommendations</h1>
+      <PageHeader
+        title="Playlist Suggester"
+        subtitle="AI-powered song suggestions. Pick a mood, get recommendations, listen on your favorite platform."
+      />
 
       {/* Mood selector */}
       <div className="bg-background border border-border p-5 space-y-3">
         <h2 className="text-sm font-semibold text-muted-foreground">How are you feeling?</h2>
         <div className="grid grid-cols-3 gap-2">
           {MOODS.map(m => (
-            <button key={m.id} onClick={() => setMood(m.id)} className={`py-3 text-sm font-medium border transition-all ${mood === m.id ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-secondary border-border text-muted-foreground hover:border-[#3f3f46]'}`}>
+            <button
+              key={m.id}
+              onClick={() => setMood(m.id)}
+              className={`min-h-[44px] py-3 text-sm font-medium border transition-all ${
+                mood === m.id
+                  ? 'bg-foreground text-background border-foreground'
+                  : 'bg-secondary border-border text-muted-foreground hover:text-foreground hover:border-foreground/50'
+              }`}
+            >
               {m.label}
             </button>
           ))}
@@ -116,10 +93,18 @@ export function MusicPage() {
 
       {/* Genre preferences */}
       <div className="bg-background border border-border p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-muted-foreground">Genre Preferences (pick 3-5)</h2>
+        <h2 className="text-sm font-semibold text-muted-foreground">Genre Preferences (optional)</h2>
         <div className="flex flex-wrap gap-2">
           {ALL_GENRES.map(g => (
-            <button key={g} onClick={() => toggleGenre(g)} className={`px-3 py-1.5 rounded-full text-xs font-medium border ${genres.includes(g) ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-secondary border-border text-muted-foreground hover:border-[#3f3f46]'}`}>
+            <button
+              key={g}
+              onClick={() => toggleGenre(g)}
+              className={`px-3 py-1.5 text-xs font-medium border min-h-[44px] ${
+                genres.includes(g)
+                  ? 'bg-foreground text-background border-foreground'
+                  : 'bg-secondary border-border text-muted-foreground hover:text-foreground hover:border-foreground/50'
+              }`}
+            >
               {g}
             </button>
           ))}
@@ -127,56 +112,47 @@ export function MusicPage() {
       </div>
 
       {/* Get recommendations */}
-      <button onClick={getSuggestions} disabled={!mood || loading} className="w-full py-3 bg-purple-600 text-white font-semibold hover:bg-purple-500 disabled:opacity-50 transition-colors">
-        {loading ? '✨ Finding songs...' : '✨ Get Recommendations'}
+      <button
+        onClick={getSuggestions}
+        disabled={!mood || loading}
+        className="w-full min-h-[44px] py-3 bg-foreground text-background font-semibold hover:bg-foreground/90 disabled:opacity-50 transition-colors"
+      >
+        {loading ? 'Finding songs...' : 'Get Recommendations'}
       </button>
       {error && <p className="text-red-400 text-sm">{error}</p>}
 
       {/* Songs */}
       {songs.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">Recommendations for {MOODS.find(m2 => m2.id === mood)?.label}</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground">
+            Recommendations for {MOODS.find(m2 => m2.id === mood)?.label}
+          </h2>
           {songs.map((song, i) => (
             <div key={i} className="bg-background border border-border p-4 space-y-2">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="font-semibold text-foreground">{song.song}</div>
-                  <div className="text-sm text-muted-foreground">{song.artist}</div>
-                </div>
-                <button onClick={() => likeSong(song)} title="Like" className={`text-lg ${likes.some(s => s.song === song.song) ? 'text-red-400' : 'text-muted-foreground/80 hover:text-red-400'}`}>
-                  ♥
-                </button>
-              </div>
-              {song.reason && <p className="text-xs text-muted-foreground leading-relaxed">{song.reason}</p>}
-              <div className="flex gap-2">
-                <a href={searchUrl('youtube', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-red-600/20 text-red-400 text-xs hover:bg-red-600/30">▶ YouTube Music</a>
-                <a href={searchUrl('spotify', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-green-600/20 text-green-400 text-xs hover:bg-green-600/30">▶ Spotify</a>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Raw AI output if parsing failed */}
-      {rawText && songs.length === 0 && (
-        <div className="bg-background border border-border p-4">
-          <pre className="text-sm text-muted-foreground whitespace-pre-wrap">{rawText}</pre>
-        </div>
-      )}
-
-      {/* Liked songs */}
-      {likes.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">❤️ Liked Songs ({likes.length})</h2>
-          {likes.map(song => (
-            <div key={song.id} className="bg-background border border-border p-3 flex items-center justify-between gap-3">
               <div>
-                <div className="text-sm font-medium text-foreground">{song.song}</div>
-                <div className="text-xs text-muted-foreground">{song.artist} · {song.mood}</div>
+                <div className="font-semibold text-foreground">{song.song}</div>
+                <div className="text-sm text-muted-foreground">{song.artist}</div>
               </div>
+              {song.reason && (
+                <p className="text-xs text-muted-foreground leading-relaxed">{song.reason}</p>
+              )}
               <div className="flex gap-2">
-                <a href={searchUrl('spotify', song.song, song.artist)} target="_blank" rel="noopener noreferrer" className="text-xs text-green-400 hover:text-green-300">Spotify</a>
-                <button onClick={() => setLikes(p => p.filter(s => s.id !== song.id))} className="text-muted-foreground/80 hover:text-red-400 text-xs">✕</button>
+                <a
+                  href={searchUrl('youtube', song.song, song.artist)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 min-h-[44px] flex items-center border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                >
+                  YouTube Music
+                </a>
+                <a
+                  href={searchUrl('spotify', song.song, song.artist)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 min-h-[44px] flex items-center border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                >
+                  Spotify
+                </a>
               </div>
             </div>
           ))}

@@ -21,7 +21,7 @@ const PAGES = [
   { path: '/networking', label: 'Networking / CRM', keywords: 'contacts follow-up' },
   { path: '/news', label: 'News', keywords: 'headlines articles feed' },
   { path: '/flashcards', label: 'Flashcards', keywords: 'study spaced repetition' },
-  { path: '/music', label: 'Music', keywords: 'recommendations mood playlist' },
+  { path: '/music', label: 'Playlist Suggester', keywords: 'music recommendations mood playlist songs' },
   { path: '/splitter', label: 'Expense Splitter', keywords: 'split bills friends' },
   { path: '/packing', label: 'Packing Lists', keywords: 'travel checklist' },
   { path: '/devtools', label: 'Dev Tools', keywords: 'github snippets standup' },

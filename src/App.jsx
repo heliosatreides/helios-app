@@ -64,7 +64,7 @@ const ROUTE_LABELS = {
   '/networking': 'Networking',
   '/news': 'News',
   '/flashcards': 'Flashcards',
-  '/music': 'Music',
+  '/music': 'Playlist Suggester',
   '/splitter': 'Splitter',
   '/packing': 'Packing',
   '/devtools': 'Dev Tools',

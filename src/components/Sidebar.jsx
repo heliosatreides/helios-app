@@ -39,7 +39,7 @@ const navGroups = [
       { to: '/networking', label: 'Networking' },
       { to: '/news', label: 'News' },
       { to: '/flashcards', label: 'Flashcards' },
-      { to: '/music', label: 'Music' },
+      { to: '/music', label: 'Playlist Suggester' },
       { to: '/splitter', label: 'Splitter' },
       { to: '/packing', label: 'Packing' },
       { to: '/password', label: 'Passwords' },
