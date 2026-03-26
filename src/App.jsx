@@ -31,7 +31,6 @@ import { RegexPage } from './pages/regex/RegexPage';
 import { CalculatorPage } from './pages/calculator/CalculatorPage';
 import { PasswordGenerator } from './pages/password/PasswordGenerator';
 import { UtilitiesPage } from './pages/utilities/UtilitiesPage';
-import { ChatPage } from './pages/chat/ChatPage';
 import { AIChatPage } from './pages/aichat/AIChatPage';
 import { ListsPage } from './pages/lists/ListsPage';
 import { AuthProvider } from './auth/AuthContext';
@@ -60,7 +59,6 @@ const ROUTE_LABELS = {
   '/meals': 'Meals',
   '/subscriptions': 'Subscriptions',
   '/ai': 'AI Chat',
-  '/chat': 'P2P Chat',
   '/focus': 'Focus',
   '/knowledge': 'Knowledge',
   '/networking': 'Networking',
@@ -248,7 +246,6 @@ function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<RootRoute />} />
-            <Route path="/chat" element={<ChatPage />} />
             <Route path="/*" element={<AppShell />} />
           </Routes>
         </ToastProvider>

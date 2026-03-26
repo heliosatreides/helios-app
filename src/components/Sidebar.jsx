@@ -33,7 +33,6 @@ const navGroups = [
     label: 'Tools',
     items: [
       { to: '/ai', label: 'AI Chat' },
-      { to: '/chat', label: 'P2P Chat' },
       { to: '/focus', label: 'Focus' },
       { to: '/knowledge', label: 'Knowledge' },
       { to: '/networking', label: 'Networking' },

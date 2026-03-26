@@ -41,7 +41,6 @@ vi.mock('../pages/regex/RegexPage', () => ({ RegexPage: () => <div>Regex Page</d
 vi.mock('../pages/calculator/CalculatorPage', () => ({ CalculatorPage: () => <div>Calculator Page</div> }));
 vi.mock('../pages/password/PasswordGenerator', () => ({ PasswordGenerator: () => <div>Password Page</div> }));
 vi.mock('../pages/lists/ListsPage', () => ({ ListsPage: () => <div>Lists Page</div> }));
-vi.mock('../pages/chat/ChatPage', () => ({ ChatPage: () => <div>Chat Page</div> }));
 vi.mock('../pages/aichat/AIChatPage', () => ({ AIChatPage: () => <div>AI Chat Page</div> }));
 vi.mock('../pages/landing/LandingPage', () => ({ LandingPage: () => <div>Landing</div> }));
 vi.mock('./Sidebar', () => ({ Sidebar: () => <nav>Sidebar</nav> }));
