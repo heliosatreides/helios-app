@@ -89,7 +89,7 @@ function MeetingPlanner({ cities, now }) {
 
 // ── Main page ─────────────────────────────────────────────────────────────
 
-export function WorldClockPage() {
+export function WorldClockPage({ embedded } = {}) {
   const [savedCities, setSavedCities] = useIDB('world-clocks', DEFAULT_CITIES);
   const [now, setNow] = useState(new Date());
   const [search, setSearch] = useState('');
@@ -124,15 +124,27 @@ export function WorldClockPage() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title="World Clock" subtitle="Live time across time zones">
-        <button
-          type="button"
-          onClick={() => setShowSearch((s) => !s)}
-          className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-1.5 text-sm transition-colors"
-        >
-          + Add city
-        </button>
-      </PageHeader>
+      {!embedded ? (
+        <PageHeader title="World Clock" subtitle="Live time across time zones">
+          <button
+            type="button"
+            onClick={() => setShowSearch((s) => !s)}
+            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-1.5 text-sm transition-colors"
+          >
+            + Add city
+          </button>
+        </PageHeader>
+      ) : (
+        <div className="flex items-center justify-between mb-4">
+          <button
+            type="button"
+            onClick={() => setShowSearch((s) => !s)}
+            className="bg-foreground hover:bg-foreground/90 text-background font-medium px-3 py-1.5 text-sm transition-colors"
+          >
+            + Add city
+          </button>
+        </div>
+      )}
 
       {/* City search */}
       {showSearch && (

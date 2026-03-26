@@ -298,12 +298,12 @@ function UnitConverter() {
 
 // ── Page wrapper ──────────────────────────────────────────────────────────
 
-export function ConverterPage() {
+export function ConverterPage({ embedded } = {}) {
   const [mode, setMode] = useState('currency');
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Converter" subtitle="Currency and unit conversion" />
+      {!embedded && <PageHeader title="Converter" subtitle="Currency and unit conversion" />}
 
       {/* Mode toggle */}
       <div className="flex gap-2">

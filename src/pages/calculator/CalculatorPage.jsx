@@ -12,7 +12,7 @@ const TABS = ['Loan', 'Compound', 'Retirement', 'Savings Goal', 'Tax'];
 function fmt(n, decimals = 2) { return `$${Number(n).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`; }
 function pct(n) { return `${Number(n).toFixed(2)}%`; }
 
-export function CalculatorPage() {
+export function CalculatorPage({ embedded } = {}) {
   const [history, setHistory] = useIDB('calculator-history', []);
   const [tab, setTab] = useState('Loan');
   const [result, setResult] = useState(null);
@@ -94,7 +94,7 @@ export function CalculatorPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Financial Calculator" />
+      {!embedded && <PageHeader title="Financial Calculator" />}
 
       {/* Tab bar */}
       <div className="flex gap-1 flex-wrap">

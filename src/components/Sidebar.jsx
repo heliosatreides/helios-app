@@ -42,20 +42,16 @@ const navGroups = [
       { to: '/music', label: 'Playlist Suggester' },
       { to: '/splitter', label: 'Splitter' },
       { to: '/packing', label: 'Packing' },
-      { to: '/password', label: 'Passwords' },
+      { to: '/utilities', label: 'Utilities' },
     ],
   },
   {
     label: 'Developer',
     items: [
       { to: '/devtools', label: 'Dev Tools' },
-      { to: '/converter', label: 'Converter' },
-      { to: '/worldclock', label: 'World Clock' },
       { to: '/apiplayground', label: 'API Playground' },
       { to: '/colors', label: 'Colors' },
       { to: '/wiki', label: 'Wiki' },
-      { to: '/regex', label: 'Regex' },
-      { to: '/calculator', label: 'Calculator' },
     ],
   },
   {

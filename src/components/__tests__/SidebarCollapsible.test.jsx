@@ -56,7 +56,7 @@ describe('Sidebar collapsible groups', () => {
     renderSidebar();
     // Developer items should be hidden
     expect(screen.queryByText('Dev Tools')).not.toBeInTheDocument();
-    expect(screen.queryByText('Calculator')).not.toBeInTheDocument();
+    expect(screen.queryByText('API Playground')).not.toBeInTheDocument();
   });
 
   it('clicking a group label toggles collapse', () => {
@@ -79,7 +79,7 @@ describe('Sidebar collapsible groups', () => {
 
     fireEvent.click(screen.getByText('Developer'));
     expect(screen.getByText('Dev Tools')).toBeInTheDocument();
-    expect(screen.getByText('Calculator')).toBeInTheDocument();
+    expect(screen.getByText('API Playground')).toBeInTheDocument();
   });
 
   it('persists collapse state to localStorage', () => {
@@ -112,10 +112,10 @@ describe('Sidebar collapsible groups', () => {
   });
 
   it('auto-expands Developer group when navigating to a developer route', () => {
-    renderSidebar('/calculator');
-    // Developer should auto-expand since /calculator is the active route
-    expect(screen.getByText('Calculator')).toBeInTheDocument();
+    renderSidebar('/devtools');
+    // Developer should auto-expand since /devtools is the active route
     expect(screen.getByText('Dev Tools')).toBeInTheDocument();
+    expect(screen.getByText('API Playground')).toBeInTheDocument();
   });
 
   it('Settings group is always visible (not collapsible)', () => {

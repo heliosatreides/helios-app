@@ -30,6 +30,7 @@ import { PackingPage } from './pages/packing/PackingPage';
 import { RegexPage } from './pages/regex/RegexPage';
 import { CalculatorPage } from './pages/calculator/CalculatorPage';
 import { PasswordGenerator } from './pages/password/PasswordGenerator';
+import { UtilitiesPage } from './pages/utilities/UtilitiesPage';
 import { ChatPage } from './pages/chat/ChatPage';
 import { AIChatPage } from './pages/aichat/AIChatPage';
 import { ListsPage } from './pages/lists/ListsPage';
@@ -68,6 +69,7 @@ const ROUTE_LABELS = {
   '/splitter': 'Splitter',
   '/packing': 'Packing',
   '/devtools': 'Dev Tools',
+  '/utilities': 'Utilities',
   '/converter': 'Converter',
   '/worldclock': 'World Clock',
   '/apiplayground': 'API Playground',
@@ -178,8 +180,12 @@ function AppShell() {
               <Route path="/devtools" element={<ProtectedRoute><DevToolsPage /></ProtectedRoute>} />
               <Route path="/focus" element={<ProtectedRoute><FocusPage /></ProtectedRoute>} />
               <Route path="/news" element={<ProtectedRoute><NewsPage /></ProtectedRoute>} />
-              <Route path="/converter" element={<ProtectedRoute><ConverterPage /></ProtectedRoute>} />
-              <Route path="/worldclock" element={<ProtectedRoute><WorldClockPage /></ProtectedRoute>} />
+              <Route path="/utilities" element={<ProtectedRoute><UtilitiesPage /></ProtectedRoute>} />
+              <Route path="/converter" element={<Navigate to="/utilities?tab=converter" replace />} />
+              <Route path="/worldclock" element={<Navigate to="/utilities?tab=worldclock" replace />} />
+              <Route path="/regex" element={<Navigate to="/utilities?tab=regex" replace />} />
+              <Route path="/calculator" element={<Navigate to="/utilities?tab=calculator" replace />} />
+              <Route path="/password" element={<Navigate to="/utilities?tab=passwords" replace />} />
               <Route path="/flashcards" element={<ProtectedRoute><FlashcardsPage /></ProtectedRoute>} />
               <Route path="/splitter" element={<ProtectedRoute><SplitterPage /></ProtectedRoute>} />
               <Route path="/meals" element={<ProtectedRoute><MealsPage /></ProtectedRoute>} />
@@ -189,9 +195,6 @@ function AppShell() {
               <Route path="/wiki" element={<ProtectedRoute><WikiPage /></ProtectedRoute>} />
               <Route path="/music" element={<ProtectedRoute><MusicPage /></ProtectedRoute>} />
               <Route path="/packing" element={<ProtectedRoute><PackingPage /></ProtectedRoute>} />
-              <Route path="/regex" element={<ProtectedRoute><RegexPage /></ProtectedRoute>} />
-              <Route path="/calculator" element={<ProtectedRoute><CalculatorPage /></ProtectedRoute>} />
-              <Route path="/password" element={<ProtectedRoute><PasswordGenerator /></ProtectedRoute>} />
               <Route path="/ai" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
               <Route path="/lists" element={<ListsPage />} />
             </Routes>

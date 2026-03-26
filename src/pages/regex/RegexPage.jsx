@@ -6,7 +6,7 @@ import { extractMatches, getHighlightSegments, COMMON_PATTERNS } from './regexUt
 
 const ALL_FLAGS = ['g', 'i', 'm', 's'];
 
-export function RegexPage() {
+export function RegexPage({ embedded } = {}) {
   const [saved, setSaved] = useIDB('regex-patterns', []);
   const [pattern, setPattern] = useState('');
   const [flags, setFlags] = useState(['g']);
@@ -64,7 +64,7 @@ export function RegexPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <PageHeader title="Regex Tester" />
+        {!embedded && <PageHeader title="Regex Tester" />}
         <div className="flex gap-2">
           {['tester', 'library', 'saved'].map(t => (
             <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>
