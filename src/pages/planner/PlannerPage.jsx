@@ -37,11 +37,9 @@ export function PlannerPage() {
 
       <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
-      <div className="border-0 md:border md:border-border p-3 md:p-5">
-        {activeTab === 'Today' && <TodayTab dateStr={today} tripActivities={todayTripActivities} />}
-        {activeTab === 'Tasks' && <TasksTab objectives={objectives || []} />}
-        {activeTab === 'Calendar' && <CalendarTab />}
-      </div>
+      {activeTab === 'Today' && <TodayTab dateStr={today} tripActivities={todayTripActivities} />}
+      {activeTab === 'Tasks' && <TasksTab objectives={objectives || []} />}
+      {activeTab === 'Calendar' && <CalendarTab />}
     </div>
   );
 }

@@ -17,16 +17,20 @@ vi.mock('./CalendarTab', () => ({ CalendarTab: () => <div data-testid="calendar-
 
 import { PlannerPage } from './PlannerPage';
 
-test('planner content wrapper uses responsive padding (p-3 md:p-5) instead of fixed p-5', () => {
+test('planner tab content renders without an extra border wrapper div', () => {
   const { container } = render(<MemoryRouter><PlannerPage /></MemoryRouter>);
-  const contentWrapper = container.querySelector('[data-testid="today-tab"]').parentElement;
-  // Should have responsive padding, not a fixed border+p-5
-  expect(contentWrapper.className).toMatch(/p-3/);
-  expect(contentWrapper.className).toMatch(/md:p-5/);
+  const todayTab = container.querySelector('[data-testid="today-tab"]');
+  const parent = todayTab.parentElement;
+  // Parent should be the top-level space-y-6 div, not a border wrapper
+  expect(parent.className).toContain('space-y-6');
 });
 
-test('planner content wrapper removes border on mobile', () => {
+test('planner tab content has no double-padding wrapper on mobile', () => {
   const { container } = render(<MemoryRouter><PlannerPage /></MemoryRouter>);
-  const contentWrapper = container.querySelector('[data-testid="today-tab"]').parentElement;
-  expect(contentWrapper.className).toMatch(/border-0|md:border/);
+  const todayTab = container.querySelector('[data-testid="today-tab"]');
+  const parent = todayTab.parentElement;
+  // Should NOT have the old border-0 md:border wrapper classes
+  expect(parent.className).not.toContain('border-0');
+  expect(parent.className).not.toContain('md:border');
+  expect(parent.className).not.toContain('md:p-5');
 });
