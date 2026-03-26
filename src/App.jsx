@@ -196,7 +196,7 @@ function AppShell() {
               <Route path="/music" element={<ProtectedRoute><MusicPage /></ProtectedRoute>} />
               <Route path="/packing" element={<ProtectedRoute><PackingPage /></ProtectedRoute>} />
               <Route path="/ai" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
-              <Route path="/lists" element={<ListsPage />} />
+              <Route path="/lists" element={<ProtectedRoute><ListsPage /></ProtectedRoute>} />
             </Routes>
           </div>
           </ErrorBoundary>

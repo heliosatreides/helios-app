@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 
 // Mock all heavy child components to isolate the title ordering test
@@ -33,7 +34,7 @@ import { FinancePage } from './FinancePage';
 
 describe('FinancePage title ordering', () => {
   it('renders the h1 header before the net worth banner', () => {
-    const { container } = render(<FinancePage />);
+    const { container } = render(<MemoryRouter><FinancePage /></MemoryRouter>);
 
     const header = screen.getByRole('heading', { level: 1, name: /finance/i });
     const netWorthBanner = screen.getByTestId('net-worth-banner');

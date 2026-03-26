@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ScoresTab } from './ScoresTab';
 import { StandingsTab } from './StandingsTab';
 import { FavoritesTab } from './FavoritesTab';
@@ -20,8 +21,15 @@ function useAllGames() {
   return { NBA: nba.games, NFL: nfl.games, MLB: mlb.games, NHL: nhl.games, MLS: mls.games };
 }
 
+const TAB_IDS = TABS.map(t => t.id);
+
 export function SportsPage() {
-  const [activeTab, setActiveTab] = useState('scores');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab = TAB_IDS.includes(tabParam) ? tabParam : 'scores';
+  const setActiveTab = useCallback((tab) => {
+    setSearchParams(tab === 'scores' ? {} : { tab }, { replace: true });
+  }, [setSearchParams]);
   const [activeSport, setActiveSport] = useState('NBA');
   const allGames = useAllGames();
 

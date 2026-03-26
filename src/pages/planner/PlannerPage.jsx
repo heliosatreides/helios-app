@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useIDB } from '../../hooks/useIDB';
 import { TodayTab } from './TodayTab';
 import { TasksTab } from './TasksTab';
@@ -9,7 +10,12 @@ import { PageHeader, TabBar } from '../../components/ui';
 const TABS = ['Today', 'Tasks', 'Calendar'];
 
 export function PlannerPage() {
-  const [activeTab, setActiveTab] = useState('Today');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab = TABS.includes(tabParam) ? tabParam : 'Today';
+  const setActiveTab = useCallback((tab) => {
+    setSearchParams(tab === 'Today' ? {} : { tab }, { replace: true });
+  }, [setSearchParams]);
   const today = getTodayStr();
   const [trips] = useIDB('helios-trips', []);
 

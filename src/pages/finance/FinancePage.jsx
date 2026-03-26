@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
@@ -23,10 +24,16 @@ const TABS = ['Accounts', 'Transactions', 'Budget'];
 
 export function FinancePage() {
   const toast = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [accounts, setAccounts] = useIDB('finance-accounts', []);
   const [transactions, setTransactions] = useIDB('finance-transactions', []);
   const [budgets, setBudgets] = useIDB('finance-budgets', []);
-  const [activeTab, setActiveTab] = useState('Accounts');
+
+  const tabParam = searchParams.get('tab');
+  const activeTab = TABS.includes(tabParam) ? tabParam : 'Accounts';
+  const setActiveTab = useCallback((tab) => {
+    setSearchParams(tab === 'Accounts' ? {} : { tab }, { replace: true });
+  }, [setSearchParams]);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [editingAccount, setEditingAccount] = useState(null);
   const [showTxModal, setShowTxModal] = useState(false);
