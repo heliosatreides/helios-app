@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { getDuration } from './tripUtils';
+import { EmptyState, ActionButton } from '../../components/ui';
 
 const STATUS_COLORS = {
   Planning: 'bg-amber-900/60 text-amber-300 ring-1 ring-amber-600/40',
@@ -84,17 +85,15 @@ export function TripList({ trips }) {
 
   if (!trips || trips.length === 0) {
     return (
-      <div className="text-center py-16 text-muted-foreground">
-        <div className="text-5xl mb-4">✈️</div>
-        <p className="text-lg mb-2 text-foreground">No trips yet. Plan your first adventure →</p>
-        <p className="text-sm mb-6">Keep track of your travel plans, budget, and itinerary in one place.</p>
-        <button
-          onClick={() => navigate('/trips/new')}
-          className="bg-foreground hover:bg-foreground/90 text-background font-semibold px-5 py-2.5 text-sm transition-colors"
-        >
-          + Create Trip
-        </button>
-      </div>
+      <EmptyState
+        title="No trips yet"
+        description="Keep track of your travel plans, budget, and itinerary in one place."
+        action={
+          <ActionButton variant="primary" onClick={() => navigate('/trips/new')}>
+            Create Trip
+          </ActionButton>
+        }
+      />
     );
   }
 

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { vi } from 'vitest';
 import { NetworkingTab } from './NetworkingTab';
 import { daysSince, isOverdue } from './NetworkingTab';
@@ -78,8 +78,8 @@ function renderNetworkingTab() {
 
 test('NetworkingTab renders empty state', () => {
   renderNetworkingTab();
-  expect(screen.getByTestId('networking-empty-state')).toBeInTheDocument();
   expect(screen.getByText(/no contacts yet/i)).toBeInTheDocument();
+  expect(screen.getByText(/start building your professional network/i)).toBeInTheDocument();
 });
 
 test('NetworkingTab shows add contact button', () => {
@@ -99,7 +99,7 @@ test('NetworkingTab can add a contact', () => {
   fireEvent.change(screen.getByTestId('contact-name-input'), {
     target: { value: 'Alice Johnson' },
   });
-  fireEvent.click(screen.getByRole('button', { name: 'Add Contact' }));
+  fireEvent.click(within(screen.getByTestId('add-contact-modal')).getByRole('button', { name: 'Add Contact' }));
   expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
 });
 
@@ -109,11 +109,11 @@ test('NetworkingTab search filters contacts', () => {
   // Add two contacts
   fireEvent.click(screen.getByTestId('add-contact-btn'));
   fireEvent.change(screen.getByTestId('contact-name-input'), { target: { value: 'Alice Johnson' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Add Contact' }));
+  fireEvent.click(within(screen.getByTestId('add-contact-modal')).getByRole('button', { name: 'Add Contact' }));
 
   fireEvent.click(screen.getByTestId('add-contact-btn'));
   fireEvent.change(screen.getByTestId('contact-name-input'), { target: { value: 'Bob Smith' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Add Contact' }));
+  fireEvent.click(within(screen.getByTestId('add-contact-modal')).getByRole('button', { name: 'Add Contact' }));
 
   // Search for Alice
   fireEvent.change(screen.getByTestId('contact-search'), { target: { value: 'Alice' } });
@@ -127,7 +127,7 @@ test('NetworkingTab can log an interaction', () => {
   // Add contact
   fireEvent.click(screen.getByTestId('add-contact-btn'));
   fireEvent.change(screen.getByTestId('contact-name-input'), { target: { value: 'Carol White' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Add Contact' }));
+  fireEvent.click(within(screen.getByTestId('add-contact-modal')).getByRole('button', { name: 'Add Contact' }));
 
   // Expand the contact card
   const card = screen.getByText('Carol White').closest('[data-testid^="contact-card-"]');
@@ -176,6 +176,6 @@ test('NetworkingTab tag filter - filter by tag', () => {
   fireEvent.click(screen.getByTestId('add-contact-btn'));
   fireEvent.change(screen.getByTestId('contact-name-input'), { target: { value: 'Dave Recruiter' } });
   // Let's just add contact to verify base functionality
-  fireEvent.click(screen.getByRole('button', { name: 'Add Contact' }));
+  fireEvent.click(within(screen.getByTestId('add-contact-modal')).getByRole('button', { name: 'Add Contact' }));
   expect(screen.getByText('Dave Recruiter')).toBeInTheDocument();
 });

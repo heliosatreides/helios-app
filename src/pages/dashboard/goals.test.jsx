@@ -93,8 +93,8 @@ function renderGoalsTab(props = {}) {
 
 test('GoalsTab renders empty state', () => {
   renderGoalsTab();
-  expect(screen.getByTestId('goals-empty-state')).toBeInTheDocument();
   expect(screen.getByText(/no objectives yet/i)).toBeInTheDocument();
+  expect(screen.getByText(/set your first objective/i)).toBeInTheDocument();
 });
 
 test('GoalsTab shows add objective button', () => {

@@ -44,6 +44,7 @@ import { CommandPalette } from './components/CommandPalette';
 import { CommandPaletteProvider, useCommandPalette } from './components/CommandPaletteContext';
 import { ToastProvider } from './components/Toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { BottomNav } from './components/BottomNav';
 import './index.css';
 
 const ROUTE_LABELS = {
@@ -158,13 +159,13 @@ function AppShell() {
 
         {/* AI Chat renders full-bleed (no padding/max-width) to avoid layout hacks */}
         {location.pathname === '/ai' ? (
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden pb-14 md:pb-0">
             <ErrorBoundary>
               <ProtectedRoute><AIChatPage onOpenSidebar={() => setSidebarOpen(true)} onOpenSearch={openCommandPalette} /></ProtectedRoute>
             </ErrorBoundary>
           </div>
         ) : (
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 pb-20 md:pb-6">
           <ErrorBoundary>
           <div className="max-w-5xl mx-auto">
             <Routes>
@@ -206,6 +207,9 @@ function AppShell() {
         </main>
         )}
       </div>
+
+      {/* Mobile bottom navigation bar */}
+      <BottomNav />
     </div>
   );
 }

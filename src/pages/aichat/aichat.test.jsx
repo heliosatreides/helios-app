@@ -67,16 +67,17 @@ describe('AIChatPage mobile conversation drawer', () => {
     expect(screen.getByRole('button', { name: 'Chats' })).toBeInTheDocument();
   });
 
-  test('does not show drawer by default', () => {
+  test('drawer is off-screen by default', () => {
     renderPage(mockConversations);
-    expect(screen.queryByTestId('modal-overlay')).not.toBeInTheDocument();
+    const drawer = screen.getByTestId('conversation-drawer');
+    expect(drawer.className).toContain('-translate-x-full');
   });
 
   test('opening drawer shows conversation list', () => {
     renderPage(mockConversations);
     fireEvent.click(screen.getByRole('button', { name: 'Chats' }));
-    const drawer = screen.getByTestId('modal-overlay');
-    expect(drawer).toBeInTheDocument();
+    const drawer = screen.getByTestId('conversation-drawer');
+    expect(drawer.className).toContain('translate-x-0');
     expect(within(drawer).getByText('First chat')).toBeInTheDocument();
     expect(within(drawer).getByText('Second chat')).toBeInTheDocument();
   });
@@ -84,10 +85,10 @@ describe('AIChatPage mobile conversation drawer', () => {
   test('tapping a conversation selects it and closes drawer', () => {
     renderPage(mockConversations);
     fireEvent.click(screen.getByRole('button', { name: 'Chats' }));
-    const drawer = screen.getByTestId('modal-overlay');
+    const drawer = screen.getByTestId('conversation-drawer');
     fireEvent.click(within(drawer).getByText('First chat'));
-    // Drawer should close
-    expect(screen.queryByTestId('modal-overlay')).not.toBeInTheDocument();
+    // Drawer should slide back off-screen
+    expect(drawer.className).toContain('-translate-x-full');
   });
 
   test('delete button is always visible (not hover-only) in drawer', () => {
@@ -106,8 +107,9 @@ describe('AIChatPage mobile conversation drawer', () => {
     renderPage([]);
     fireEvent.click(screen.getByRole('button', { name: 'Chats' }));
     fireEvent.click(screen.getByText('+ New conversation'));
-    // Drawer should close after creating
-    expect(screen.queryByTestId('modal-overlay')).not.toBeInTheDocument();
+    // Drawer should slide back off-screen after creating
+    const drawer = screen.getByTestId('conversation-drawer');
+    expect(drawer.className).toContain('-translate-x-full');
   });
 
   test('shows active conversation title in mobile header', () => {

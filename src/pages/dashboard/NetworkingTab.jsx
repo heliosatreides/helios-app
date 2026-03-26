@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
+import { EmptyState, ActionButton } from '../../components/ui';
 import { Modal } from '../../components/Modal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 
@@ -457,24 +458,20 @@ export function NetworkingTab() {
 
       {/* Contact list */}
       {(!contacts || contacts.length === 0) ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center" data-testid="networking-empty-state">
-          <div className="text-5xl mb-4">🤝</div>
-          <h3 className="text-foreground text-lg font-semibold mb-2">No contacts yet</h3>
-          <p className="text-muted-foreground text-sm mb-4">Start building your professional network</p>
-          <button
-            type="button"
-            onClick={() => setShowAdd(true)}
-            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
-          >
-            + Add Contact
-          </button>
-        </div>
+        <EmptyState
+          title="No contacts yet"
+          description="Start building your professional network."
+          action={
+            <ActionButton variant="primary" onClick={() => setShowAdd(true)}>
+              Add Contact
+            </ActionButton>
+          }
+        />
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="networking-no-results">
-          <div className="text-4xl mb-3">🔍</div>
-          <h3 className="text-foreground text-base font-semibold mb-1">No contacts found</h3>
-          <p className="text-muted-foreground text-sm">Try a different search or filter</p>
-        </div>
+        <EmptyState
+          title="No contacts found"
+          description="Try a different search or filter."
+        />
       ) : (
         <div className="space-y-3">
           {filtered.map((contact) => (

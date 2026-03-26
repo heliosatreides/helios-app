@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
+import { EmptyState, ActionButton } from '../../components/ui';
 import { Modal } from '../../components/Modal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { filterObjectivesByTimeframe, getObjectiveStats, getActiveTimeframes } from './goals.utils';
@@ -613,30 +614,25 @@ export function GoalsTab({ trips = [], budgets = [], tasks = [] }) {
 
       {/* Objectives list */}
       {(!objectives || objectives.length === 0) ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center" data-testid="goals-empty-state">
-          <div className="text-5xl mb-4">🎯</div>
-          <h3 className="text-foreground text-lg font-semibold mb-2">No objectives yet</h3>
-          <p className="text-muted-foreground text-sm mb-4">Set your first objective to start tracking progress with OKRs</p>
-          <button
-            type="button"
-            onClick={() => setShowAddObjective(true)}
-            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
-          >
-            + New Objective
-          </button>
-        </div>
+        <EmptyState
+          title="No objectives yet"
+          description="Set your first objective to start tracking progress with OKRs."
+          action={
+            <ActionButton variant="primary" onClick={() => setShowAddObjective(true)}>
+              New Objective
+            </ActionButton>
+          }
+        />
       ) : filteredObjectives.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="goals-filter-empty">
-          <div className="text-4xl mb-3">🔍</div>
-          <p className="text-muted-foreground text-sm">No objectives for <span className="text-foreground font-medium">{selectedTimeframe}</span></p>
-          <button
-            type="button"
-            onClick={() => setSelectedTimeframe('All')}
-            className="mt-3 text-xs text-amber-400 hover:underline"
-          >
-            Show all timeframes
-          </button>
-        </div>
+        <EmptyState
+          title={`No objectives for ${selectedTimeframe}`}
+          description="Try a different timeframe or create a new objective."
+          action={
+            <ActionButton variant="secondary" onClick={() => setSelectedTimeframe('All')}>
+              Show all timeframes
+            </ActionButton>
+          }
+        />
       ) : (
         <div className="space-y-4">
           {filteredObjectives.map((objective) => (

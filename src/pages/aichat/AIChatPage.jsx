@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useGemini } from '../../hooks/useGemini';
 import { useIDB } from '../../hooks/useIDB';
 import { buildToolSystemPrompt, executeActions } from '../../hooks/useHeliosTools';
-import { Modal } from '../../components/Modal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 
 const SUGGESTED_ACTIONS = [
@@ -65,21 +64,50 @@ function TypingIndicator() {
 
 function ConversationDrawer({ open, onClose, conversations, activeConvId, onSelect, onDelete, onCreate }) {
   return (
-    <Modal open={open} onClose={onClose} title="Conversations" className="w-full h-full max-w-full sm:max-w-full">
-      <div className="flex flex-col h-full">
-        <button
-          onClick={() => { onCreate(); onClose(); }}
-          className="w-full px-4 py-3 text-sm text-left border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
-          style={{ minHeight: '44px' }}
-        >
-          + New conversation
-        </button>
-        <div className="flex-1 overflow-y-auto mt-2 space-y-0.5">
+    <>
+      {/* Backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={onClose}
+          data-testid="drawer-backdrop"
+        />
+      )}
+      {/* Slide-in panel */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[80vw] bg-background border-r border-border flex flex-col transform transition-transform duration-200 ease-in-out md:hidden ${
+          open ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+        data-testid="conversation-drawer"
+      >
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
+          <span className="text-sm font-semibold text-foreground">Conversations</span>
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Close conversations"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div className="px-3 py-2 shrink-0">
+          <button
+            onClick={() => { onCreate(); onClose(); }}
+            className="w-full px-3 py-2 text-sm text-left border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+            style={{ minHeight: '44px' }}
+          >
+            + New conversation
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-2 space-y-0.5">
           {conversations.map(conv => (
-            <div key={conv.id} className="flex items-center border-b border-border">
+            <div key={conv.id} className="flex items-center">
               <button
                 onClick={() => { onSelect(conv.id); onClose(); }}
-                className={`flex-1 text-left px-4 py-3 text-sm transition-colors ${
+                className={`flex-1 text-left px-3 py-3 text-sm transition-colors ${
                   activeConvId === conv.id
                     ? 'bg-secondary text-foreground'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -93,7 +121,7 @@ function ConversationDrawer({ open, onClose, conversations, activeConvId, onSele
               </button>
               <button
                 onClick={() => onDelete(conv.id)}
-                className="shrink-0 px-4 py-3 text-muted-foreground hover:text-red-400 text-sm"
+                className="shrink-0 px-3 py-3 text-muted-foreground hover:text-red-400 text-sm"
                 style={{ minHeight: '44px' }}
                 aria-label={`Delete ${conv.title}`}
               >
@@ -102,11 +130,11 @@ function ConversationDrawer({ open, onClose, conversations, activeConvId, onSele
             </div>
           ))}
           {conversations.length === 0 && (
-            <p className="text-muted-foreground/40 text-xs px-4 py-4">No conversations yet</p>
+            <p className="text-muted-foreground/40 text-xs px-3 py-4">No conversations yet</p>
           )}
         </div>
       </div>
-    </Modal>
+    </>
   );
 }
 
@@ -375,9 +403,9 @@ export function AIChatPage({ onOpenSidebar, onOpenSearch }) {
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           {!activeConvId && messages.length === 0 && (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center max-w-md">
-                <h2 className="text-foreground font-medium mb-2">AI Chat</h2>
-                <p className="text-muted-foreground text-sm mb-4">
+              <div className="border border-dashed border-border p-10 text-center max-w-md">
+                <h3 className="text-foreground font-medium mb-2">AI Chat</h3>
+                <p className="text-muted-foreground text-sm max-w-md mx-auto mb-4">
                   Chat with Gemini. It can read and modify your Helios data — tasks, finance, trips, goals, and more.
                 </p>
                 <p className="text-muted-foreground/60 text-xs mb-3">Try asking Helios to do something</p>
