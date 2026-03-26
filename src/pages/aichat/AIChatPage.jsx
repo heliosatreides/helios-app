@@ -5,8 +5,35 @@ import { buildToolSystemPrompt, executeActions } from '../../hooks/useHeliosTool
 import { Modal } from '../../components/Modal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 
+const SUGGESTED_ACTIONS = [
+  { label: 'Add a task', prompt: 'Add a task: buy groceries by Friday' },
+  { label: 'Log an expense', prompt: 'Log an expense: $45 dinner last night' },
+  { label: 'Set a goal', prompt: 'Set a goal: run a marathon by December' },
+  { label: 'Track subscription', prompt: 'Track a subscription: Netflix $15.99/month' },
+  { label: 'Plan a trip', prompt: 'Plan a trip to Tokyo in April' },
+  { label: 'Show my tasks', prompt: 'Show me my tasks for this week' },
+  { label: 'Spending summary', prompt: 'What does my spending look like this month?' },
+  { label: 'Add a contact', prompt: 'Add a contact: John from Acme Corp' },
+];
+
+function ActionConfirmation({ text }) {
+  return (
+    <div className="flex justify-start">
+      <div className="max-w-[80%] px-3 py-1.5 text-xs text-muted-foreground bg-secondary/30 border-l-2 border-foreground/20" data-testid="action-confirmation">
+        {text}
+      </div>
+    </div>
+  );
+}
+
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
+  const isAction = message.role === 'action';
+
+  if (isAction) {
+    return <ActionConfirmation text={message.content} />;
+  }
+
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} ${message.animate ? 'animate-fadeIn' : ''}`}>
       <div className={`max-w-[80%] px-4 py-2.5 text-sm leading-relaxed ${
@@ -187,6 +214,18 @@ export function AIChatPage() {
 
       let finalContent = cleanResponse || rawResponse;
 
+      // Build action confirmation messages for write/update/delete operations
+      const actionMessages = [];
+      if (dataContext.trim()) {
+        const actionLines = dataContext.split('\n').filter(l => l.trim());
+        for (const line of actionLines) {
+          const match = line.match(/\[(Created|Updated|Deleted)[^\]]*\]/);
+          if (match) {
+            actionMessages.push({ role: 'action', content: match[0].replace(/^\[|\]$/g, ''), timestamp: Date.now(), animate: true });
+          }
+        }
+      }
+
       // If there was data read, make a follow-up call with the data context
       if (dataContext.trim()) {
         try {
@@ -204,7 +243,7 @@ export function AIChatPage() {
       const assistantMsg = { role: 'assistant', content: finalContent, timestamp: Date.now(), animate: true };
 
       setConversations(prev => prev.map(c =>
-        c.id === convId ? { ...c, messages: [...c.messages, assistantMsg] } : c
+        c.id === convId ? { ...c, messages: [...c.messages, ...actionMessages, assistantMsg] } : c
       ));
     } catch (err) {
       const errorMsg = { role: 'assistant', content: `Error: ${err.message}`, timestamp: Date.now(), animate: true };
@@ -313,19 +352,21 @@ export function AIChatPage() {
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           {!activeConvId && messages.length === 0 && (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center max-w-sm">
+              <div className="text-center max-w-md">
                 <h2 className="text-foreground font-medium mb-2">AI Chat</h2>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Chat with Gemini. It can read and modify your Helios data — trips, finance, tasks, goals, and more.
+                  Chat with Gemini. It can read and modify your Helios data — tasks, finance, trips, goals, and more.
                 </p>
-                <div className="space-y-2 text-left">
-                  {['Show me my upcoming trips', 'Add a task to review Q1 financials', 'What does my spending look like?', 'Create a goal to run a marathon'].map(q => (
+                <p className="text-muted-foreground/60 text-xs mb-3">Try asking Helios to do something</p>
+                <div className="flex flex-wrap gap-2 justify-center" data-testid="suggested-actions">
+                  {SUGGESTED_ACTIONS.map(a => (
                     <button
-                      key={q}
-                      onClick={() => { if (!activeConvId) createConversation(); setInput(q); }}
-                      className="block w-full text-left px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                      key={a.label}
+                      onClick={() => { if (!activeConvId) createConversation(); setInput(a.prompt); }}
+                      className="px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                      style={{ minHeight: '44px' }}
                     >
-                      {q}
+                      {a.label}
                     </button>
                   ))}
                 </div>

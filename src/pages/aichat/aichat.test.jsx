@@ -144,6 +144,64 @@ describe('AIChatPage auto-select conversation', () => {
   });
 });
 
+describe('AIChatPage suggested action chips', () => {
+  beforeEach(() => {
+    mockConvState = undefined;
+    mockSetConversations = undefined;
+  });
+
+  test('renders suggested action chips in empty state', () => {
+    renderPage([]);
+    const actions = screen.getByTestId('suggested-actions');
+    expect(actions).toBeInTheDocument();
+    expect(screen.getByText('Add a task')).toBeInTheDocument();
+    expect(screen.getByText('Log an expense')).toBeInTheDocument();
+    expect(screen.getByText('Set a goal')).toBeInTheDocument();
+    expect(screen.getByText('Track subscription')).toBeInTheDocument();
+    expect(screen.getByText('Plan a trip')).toBeInTheDocument();
+    expect(screen.getByText('Show my tasks')).toBeInTheDocument();
+    expect(screen.getByText('Spending summary')).toBeInTheDocument();
+    expect(screen.getByText('Add a contact')).toBeInTheDocument();
+  });
+
+  test('clicking a suggested action populates input', () => {
+    renderPage([]);
+    fireEvent.click(screen.getByText('Add a task'));
+    const textarea = screen.getByPlaceholderText('Message Gemini...');
+    expect(textarea.value).toBe('Add a task: buy groceries by Friday');
+  });
+
+  test('suggested action chips have 44px min-height for mobile', () => {
+    renderPage([]);
+    const chip = screen.getByText('Add a task');
+    expect(chip.style.minHeight).toBe('44px');
+  });
+
+  test('does not show suggested actions when conversations exist', () => {
+    renderPage(mockConversations);
+    expect(screen.queryByTestId('suggested-actions')).not.toBeInTheDocument();
+  });
+});
+
+describe('AIChatPage action confirmation messages', () => {
+  test('ActionConfirmation renders with action role styling', () => {
+    const convWithAction = [{
+      id: 'conv-action',
+      title: 'Test',
+      messages: [
+        { role: 'user', content: 'Add a task', timestamp: Date.now() },
+        { role: 'action', content: 'Created item in tasks', timestamp: Date.now() },
+        { role: 'assistant', content: 'Done!', timestamp: Date.now() },
+      ],
+      createdAt: '2026-03-25T10:00:00Z',
+    }];
+    renderPage(convWithAction);
+    const confirmation = screen.getByTestId('action-confirmation');
+    expect(confirmation).toBeInTheDocument();
+    expect(confirmation.textContent).toBe('Created item in tasks');
+  });
+});
+
 describe('AIChatPage desktop sidebar delete button', () => {
   beforeEach(() => {
     mockConvState = undefined;
