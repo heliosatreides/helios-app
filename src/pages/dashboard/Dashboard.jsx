@@ -167,7 +167,7 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
     } catch { return 0; }
   })();
 
-  const isEmpty = trips.length === 0 && accounts.length === 0 && portfolio.length === 0;
+  const isEmpty = trips.length === 0 && accounts.length === 0 && portfolio.length === 0 && tasks.length === 0;
 
   const generateBrief = useCallback(async () => {
     setBriefError(null);

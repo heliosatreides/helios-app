@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Portfolio } from './Portfolio';
 import { Watchlist } from './Watchlist';
 import { StrategyNotes } from './StrategyNotes';
@@ -14,8 +15,13 @@ const TABS = [
   { id: 'strategy', label: 'Strategy' },
 ];
 
+const VALID_TABS = TABS.map((t) => t.id);
+
 export function InvestmentsPage() {
-  const [activeTab, setActiveTab] = useState('portfolio');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const rawTab = searchParams.get('tab');
+  const activeTab = VALID_TABS.includes(rawTab) ? rawTab : 'portfolio';
+  const setActiveTab = (tab) => setSearchParams({ tab }, { replace: true });
   const { generate, loading: aiLoading, hasKey } = useGemini();
   const [holdings] = useIDB('investments-portfolio', []);
   const [aiAnalysis, setAiAnalysis] = useState(null);
