@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthContext';
 import { encrypt, decrypt } from '../../auth/crypto';
 import { useIDB } from '../../hooks/useIDB';
@@ -57,7 +58,11 @@ export async function callGemini(apiKey, prompt) {
 export function SettingsPage() {
   const toast = useToast();
   const { user, password, needsReauth, login } = useAuth();
-  const [activeTab, setActiveTab] = useState('ai');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const validTabs = ['ai', 'export', 'preferences'];
+  const rawTab = searchParams.get('tab');
+  const activeTab = validTabs.includes(rawTab) ? rawTab : 'ai';
+  const setActiveTab = (tab) => setSearchParams({ tab }, { replace: true });
 
   // Re-auth state — shown when session survived a refresh but password is gone
   const [reAuthPwd, setReAuthPwd] = useState('');
