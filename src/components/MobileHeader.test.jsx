@@ -133,6 +133,43 @@ describe('Mobile header shows current page name', () => {
     expect(searchBtn.className).toContain('min-h-[44px]');
   });
 
+  it('shows back button on nested routes like /trips/123', () => {
+    renderAppAtRoute('/trips/123');
+    const backBtn = screen.getByTestId('mobile-back-btn');
+    expect(backBtn).toBeInTheDocument();
+    expect(backBtn).toHaveAttribute('aria-label', 'Go back');
+    // Should NOT show the hamburger menu button
+    expect(screen.queryByTestId('mobile-menu-btn')).not.toBeInTheDocument();
+  });
+
+  it('back button has 44px minimum tap target', () => {
+    renderAppAtRoute('/trips/123');
+    const backBtn = screen.getByTestId('mobile-back-btn');
+    expect(backBtn.className).toContain('min-w-[44px]');
+    expect(backBtn.className).toContain('min-h-[44px]');
+  });
+
+  it('shows hamburger menu on top-level routes like /trips', () => {
+    renderAppAtRoute('/trips');
+    const menuBtn = screen.getByTestId('mobile-menu-btn');
+    expect(menuBtn).toBeInTheDocument();
+    expect(menuBtn).toHaveAttribute('aria-label', 'Open menu');
+    // Should NOT show the back button
+    expect(screen.queryByTestId('mobile-back-btn')).not.toBeInTheDocument();
+  });
+
+  it('shows hamburger menu on /dashboard (top-level)', () => {
+    renderAppAtRoute('/dashboard');
+    expect(screen.getByTestId('mobile-menu-btn')).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-back-btn')).not.toBeInTheDocument();
+  });
+
+  it('shows back button on /trips/new (nested route)', () => {
+    renderAppAtRoute('/trips/new');
+    expect(screen.getByTestId('mobile-back-btn')).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-menu-btn')).not.toBeInTheDocument();
+  });
+
   it('does not render global mobile header on /ai route (AI Chat has its own)', () => {
     renderAppAtRoute('/ai');
     expect(screen.queryByTestId('mobile-header-title')).not.toBeInTheDocument();
