@@ -26,7 +26,7 @@ export const SCHEMAS = {
   budgets: `{ category ("Food"|"Transport"|"Housing"|"Entertainment"|"Health"|"Shopping"|"Other"), limit (number) }`,
   portfolio: `{ id, ticker (UPPERCASE), name, shares (number), costBasis (number), currentPrice (number), assetClass ("Stocks"|"ETF"|"Crypto"|"Bonds"|"Real Estate"|"Cash"), addedAt (ISO datetime) }`,
   tasks: `{ id, title, priority ("High"|"Medium"|"Low"), dueDate (YYYY-MM-DD or null), notes, completed (false), recurring ("None"|"Daily"|"Weekly"), createdAt (ISO datetime) }`,
-  goals: `{ id, title, description, progress (0-100), status ("active"|"completed"|"paused"), targetDate (YYYY-MM-DD) }`,
+  goals: `{ id, title, timeframe ("Q1 YYYY"|"Q2 YYYY"|"Q3 YYYY"|"Q4 YYYY"|"This Year"|"Ongoing"), color ("amber"|"blue"|"green"|"purple"|"red"), keyResults: [{ id, title, metricType ("%"|"number"|"boolean"), currentValue, targetValue }] }`,
   subscriptions: `{ id, name, cost (number), cycle ("monthly"|"annual"|"weekly"), category, nextDate (YYYY-MM-DD) }`,
 };
 
@@ -42,7 +42,17 @@ export function formatStoreData(store, data) {
     budgets: (b) => `- ${b.category}: $${Number(b.limit ?? b.amount ?? 0).toLocaleString()} budget`,
     portfolio: (h) => `- ${h.ticker || h.name}${h.shares ? `: ${h.shares} shares` : ''}${h.currentPrice ? ` @ $${h.currentPrice}` : ''}`,
     tasks: (t) => `- [${t.completed ? 'x' : ' '}] ${t.title}${t.dueDate ? ` (due ${t.dueDate})` : ''}${t.priority ? ` [${t.priority}]` : ''}`,
-    goals: (g) => `- ${g.title}${g.progress !== undefined ? ` — ${g.progress}%` : ''}${g.status ? ` [${g.status}]` : ''}`,
+    goals: (g) => {
+      const krs = g.keyResults || [];
+      const progress = krs.length > 0
+        ? Math.round(krs.reduce((sum, kr) => {
+            if (kr.metricType === 'boolean') return sum + (kr.currentValue ? 100 : 0);
+            const target = parseFloat(kr.targetValue) || 0;
+            return sum + (target > 0 ? Math.min(100, Math.round(((parseFloat(kr.currentValue) || 0) / target) * 100)) : 0);
+          }, 0) / krs.length)
+        : 0;
+      return `- ${g.title}${g.timeframe ? ` [${g.timeframe}]` : ''} — ${progress}% (${krs.length} key results)`;
+    },
     contacts: (c) => `- ${c.name}${c.company ? ` @ ${c.company}` : ''}`,
     flashcards: (d) => `- ${d.name || d.title}: ${d.cards?.length ?? 0} cards`,
     wiki: (p) => `- ${p.title || p.name}`,

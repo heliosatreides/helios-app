@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useGemini } from '../../hooks/useGemini';
 import { useIDB } from '../../hooks/useIDB';
 import { buildToolSystemPrompt, executeActions } from '../../hooks/useHeliosTools';
@@ -271,7 +272,7 @@ export function AIChatPage() {
         </div>
         <div className="border border-border p-8 text-center">
           <p className="text-muted-foreground text-sm mb-4">Add your Gemini API key in Settings to start chatting.</p>
-          <a href="/settings" className="text-sm text-foreground hover:underline">Go to Settings</a>
+          <Link to="/settings" className="text-sm text-foreground hover:underline">Go to Settings</Link>
         </div>
       </div>
     );

@@ -189,7 +189,10 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
     }
   }, [generate, budgets, monthlySpend, portfolioCost, portfolioValue, upcomingTrips, today, tasksDueToday, contacts, setBriefCache]);
 
-  // Auto-generate brief on mount
+  // Auto-generate brief on mount — use IDB cache as primary guard instead of ref
+  // to prevent re-firing when user navigates away and back on the same day (PM Fix Now #3).
+  // The ref alone was insufficient because it resets on every remount.
+  const briefGenerating = useRef(false);
   useEffect(() => {
     if (!briefReady || briefTriggered.current) return;
     if (!hasKey || isEmpty) return;
@@ -198,8 +201,11 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       briefTriggered.current = true;
       return;
     }
+    // Prevent concurrent generation calls
+    if (briefGenerating.current) return;
     briefTriggered.current = true;
-    generateBrief();
+    briefGenerating.current = true;
+    generateBrief().finally(() => { briefGenerating.current = false; });
   }, [briefReady, hasKey, isEmpty, briefCache, today, generateBrief]);
 
   return (

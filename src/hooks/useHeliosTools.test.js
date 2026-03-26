@@ -228,6 +228,67 @@ ACTION: read:tasks`;
     });
   });
 
+  describe('goals OKR schema alignment', () => {
+    it('schema uses OKR model with keyResults, timeframe, and color', () => {
+      expect(SCHEMAS.goals).toContain('keyResults');
+      expect(SCHEMAS.goals).toContain('timeframe');
+      expect(SCHEMAS.goals).toContain('color');
+      expect(SCHEMAS.goals).toContain('metricType');
+      expect(SCHEMAS.goals).toContain('currentValue');
+      expect(SCHEMAS.goals).toContain('targetValue');
+      // Should NOT have flat progress/status fields that don't match the actual data model
+      expect(SCHEMAS.goals).not.toContain('progress (0-100)');
+      expect(SCHEMAS.goals).not.toContain('status ("active"');
+    });
+
+    it('formatter computes progress from key results', () => {
+      const objectives = [
+        {
+          id: '1',
+          title: 'Launch MVP',
+          timeframe: 'Q1 2026',
+          color: 'amber',
+          keyResults: [
+            { id: 'kr1', title: 'Ship beta', metricType: '%', currentValue: 75, targetValue: 100 },
+            { id: 'kr2', title: 'Get 10 users', metricType: 'number', currentValue: 6, targetValue: 10 },
+          ],
+        },
+      ];
+      const result = formatStoreData('goals', objectives);
+      // (75 + 60) / 2 = 68%
+      expect(result).toContain('Launch MVP');
+      expect(result).toContain('[Q1 2026]');
+      expect(result).toContain('68%');
+      expect(result).toContain('2 key results');
+    });
+
+    it('formatter handles objectives with no key results', () => {
+      const objectives = [
+        { id: '1', title: 'Big Goal', timeframe: 'Ongoing', color: 'blue', keyResults: [] },
+      ];
+      const result = formatStoreData('goals', objectives);
+      expect(result).toContain('Big Goal');
+      expect(result).toContain('0%');
+      expect(result).toContain('0 key results');
+    });
+
+    it('formatter handles boolean key results', () => {
+      const objectives = [
+        {
+          id: '1',
+          title: 'Complete certification',
+          timeframe: 'Q2 2026',
+          color: 'green',
+          keyResults: [
+            { id: 'kr1', title: 'Pass exam', metricType: 'boolean', currentValue: true, targetValue: 1 },
+          ],
+        },
+      ];
+      const result = formatStoreData('goals', objectives);
+      expect(result).toContain('100%');
+    });
+  });
+
   describe('buildToolSystemPrompt', () => {
     it('includes all store names', () => {
       const prompt = buildToolSystemPrompt();

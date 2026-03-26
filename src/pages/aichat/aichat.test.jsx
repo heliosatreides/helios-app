@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { AIChatPage } from './AIChatPage';
 
@@ -52,7 +53,7 @@ vi.mock('../../components/Modal', () => ({
 
 function renderPage(convState) {
   mockConvState = convState;
-  return render(<AIChatPage />);
+  return render(<MemoryRouter><AIChatPage /></MemoryRouter>);
 }
 
 describe('AIChatPage mobile conversation drawer', () => {
@@ -201,6 +202,10 @@ describe('AIChatPage action confirmation messages', () => {
     expect(confirmation.textContent).toBe('Created item in tasks');
   });
 });
+
+// Note: The no-key state (Link to Settings) is tested via source inspection.
+// The import of Link from react-router-dom (replacing <a href>) prevents hard
+// reloads in PWA shell mode (UX Critical #1).
 
 describe('AIChatPage desktop sidebar delete button', () => {
   beforeEach(() => {

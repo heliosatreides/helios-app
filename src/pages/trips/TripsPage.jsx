@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { TripList } from './TripList';
 import { CreateTrip } from './CreateTrip';
@@ -6,6 +5,7 @@ import { TripDetail } from './TripDetail';
 import { useIDB } from '../../hooks/useIDB';
 import { ImportButton } from '../../components/ImportButton';
 import { mergeById, csvRowToTrip } from '../../utils/importData';
+import { useToast } from '../../components/Toast';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -14,7 +14,7 @@ function generateId() {
 export function TripsPage() {
   const [trips, setTrips] = useIDB('helios-trips', []);
   const navigate = useNavigate();
-  const [importMsg, setImportMsg] = useState('');
+  const toast = useToast();
 
   const handleCreate = (tripData) => {
     const newTrip = {
@@ -38,8 +38,7 @@ export function TripsPage() {
     const incoming = Array.isArray(data) ? data : (data.trips || []);
     setTrips((prev) => {
       const { merged, imported, skipped } = mergeById(prev, incoming);
-      setImportMsg(`Imported ${imported} trip${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
-      setTimeout(() => setImportMsg(''), 4000);
+      toast.success(`Imported ${imported} trip${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
       return merged;
     });
   };
@@ -48,8 +47,7 @@ export function TripsPage() {
     const incoming = rows.map(csvRowToTrip);
     setTrips((prev) => {
       const { merged, imported, skipped } = mergeById(prev, incoming);
-      setImportMsg(`Imported ${imported} trip${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
-      setTimeout(() => setImportMsg(''), 4000);
+      toast.success(`Imported ${imported} trip${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
       return merged;
     });
   };
@@ -83,12 +81,6 @@ export function TripsPage() {
                 onImport={handleImportCSV}
               />
             </div>
-
-            {importMsg && (
-              <div className="mb-4 text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
-                ✅ {importMsg}
-              </div>
-            )}
 
             <TripList trips={trips} />
           </div>

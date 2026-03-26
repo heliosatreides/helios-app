@@ -53,20 +53,14 @@ export function FinancePage() {
   const [aiInsightsLoading, setAiInsightsLoading] = useState(false);
   const [aiInsightsError, setAiInsightsError] = useState(null);
 
-  // Import state
-  const [importMsg, setImportMsg] = useState('');
-
-  function showImportMsg(msg) {
-    setImportMsg(msg);
-    setTimeout(() => setImportMsg(''), 4000);
-  }
+  // Import feedback routed through toast (UX Inconsistency #6)
 
   // Import handlers
   function handleImportTransactionsCSV(rows) {
     const incoming = rows.map(csvRowToTransaction);
     setTransactions((prev) => {
       const { merged, imported, skipped } = mergeById(prev, incoming);
-      showImportMsg(`Imported ${imported} transaction${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
+      toast.success(`Imported ${imported} transaction${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
       return merged;
     });
   }
@@ -75,7 +69,7 @@ export function FinancePage() {
     const incoming = Array.isArray(data) ? data : (data.finance?.accounts || data.accounts || []);
     setAccounts((prev) => {
       const { merged, imported, skipped } = mergeById(prev, incoming);
-      showImportMsg(`Imported ${imported} account${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
+      toast.success(`Imported ${imported} account${imported !== 1 ? 's' : ''} (${skipped} skipped as duplicates)`);
       return merged;
     });
   }
@@ -291,13 +285,6 @@ export function FinancePage() {
 
       {/* Tabs */}
       <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
-
-      {/* Import flash */}
-      {importMsg && (
-        <div className="text-xs px-3 py-2 border text-green-400 bg-green-400/10 border-green-400/20">
-          ✅ {importMsg}
-        </div>
-      )}
 
       {/* Tab content */}
       {activeTab === 'Accounts' && (
