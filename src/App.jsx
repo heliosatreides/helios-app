@@ -226,7 +226,7 @@ function AppShell() {
       </div>
 
       {/* Mobile bottom navigation bar */}
-      <BottomNav />
+      <BottomNav onOpenSidebar={() => setSidebarOpen(true)} />
     </div>
   );
 }

@@ -44,8 +44,23 @@ const NAV_ITEMS = [
   },
 ];
 
-export function BottomNav() {
+const MORE_ICON = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+);
+
+export function BottomNav({ onOpenSidebar }) {
   const location = useLocation();
+
+  // Check if current route is NOT one of the 4 main nav items
+  const isMoreActive = !NAV_ITEMS.some(({ to }) =>
+    to === '/ai'
+      ? location.pathname === '/ai'
+      : location.pathname.startsWith(to)
+  );
 
   return (
     <nav
@@ -63,18 +78,38 @@ export function BottomNav() {
             <NavLink
               key={to}
               to={to}
-              className={`flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[44px] px-3 py-1 transition-colors ${
+              className={`relative flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] px-2 py-1 transition-colors ${
                 isActive
                   ? 'text-foreground'
                   : 'text-muted-foreground'
               }`}
               aria-label={label}
             >
+              {isActive && (
+                <span className="absolute top-0 left-2 right-2 h-0.5 bg-foreground" />
+              )}
               <span className={isActive ? 'text-foreground' : 'text-muted-foreground/70'}>{icon}</span>
               <span className="text-[10px] font-medium leading-none">{label}</span>
             </NavLink>
           );
         })}
+        <button
+          type="button"
+          onClick={onOpenSidebar}
+          className={`relative flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[44px] px-2 py-1 transition-colors ${
+            isMoreActive
+              ? 'text-foreground'
+              : 'text-muted-foreground'
+          }`}
+          aria-label="More"
+          data-testid="bottom-nav-more"
+        >
+          {isMoreActive && (
+            <span className="absolute top-0 left-2 right-2 h-0.5 bg-foreground" />
+          )}
+          <span className={isMoreActive ? 'text-foreground' : 'text-muted-foreground/70'}>{MORE_ICON}</span>
+          <span className="text-[10px] font-medium leading-none">More</span>
+        </button>
       </div>
     </nav>
   );
