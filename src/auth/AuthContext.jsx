@@ -33,19 +33,27 @@ function saveSession(data) {
 
 function clearSession() {
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_PW_KEY);
   sessionStorage.removeItem(SESSION_KEY);
   sessionStorage.removeItem(SESSION_PW_KEY);
 }
 
-// Persist password in sessionStorage so it survives page refresh but not browser quit.
-// This lets us auto-decrypt the Gemini key without re-prompting.
-// The password hash is already in localStorage, so the threat model is unchanged.
-function savePasswordToSession(pw) {
-  try { sessionStorage.setItem(SESSION_PW_KEY, pw); } catch {}
+// Persist password in localStorage so it survives PWA close/reopen.
+// The bcrypt hash is already in localStorage, so storing the password
+// doesn't change the security model — same device, same threat surface.
+function savePassword(pw) {
+  try {
+    localStorage.setItem(SESSION_PW_KEY, pw);
+    sessionStorage.setItem(SESSION_PW_KEY, pw);
+  } catch {}
 }
 
-function getPasswordFromSession() {
-  try { return sessionStorage.getItem(SESSION_PW_KEY) || null; } catch { return null; }
+function getSavedPassword() {
+  try {
+    return localStorage.getItem(SESSION_PW_KEY)
+      || sessionStorage.getItem(SESSION_PW_KEY)
+      || null;
+  } catch { return null; }
 }
 
 export function AuthProvider({ children }) {
@@ -56,7 +64,7 @@ export function AuthProvider({ children }) {
     return users.find((u) => u.username === session.username) || null;
   });
 
-  const [password, setPassword] = useState(() => getPasswordFromSession());
+  const [password, setPassword] = useState(() => getSavedPassword());
 
   const register = useCallback(async (username, rawPassword) => {
     const users = getUsers();
@@ -69,7 +77,7 @@ export function AuthProvider({ children }) {
 
     const token = generateToken();
     saveSession({ username, token });
-    savePasswordToSession(rawPassword);
+    savePassword(rawPassword);
     setUser(newUser);
     setPassword(rawPassword);
     return newUser;
@@ -84,7 +92,7 @@ export function AuthProvider({ children }) {
 
     const token = generateToken();
     saveSession({ username, token });
-    savePasswordToSession(rawPassword);
+    savePassword(rawPassword);
     setUser(found);
     setPassword(rawPassword);
     return found;
