@@ -60,7 +60,7 @@ export function Modal({ open, onClose, children, className = '', title = '' }) {
     >
       <div
         ref={contentRef}
-        className={`bg-background border border-border p-4 sm:p-6 w-full max-w-md ${className}`}
+        className={`bg-background border border-border p-4 sm:p-6 w-full max-w-md max-h-[90dvh] overflow-y-auto ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">

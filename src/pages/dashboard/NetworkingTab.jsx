@@ -54,7 +54,7 @@ function AddContactModal({ onSave, onClose }) {
   }
 
   return (
-    <Modal open={true} onClose={onClose} className="max-h-[90vh] overflow-y-auto">
+    <Modal open={true} onClose={onClose}>
       <div data-testid="add-contact-modal">
         <h2 className="text-lg font-bold text-foreground mb-4">Add Contact</h2>
         <form onSubmit={handleSubmit} className="space-y-3">

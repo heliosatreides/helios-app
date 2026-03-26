@@ -74,4 +74,21 @@ describe('Modal', () => {
     rerender(<Modal open={false} onClose={onClose}><p>Content</p></Modal>);
     expect(document.body.style.overflow).toBe('');
   });
+
+  it('content div has max-h-[90dvh] and overflow-y-auto for tall modal scrolling', () => {
+    render(<Modal open={true} onClose={onClose}><p>Content</p></Modal>);
+    const backdrop = screen.getByTestId('modal-backdrop');
+    const contentDiv = backdrop.firstChild;
+    expect(contentDiv.className).toContain('max-h-[90dvh]');
+    expect(contentDiv.className).toContain('overflow-y-auto');
+  });
+
+  it('allows className override without losing base scroll classes', () => {
+    render(<Modal open={true} onClose={onClose} className="max-w-lg"><p>Content</p></Modal>);
+    const backdrop = screen.getByTestId('modal-backdrop');
+    const contentDiv = backdrop.firstChild;
+    expect(contentDiv.className).toContain('max-h-[90dvh]');
+    expect(contentDiv.className).toContain('overflow-y-auto');
+    expect(contentDiv.className).toContain('max-w-lg');
+  });
 });
