@@ -262,12 +262,17 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
                 { title: 'Build Habits', desc: 'Daily habit streaks and consistency tracking', to: '/health' },
                 { title: 'Study with Flashcards', desc: 'Spaced repetition for learning anything', to: '/flashcards' },
                 { title: 'Manage Contacts', desc: 'CRM-style networking and relationship notes', to: '/networking' },
-                { title: 'AI Assistant', desc: 'Chat with AI connected to all your data', to: '/ai' },
-                { title: 'Track Health', desc: 'Meals, nutrition, and wellness logging', to: '/meals' },
+                { title: 'AI Assistant', desc: 'Chat with AI connected to all your data', to: '/ai', needsKey: true },
+                { title: 'Track Meals', desc: 'Nutrition and wellness logging', to: '/meals' },
               ].map((card) => (
                 <Link key={card.to} to={card.to} data-testid="feature-card"
                   className="block bg-background p-4 min-h-[44px] hover:bg-secondary/30 transition-colors">
-                  <p className="text-sm font-medium text-foreground">{card.title}</p>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-sm font-medium text-foreground">{card.title}</p>
+                    {card.needsKey && !hasKey && (
+                      <span className="text-[10px] text-muted-foreground border border-border px-1.5 py-0.5 shrink-0 whitespace-nowrap" data-testid="api-key-badge">API key required</span>
+                    )}
+                  </div>
                   <p className="text-muted-foreground text-xs mt-1">{card.desc}</p>
                 </Link>
               ))}

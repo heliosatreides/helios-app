@@ -326,6 +326,45 @@ test('backup nudge dismiss button sets localStorage and hides card', () => {
   expect(lsStore['helios-backup-nudge-dismissed']).toBe('1');
 });
 
+// --- Quick Start onboarding tests (UX Critical #1) ---
+
+test('Quick Start shows API key badge on AI Assistant when no key', () => {
+  mockHasKey = false;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.getByTestId('api-key-badge')).toBeInTheDocument();
+  expect(screen.getByText('API key required')).toBeInTheDocument();
+});
+
+test('Quick Start hides API key badge on AI Assistant when key exists', () => {
+  mockHasKey = true;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  expect(screen.queryByTestId('api-key-badge')).not.toBeInTheDocument();
+});
+
+test('Quick Start orders Planner and Finance before AI Assistant', () => {
+  mockHasKey = false;
+  render(
+    <MemoryRouter>
+      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
+    </MemoryRouter>
+  );
+  const cards = screen.getAllByTestId('feature-card');
+  const titles = cards.map((c) => c.querySelector('.text-sm.font-medium').textContent);
+  const plannerIdx = titles.indexOf('Plan Your Day');
+  const financeIdx = titles.indexOf('Track Finances');
+  const aiIdx = titles.indexOf('AI Assistant');
+  expect(plannerIdx).toBeLessThan(aiIdx);
+  expect(financeIdx).toBeLessThan(aiIdx);
+});
+
 test('Morning brief does not show on empty dashboard', () => {
   mockHasKey = true;
   render(
