@@ -127,16 +127,54 @@ function BackupNudge({ isEmpty }) {
   );
 }
 
-export function Dashboard({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [], sportsGameCount = null }) {
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6" data-testid="dashboard-skeleton">
+      <div>
+        <div className="h-5 bg-secondary animate-pulse w-32 mb-2" />
+        <div className="h-4 bg-secondary animate-pulse w-48" />
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="border border-border p-4 bg-background">
+            <div className="h-3 bg-secondary animate-pulse w-20 mb-3" />
+            <div className="h-7 bg-secondary animate-pulse w-16" />
+          </div>
+        ))}
+      </div>
+      <div className="border border-border p-5">
+        <div className="h-4 bg-secondary animate-pulse w-28 mb-4" />
+        <div className="space-y-2">
+          <div className="h-3 bg-secondary animate-pulse w-3/4" />
+          <div className="h-3 bg-secondary animate-pulse w-1/2" />
+          <div className="h-3 bg-secondary animate-pulse w-2/3" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Dashboard({ sportsGameCount = null }) {
+  const [trips, , tripsReady] = useIDB('helios-trips', []);
+  const [accounts, , accountsReady] = useIDB('finance-accounts', []);
+  const [transactions, , txReady] = useIDB('finance-transactions', []);
+  const [budgets, , budgetsReady] = useIDB('finance-budgets', []);
+  const [portfolio, , portfolioReady] = useIDB('investments-portfolio', []);
   const { generate, loading: aiLoading, hasKey } = useGemini();
   const [briefCache, setBriefCache, briefReady] = useIDB('daily-brief', null);
   const [contacts] = useIDB('contacts', []);
+
+  const idbReady = tripsReady && accountsReady && txReady && budgetsReady && portfolioReady;
   const [briefText, setBriefText] = useState(null);
   const [briefLoading, setBriefLoading] = useState(false);
   const [briefError, setBriefError] = useState(null);
   const [dismissed, setDismissed] = useState(false);
   const briefTriggered = useRef(false);
 
+  const { tasks } = useTasks();
+  const today = getTodayStr();
+
+  // Derived data — safe to compute with empty arrays when IDB not ready
   const upcomingTrips = trips.filter((t) => t.status === 'Upcoming' || t.status === 'Planning');
   const totalBudget = upcomingTrips.reduce((sum, t) => sum + t.budget, 0);
   const recentTrips = [...trips].slice(0, 5);
@@ -158,8 +196,6 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
     return Math.round((within / budgets.length) * 100);
   })();
 
-  const { tasks } = useTasks();
-  const today = getTodayStr();
   const tasksDueToday = (() => {
     try {
       const grouped = groupTasks(tasks, today);
@@ -208,6 +244,9 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
     briefGenerating.current = true;
     generateBrief().finally(() => { briefGenerating.current = false; });
   }, [briefReady, hasKey, isEmpty, briefCache, today, generateBrief]);
+
+  // Show skeleton while IDB stores are loading — all hooks called above
+  if (!idbReady) return <DashboardSkeleton />;
 
   return (
     <div className="space-y-6">

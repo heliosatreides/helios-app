@@ -38,7 +38,6 @@ import { ProtectedRoute } from './auth/ProtectedRoute';
 import { LoginPage } from './auth/LoginPage';
 import { LandingPage } from './pages/landing/LandingPage';
 import { useAuth } from './auth/AuthContext';
-import { useIDB } from './hooks/useIDB';
 import { CommandPalette } from './components/CommandPalette';
 import { CommandPaletteProvider, useCommandPalette } from './components/CommandPaletteContext';
 import { ToastProvider } from './components/Toast';
@@ -97,25 +96,6 @@ function AppShell() {
   // Detect nested routes (e.g. /trips/123, /trips/new) for back navigation on mobile
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const isNestedRoute = pathSegments.length > 1;
-  const [trips, , tripsReady] = useIDB('helios-trips', []);
-  const [accounts, , accountsReady] = useIDB('finance-accounts', []);
-  const [transactions, , txReady] = useIDB('finance-transactions', []);
-  const [budgets, , budgetsReady] = useIDB('finance-budgets', []);
-  const [portfolio, , portfolioReady] = useIDB('investments-portfolio', []);
-
-  const idbReady = tripsReady && accountsReady && txReady && budgetsReady && portfolioReady;
-
-  if (!idbReady) {
-    return (
-      <div className="flex items-center justify-center bg-background" style={{ height: '100dvh' }} data-testid="idb-loading">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-muted-foreground border-t-foreground rounded-full animate-spin" />
-          <span className="text-muted-foreground text-sm">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex bg-background overflow-hidden" style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)' }}>
       <CommandPalette />
@@ -186,7 +166,7 @@ function AppShell() {
           <ErrorBoundary>
           <div className="max-w-5xl mx-auto">
             <Routes>
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard trips={trips} accounts={accounts} transactions={transactions} budgets={budgets} portfolio={portfolio} /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/trips/*" element={<ProtectedRoute><TripsPage /></ProtectedRoute>} />
               <Route path="/finance" element={<ProtectedRoute><FinancePage /></ProtectedRoute>} />
               <Route path="/investments" element={<ProtectedRoute><InvestmentsPage /></ProtectedRoute>} />

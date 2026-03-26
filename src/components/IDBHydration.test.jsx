@@ -11,7 +11,6 @@ vi.mock('../hooks/useIDB', () => ({
   },
 }));
 
-vi.mock('../pages/dashboard/Dashboard', () => ({ Dashboard: () => <div>Dashboard Page</div> }));
 vi.mock('../pages/trips/TripsPage', () => ({ TripsPage: () => <div>Trips Page</div> }));
 vi.mock('../pages/finance/FinancePage', () => ({ FinancePage: () => <div>Finance Page</div> }));
 vi.mock('../pages/investments/InvestmentsPage', () => ({ InvestmentsPage: () => <div>Investments Page</div> }));
@@ -61,22 +60,38 @@ vi.mock('../auth/ProtectedRoute', () => ({
 }));
 vi.mock('../auth/LoginPage', () => ({ LoginPage: () => <div>Login</div> }));
 
+// Mock hooks used inside Dashboard
+vi.mock('../hooks/useTasks', () => ({
+  useTasks: () => ({ tasks: [] }),
+  groupTasks: () => ({ overdue: [], today: [], upcoming: [], done: [] }),
+  getTodayStr: () => '2026-03-26',
+}));
+vi.mock('../hooks/useTodaySchedule', () => ({
+  useTodaySchedule: () => ({ schedule: [] }),
+}));
+vi.mock('../hooks/useGemini', () => ({
+  useGemini: () => ({ generate: vi.fn(), loading: false, hasKey: false }),
+}));
+
 import App from '../App';
 
-describe('IDB hydration guard', () => {
+describe('IDB hydration — lazy per-page loading', () => {
   beforeEach(() => {
     readyStates = {};
   });
 
-  it('shows loading spinner when IDB stores are not ready', () => {
-    // All stores not ready
+  it('renders app shell immediately without waiting for IDB stores', () => {
+    // No stores ready — app shell should still render (header, nav)
     readyStates = {};
     window.history.pushState({}, '', '/dashboard');
     render(<App />);
-    expect(screen.getByTestId('idb-loading')).toBeInTheDocument();
+    // AppShell renders: mobile header is present
+    expect(screen.getByTestId('mobile-header-title')).toBeInTheDocument();
+    // But Dashboard shows skeleton since its IDB stores aren't ready
+    expect(screen.getByTestId('dashboard-skeleton')).toBeInTheDocument();
   });
 
-  it('shows loading spinner when only some stores are ready', () => {
+  it('shows dashboard skeleton when only some IDB stores are ready', () => {
     readyStates = {
       'helios-trips': true,
       'finance-accounts': true,
@@ -86,20 +101,36 @@ describe('IDB hydration guard', () => {
     };
     window.history.pushState({}, '', '/dashboard');
     render(<App />);
-    expect(screen.getByTestId('idb-loading')).toBeInTheDocument();
+    // App shell renders
+    expect(screen.getByTestId('mobile-header-title')).toBeInTheDocument();
+    // Dashboard shows skeleton
+    expect(screen.getByTestId('dashboard-skeleton')).toBeInTheDocument();
   });
 
-  it('renders app content when all IDB stores are ready', () => {
+  it('renders full dashboard when all IDB stores are ready', () => {
     readyStates = {
       'helios-trips': true,
       'finance-accounts': true,
       'finance-transactions': true,
       'finance-budgets': true,
       'investments-portfolio': true,
+      'daily-brief': true,
+      'contacts': true,
     };
     window.history.pushState({}, '', '/dashboard');
     render(<App />);
-    expect(screen.queryByTestId('idb-loading')).not.toBeInTheDocument();
     expect(screen.getByTestId('mobile-header-title')).toBeInTheDocument();
+    expect(screen.queryByTestId('dashboard-skeleton')).not.toBeInTheDocument();
+    // Dashboard content should be visible (onboarding welcome since all data is empty)
+    expect(screen.getByTestId('onboarding-welcome')).toBeInTheDocument();
+  });
+
+  it('renders non-dashboard pages immediately without IDB gate', () => {
+    // No stores ready, but navigating to /goals should work
+    readyStates = {};
+    window.history.pushState({}, '', '/goals');
+    render(<App />);
+    expect(screen.getByTestId('mobile-header-title')).toBeInTheDocument();
+    expect(screen.getByText('Goals Page')).toBeInTheDocument();
   });
 });

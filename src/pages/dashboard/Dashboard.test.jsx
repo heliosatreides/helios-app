@@ -1,10 +1,19 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
-import { Dashboard } from './Dashboard';
 
 const mockGenerate = vi.fn();
 let mockHasKey = false;
+
+// Configurable IDB store — tests set data here before rendering
+const idbStore = {};
+
+vi.mock('../../hooks/useIDB', () => ({
+  useIDB: (key, initial) => {
+    const data = key in idbStore ? idbStore[key] : initial;
+    return [data, vi.fn(), true]; // always ready
+  },
+}));
 
 vi.mock('../../hooks/useGemini', () => ({
   useGemini: () => ({
@@ -14,6 +23,9 @@ vi.mock('../../hooks/useGemini', () => ({
     hasKey: mockHasKey,
   }),
 }));
+
+// Must import Dashboard after mocks
+const { Dashboard } = await import('./Dashboard');
 
 const lsStore = {};
 Object.defineProperty(window, 'localStorage', {
@@ -27,10 +39,21 @@ Object.defineProperty(window, 'localStorage', {
   configurable: true,
 });
 
+/** Helper: set IDB store data for Dashboard tests */
+function setIDB({ trips = [], accounts = [], transactions = [], budgets = [], portfolio = [] } = {}) {
+  idbStore['helios-trips'] = trips;
+  idbStore['finance-accounts'] = accounts;
+  idbStore['finance-transactions'] = transactions;
+  idbStore['finance-budgets'] = budgets;
+  idbStore['investments-portfolio'] = portfolio;
+}
+
 beforeEach(() => {
   mockGenerate.mockReset();
   mockHasKey = false;
   for (const k in lsStore) delete lsStore[k];
+  // Clear IDB store
+  for (const k in idbStore) delete idbStore[k];
 });
 
 const mockTrips = [
@@ -60,40 +83,29 @@ const mockTrips = [
   },
 ];
 
+const mockAcct = [{ id: '1', name: 'Checking', balance: 1000 }];
+
 test('Dashboard renders page header', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText('Dashboard')).toBeInTheDocument();
 });
 
 test('Dashboard shows upcoming trips stat', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText(/upcoming trips/i)).toBeInTheDocument();
 });
 
 test('Dashboard shows budget info in stat card', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} />
-    </MemoryRouter>
-  );
-  // Budget appears as sub-text under Upcoming Trips
+  setIDB({ trips: mockTrips });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText(/\$5,800 budget/i)).toBeInTheDocument();
 });
 
 test('Dashboard shows recent trips', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText('Tokyo Adventure')).toBeInTheDocument();
 });
 
@@ -101,39 +113,27 @@ test('Dashboard shows portfolio stat when portfolio has holdings', () => {
   const portfolio = [
     { id: '1', ticker: 'AAPL', shares: 10, costBasis: 150, currentPrice: 200, assetClass: 'Stocks' },
   ];
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={portfolio} />
-    </MemoryRouter>
-  );
+  setIDB({ portfolio });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText(/portfolio/i)).toBeInTheDocument();
 });
 
 test('Dashboard shows empty state when no data', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText(/Welcome to Helios/i)).toBeInTheDocument();
 });
 
 test('Dashboard empty state renders feature discovery cards', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   const cards = screen.getAllByTestId('feature-card');
   expect(cards.length).toBeGreaterThanOrEqual(6);
 });
 
 test('Dashboard feature cards link to correct routes', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   const cards = screen.getAllByTestId('feature-card');
   const hrefs = cards.map((card) => card.getAttribute('href'));
   expect(hrefs).toContain('/planner');
@@ -144,20 +144,14 @@ test('Dashboard feature cards link to correct routes', () => {
 });
 
 test('Dashboard empty state shows privacy note', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText(/all data stays on your device/i)).toBeInTheDocument();
 });
 
 test('Dashboard empty state shows subtitle', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByText(/27 features/i)).toBeInTheDocument();
 });
 
@@ -165,11 +159,8 @@ test('Dashboard empty state shows subtitle', () => {
 
 test('Gemini nudge shows when hasKey=false and dashboard has data', () => {
   mockHasKey = false;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByTestId('ai-nudge')).toBeInTheDocument();
   expect(screen.getByText(/Unlock AI features/)).toBeInTheDocument();
   expect(screen.getByText('Setup').closest('a')).toHaveAttribute('href', '/settings');
@@ -177,32 +168,23 @@ test('Gemini nudge shows when hasKey=false and dashboard has data', () => {
 
 test('Gemini nudge does NOT show when hasKey=true', () => {
   mockHasKey = true;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('ai-nudge')).not.toBeInTheDocument();
 });
 
 test('Gemini nudge does NOT show on empty dashboard', () => {
   mockHasKey = false;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('ai-nudge')).not.toBeInTheDocument();
 });
 
 test('Gemini nudge dismiss button hides it and persists to localStorage', async () => {
   mockHasKey = false;
+  setIDB({ trips: mockTrips, accounts: mockAcct });
   const { act } = await import('react');
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByTestId('ai-nudge')).toBeInTheDocument();
   const dismissBtn = screen.getByLabelText('Dismiss AI nudge');
   await act(() => { dismissBtn.click(); });
@@ -213,32 +195,23 @@ test('Gemini nudge dismiss button hides it and persists to localStorage', async 
 // --- Sports card conditional tests ---
 
 test('Sports card renders when sportsGameCount is provided', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} sportsGameCount={5} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips });
+  render(<MemoryRouter><Dashboard sportsGameCount={5} /></MemoryRouter>);
   expect(screen.getByTestId('sports-card')).toBeInTheDocument();
   expect(screen.getByText('5')).toBeInTheDocument();
 });
 
 test('Sports card does NOT render when sportsGameCount is null', () => {
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} sportsGameCount={null} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('sports-card')).not.toBeInTheDocument();
 });
 
 test('Morning brief auto-generates when no cache exists', async () => {
   mockHasKey = true;
   mockGenerate.mockResolvedValue('Your morning brief text here.');
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   await waitFor(() => {
     expect(mockGenerate).toHaveBeenCalledTimes(1);
   });
@@ -251,12 +224,9 @@ test('Morning brief auto-generates when no cache exists', async () => {
 test('Morning brief uses cache when today brief exists', async () => {
   mockHasKey = true;
   const todayStr = new Date().toISOString().slice(0, 10);
-  globalThis.__idbStore['daily-brief'] = { date: todayStr, text: 'Cached brief for today.' };
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  idbStore['daily-brief'] = { date: todayStr, text: 'Cached brief for today.' };
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   await waitFor(() => {
     expect(screen.getByTestId('morning-brief')).toBeInTheDocument();
     expect(screen.getByText('Cached brief for today.')).toBeInTheDocument();
@@ -268,11 +238,8 @@ test('Morning brief uses cache when today brief exists', async () => {
 test('renders backup nudge after 3 days of use with data present', () => {
   const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
   lsStore['helios-first-use-date'] = threeDaysAgo;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByTestId('backup-nudge')).toBeInTheDocument();
   expect(screen.getByText(/back it up to stay safe/i)).toBeInTheDocument();
   expect(screen.getByText('Back up now')).toBeInTheDocument();
@@ -282,44 +249,32 @@ test('does not render backup nudge when dismissed', () => {
   const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
   lsStore['helios-first-use-date'] = threeDaysAgo;
   lsStore['helios-backup-nudge-dismissed'] = '1';
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
 });
 
 test('does not render backup nudge when isEmpty is true', () => {
   const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
   lsStore['helios-first-use-date'] = threeDaysAgo;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} accounts={[]} portfolio={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
 });
 
 test('does not render backup nudge before 3 days', () => {
   const today = new Date().toISOString().split('T')[0];
   lsStore['helios-first-use-date'] = today;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
 });
 
 test('backup nudge dismiss button sets localStorage and hides card', () => {
   const threeDaysAgo = new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0];
   lsStore['helios-first-use-date'] = threeDaysAgo;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={mockTrips} accounts={[{ id: '1', name: 'Checking', balance: 1000 }]} />
-    </MemoryRouter>
-  );
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByTestId('backup-nudge')).toBeInTheDocument();
   fireEvent.click(screen.getByLabelText('Dismiss backup nudge'));
   expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument();
@@ -330,32 +285,23 @@ test('backup nudge dismiss button sets localStorage and hides card', () => {
 
 test('Quick Start shows API key badge on AI Assistant when no key', () => {
   mockHasKey = false;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.getByTestId('api-key-badge')).toBeInTheDocument();
   expect(screen.getByText('API key required')).toBeInTheDocument();
 });
 
 test('Quick Start hides API key badge on AI Assistant when key exists', () => {
   mockHasKey = true;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('api-key-badge')).not.toBeInTheDocument();
 });
 
 test('Quick Start orders Planner and Finance before AI Assistant', () => {
   mockHasKey = false;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   const cards = screen.getAllByTestId('feature-card');
   const titles = cards.map((c) => c.querySelector('.text-sm.font-medium').textContent);
   const plannerIdx = titles.indexOf('Plan Your Day');
@@ -367,10 +313,7 @@ test('Quick Start orders Planner and Finance before AI Assistant', () => {
 
 test('Morning brief does not show on empty dashboard', () => {
   mockHasKey = true;
-  render(
-    <MemoryRouter>
-      <Dashboard trips={[]} portfolio={[]} accounts={[]} />
-    </MemoryRouter>
-  );
+  setIDB();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('morning-brief')).not.toBeInTheDocument();
 });
