@@ -34,7 +34,7 @@ export function AddAccountModal({ account, onSave, onClose }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
         <div>
@@ -43,7 +43,7 @@ export function AddAccountModal({ account, onSave, onClose }) {
             id="account-type"
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
             {ACCOUNT_TYPES.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -58,7 +58,7 @@ export function AddAccountModal({ account, onSave, onClose }) {
             step="0.01"
             value={balance}
             onChange={(e) => setBalance(e.target.value)}
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
         <div className="flex gap-3 pt-2">
@@ -71,7 +71,7 @@ export function AddAccountModal({ account, onSave, onClose }) {
           </button>
           <button
             type="submit"
-            className="flex-1 px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all shadow-sm shadow-amber-500/10"
+            className="flex-1 px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all shadow-sm shadow-amber-500/10"
           >
             Save
           </button>

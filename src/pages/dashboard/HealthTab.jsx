@@ -414,15 +414,15 @@ Be encouraging and specific.`;
         </div>
       )}
 
-      <CollapsibleCard title="💧 Water Tracker">
+      <CollapsibleCard title="Water Tracker">
         <WaterTracker goal={goal} />
       </CollapsibleCard>
 
-      <CollapsibleCard title="🧠 Mood Journal">
+      <CollapsibleCard title="Mood Journal">
         <MoodJournal />
       </CollapsibleCard>
 
-      <CollapsibleCard title="😴 Sleep Tracker">
+      <CollapsibleCard title="Sleep Tracker">
         <SleepTracker />
       </CollapsibleCard>
     </div>

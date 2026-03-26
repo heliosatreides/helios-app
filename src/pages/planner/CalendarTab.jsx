@@ -106,7 +106,7 @@ export function CalendarTab() {
           <h3 className="text-foreground font-semibold">{formatMonthYear(viewYear, viewMonth)}</h3>
           <button
             onClick={handleToday}
-            className="text-xs px-2 py-1 bg-secondary hover:bg-[#3f3f46] text-muted-foreground transition-colors"
+            className="text-xs px-2 py-1 bg-secondary hover:bg-secondary/80 text-muted-foreground transition-colors"
           >
             Today
           </button>
@@ -145,7 +145,7 @@ export function CalendarTab() {
               onClick={() => handleDayClick(cell.dateStr)}
               className={`aspect-square flex flex-col items-center justify-center text-sm relative transition-colors ${
                 isSelected
-                  ? 'bg-foreground text-black font-bold'
+                  ? 'bg-foreground text-background font-bold'
                   : isToday
                   ? 'bg-amber-500/20 text-amber-400 font-semibold ring-2 ring-amber-400 ring-offset-1 ring-offset-[#09090b]'
                   : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
@@ -153,7 +153,7 @@ export function CalendarTab() {
             >
               {cell.day}
               {hasTasks && !isSelected && (
-                <span className={`absolute bottom-1 w-1 h-1 rounded-full ${isToday ? 'bg-amber-400' : 'bg-[#52525b]'}`} />
+                <span className={`absolute bottom-1 w-1 h-1 rounded-full ${isToday ? 'bg-amber-400' : 'bg-muted-foreground/40'}`} />
               )}
             </button>
           );

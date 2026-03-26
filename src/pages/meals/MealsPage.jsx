@@ -100,7 +100,7 @@ export function MealsPage() {
 
       <div className="flex gap-2">
         {['planner', 'grocery', 'ai'].map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium ${tab === t ? 'bg-amber-500 text-black' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium ${tab === t ? 'bg-amber-500 text-background' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}>
             {t === 'planner' ? '📅 Planner' : t === 'grocery' ? '🛒 Grocery List' : '✨ AI Help'}
           </button>
         ))}
@@ -213,8 +213,8 @@ export function MealsPage() {
               </div>
             ))}
             <div className="flex gap-3">
-              <button onClick={saveCell} className="flex-1 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400">Save</button>
-              <button onClick={() => setEditCell(null)} className="flex-1 py-2 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">Cancel</button>
+              <button onClick={saveCell} className="flex-1 py-2 bg-amber-500 text-background text-sm font-semibold hover:bg-amber-400">Save</button>
+              <button onClick={() => setEditCell(null)} className="flex-1 py-2 bg-secondary text-muted-foreground text-sm hover:bg-secondary/80">Cancel</button>
             </div>
           </div>
         )}

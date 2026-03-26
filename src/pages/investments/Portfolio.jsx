@@ -169,7 +169,7 @@ function AddHoldingForm({ onAdd, onCancel }) {
     setForm({ ticker: '', name: '', shares: '', costBasis: '', currentPrice: '', assetClass: 'Stocks' });
   };
 
-  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring w-full';
 
   return (
     <form onSubmit={handleSubmit} className="bg-background border border-border p-5 space-y-4">
@@ -189,7 +189,7 @@ function AddHoldingForm({ onAdd, onCancel }) {
               type="button"
               onClick={handleTickerLookup}
               disabled={lookingUp || !form.ticker.trim()}
-              className="bg-secondary hover:bg-[#3f3f46] disabled:opacity-40 text-foreground px-3 py-2 text-xs font-medium transition-colors whitespace-nowrap shrink-0"
+              className="bg-secondary hover:bg-secondary/80 disabled:opacity-40 text-foreground px-3 py-2 text-xs font-medium transition-colors whitespace-nowrap shrink-0"
             >
               {lookingUp ? '⏳' : '🔍 Fetch'}
             </button>
@@ -220,7 +220,7 @@ function AddHoldingForm({ onAdd, onCancel }) {
         </div>
       </div>
       <div className="flex gap-3 pt-1">
-        <button type="submit" className="bg-foreground hover:bg-amber-400 text-black font-semibold px-4 py-2 text-sm transition-colors">
+        <button type="submit" className="bg-foreground hover:bg-amber-400 text-background font-semibold px-4 py-2 text-sm transition-colors">
           Add Holding
         </button>
         <button type="button" onClick={onCancel} className="border border-border text-muted-foreground hover:text-foreground px-4 py-2 text-sm transition-colors">
@@ -372,12 +372,12 @@ export function Portfolio() {
       <div className="flex flex-wrap gap-2">
         <ImportButton
           mode="csv"
-          label="📥 Import Portfolio (CSV)"
+          label="Import Portfolio (CSV)"
           onImport={handleImportCSV}
         />
         <ImportButton
           mode="json"
-          label="📥 Import Portfolio (JSON)"
+          label="Import Portfolio (JSON)"
           onImport={handleImportJSON}
         />
       </div>
@@ -394,7 +394,7 @@ export function Portfolio() {
       ) : (
         <button
           onClick={() => setShowAdd(true)}
-          className="bg-foreground hover:bg-amber-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
+          className="bg-foreground hover:bg-amber-400 text-background font-semibold px-4 py-2 text-sm transition-colors"
         >
           + Add Holding
         </button>

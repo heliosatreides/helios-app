@@ -44,7 +44,7 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
         {!saving ? (
           <button
             onClick={() => setSaving(true)}
-            className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 transition-colors"
+            className="px-4 py-2 bg-amber-500 text-background font-semibold text-sm hover:bg-amber-400 transition-colors"
           >
             + Save as Version
           </button>
@@ -59,13 +59,13 @@ export function ResumeVersions({ versions, onSave, onLoad, onDelete }) {
                 onKeyDown={(e) => e.key === 'Enter' && handleSave()}
                 placeholder='e.g. "SWE Resume"'
                 autoFocus
-                className="w-full bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+                className="w-full bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
             <button
               onClick={handleSave}
               disabled={!versionName.trim()}
-              className="px-3 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 disabled:opacity-50"
+              className="px-3 py-2 bg-amber-500 text-background font-semibold text-sm hover:bg-amber-400 disabled:opacity-50"
             >
               Save
             </button>

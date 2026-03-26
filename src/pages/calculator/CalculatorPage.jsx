@@ -99,7 +99,7 @@ export function CalculatorPage({ embedded } = {}) {
       {/* Tab bar */}
       <div className="flex gap-1 flex-wrap">
         {TABS.map(t => (
-          <button key={t} onClick={() => { setTab(t); setResult(null); setAiInterpretation(''); }} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>{t}</button>
+          <button key={t} onClick={() => { setTab(t); setResult(null); setAiInterpretation(''); }} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-background font-semibold' : 'bg-secondary text-muted-foreground'}`}>{t}</button>
         ))}
       </div>
 
@@ -181,7 +181,7 @@ export function CalculatorPage({ embedded } = {}) {
             </div>
           </>
         )}
-        <button onClick={calculate} className="w-full py-2.5 bg-amber-500 text-black font-semibold hover:bg-amber-400">Calculate</button>
+        <button onClick={calculate} className="w-full py-2.5 bg-amber-500 text-background font-semibold hover:bg-amber-400">Calculate</button>
       </div>
 
       {/* Results */}

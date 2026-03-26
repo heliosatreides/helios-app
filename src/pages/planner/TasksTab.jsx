@@ -30,8 +30,8 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey, obj
           onClick={() => onToggle(task.id)}
           className={`mt-0.5 w-4 h-4 rounded border shrink-0 flex items-center justify-center transition-colors ${
             task.completed
-              ? 'bg-foreground border-[#f59e0b] text-black'
-              : 'border-[#3f3f46] hover:border-[#f59e0b]'
+              ? 'bg-foreground border-foreground text-background'
+              : 'border-border hover:border-foreground'
           }`}
           aria-label={task.completed ? 'Mark incomplete' : 'Mark complete'}
         >
@@ -109,7 +109,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey, obj
             type="text"
             value={task.title}
             onChange={(e) => onUpdate(task.id, { title: e.target.value })}
-            className="w-full bg-background border border-border px-2 py-1.5 text-sm text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-2 py-1.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
           <div className="flex gap-2 flex-wrap">
             <select
@@ -149,7 +149,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey, obj
             onChange={(e) => onUpdate(task.id, { notes: e.target.value })}
             placeholder="Notes…"
             rows={2}
-            className="w-full bg-background border border-border px-2 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-background border border-border px-2 py-1.5 text-xs text-foreground placeholder-muted-foreground focus:outline-none resize-none"
           />
           <button
             onClick={() => setExpanded(false)}
@@ -291,7 +291,7 @@ export function TasksTab({ objectives = [] }) {
             value={newTask.title}
             onChange={(e) => setNewTask((p) => ({ ...p, title: e.target.value }))}
             autoFocus
-            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
           <div className="flex gap-2 flex-wrap">
             <select
@@ -331,13 +331,13 @@ export function TasksTab({ objectives = [] }) {
             value={newTask.notes}
             onChange={(e) => setNewTask((p) => ({ ...p, notes: e.target.value }))}
             rows={2}
-            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none resize-none"
+            className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none resize-none"
           />
           <div className="flex gap-2">
-            <button type="submit" className="px-4 py-1.5 text-sm bg-foreground hover:bg-[#d97706] text-black font-semibold">
+            <button type="submit" className="px-4 py-1.5 text-sm bg-foreground hover:bg-foreground/90 text-background font-semibold">
               Add Task
             </button>
-            <button type="button" onClick={() => setShowAddForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">
+            <button type="button" onClick={() => setShowAddForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 text-muted-foreground">
               Cancel
             </button>
           </div>
@@ -352,10 +352,10 @@ export function TasksTab({ objectives = [] }) {
             <p key={i} className="text-xs text-muted-foreground">• {r}</p>
           ))}
           <div className="flex gap-2">
-            <button onClick={handleApplyPriority} className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-black font-semibold">
+            <button onClick={handleApplyPriority} className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-background font-semibold">
               Apply Order
             </button>
-            <button onClick={() => setAiPrioritySuggestion(null)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">
+            <button onClick={() => setAiPrioritySuggestion(null)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 text-muted-foreground">
               Dismiss
             </button>
           </div>
@@ -391,7 +391,7 @@ export function TasksTab({ objectives = [] }) {
         <button
           onClick={() => setShowAddForm(true)}
           data-testid="tasks-fab"
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-foreground hover:bg-[#d97706] text-black text-2xl font-bold shadow-lg shadow-amber-500/30 transition-colors flex items-center justify-center"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-foreground hover:bg-foreground/90 text-background text-2xl font-bold shadow-lg shadow-amber-500/30 transition-colors flex items-center justify-center"
           aria-label="Add Task"
         >
           +

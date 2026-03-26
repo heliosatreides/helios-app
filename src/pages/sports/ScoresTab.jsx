@@ -39,7 +39,7 @@ function SportContent({ sport }) {
         <p className="text-muted-foreground text-sm mb-4">{error}</p>
         <button
           onClick={refresh}
-          className="px-4 py-2 bg-amber-500 text-black text-sm font-medium hover:bg-amber-400 transition-colors"
+          className="px-4 py-2 bg-amber-500 text-background text-sm font-medium hover:bg-amber-400 transition-colors"
         >
           Retry
         </button>
@@ -77,7 +77,7 @@ export function ScoresTab({ activeSport, onSportChange }) {
             onClick={() => onSportChange(sport)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               activeSport === sport
-                ? 'bg-amber-500 text-black'
+                ? 'bg-amber-500 text-background'
                 : 'bg-secondary text-muted-foreground hover:text-foreground'
             }`}
           >

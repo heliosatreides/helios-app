@@ -96,7 +96,7 @@ function TimeframeFilter({ activeTimeframes, selected, onChange }) {
           data-testid={`timeframe-tab-${tf.replace(/\s+/g, '-')}`}
           className={`px-3 py-1 text-xs font-medium border transition-colors ${
             selected === tf
-              ? 'bg-foreground text-black border-foreground'
+              ? 'bg-foreground text-background border-foreground'
               : 'border-border text-muted-foreground hover:text-foreground hover:border-amber-500/50'
           }`}
         >
@@ -129,7 +129,7 @@ function AddObjectiveForm({ onSave, onClose }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Launch MVP product"
-              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
               data-testid="objective-title-input"
             />
           </div>
@@ -138,7 +138,7 @@ function AddObjectiveForm({ onSave, onClose }) {
             <select
               value={timeframe}
               onChange={(e) => setTimeframe(e.target.value)}
-              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             >
               {TIMEFRAMES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
@@ -158,10 +158,10 @@ function AddObjectiveForm({ onSave, onClose }) {
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold py-2 text-sm transition-colors">
               Create Objective
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-secondary/80 transition-colors">
               Cancel
             </button>
           </div>
@@ -201,7 +201,7 @@ function AddKRForm({ onSave, onClose }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Acquire 100 beta users"
-              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
               data-testid="kr-title-input"
             />
           </div>
@@ -210,7 +210,7 @@ function AddKRForm({ onSave, onClose }) {
             <select
               value={metricType}
               onChange={(e) => setMetricType(e.target.value)}
-              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
               data-testid="kr-metric-select"
             >
               {METRIC_TYPES.map((m) => <option key={m} value={m}>{m}</option>)}
@@ -224,7 +224,7 @@ function AddKRForm({ onSave, onClose }) {
                   type="number"
                   value={currentValue}
                   onChange={(e) => setCurrentValue(e.target.value)}
-                  className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+                  className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                   data-testid="kr-current-input"
                 />
               </div>
@@ -234,17 +234,17 @@ function AddKRForm({ onSave, onClose }) {
                   type="number"
                   value={targetValue}
                   onChange={(e) => setTargetValue(e.target.value)}
-                  className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+                  className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                   data-testid="kr-target-input"
                 />
               </div>
             </div>
           )}
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold py-2 text-sm transition-colors">
               Add Key Result
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-secondary/80 transition-colors">
               Cancel
             </button>
           </div>
@@ -294,7 +294,7 @@ function KRItem({ kr, onUpdateCurrent, objectiveId }) {
                 type="number"
                 value={editVal}
                 onChange={(e) => setEditVal(e.target.value)}
-                className="w-16 bg-secondary border border-[#f59e0b] rounded px-2 py-1 text-foreground text-xs"
+                className="w-16 bg-secondary border border-foreground rounded px-2 py-1 text-foreground text-xs"
                 data-testid={`kr-edit-input-${kr.id}`}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
               />
@@ -574,7 +574,7 @@ export function GoalsTab({ trips = [], budgets = [], tasks = [] }) {
         <button
           type="button"
           onClick={() => setShowAddObjective(true)}
-          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           data-testid="add-objective-btn"
         >
           + New Objective
@@ -620,7 +620,7 @@ export function GoalsTab({ trips = [], budgets = [], tasks = [] }) {
           <button
             type="button"
             onClick={() => setShowAddObjective(true)}
-            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           >
             + New Objective
           </button>

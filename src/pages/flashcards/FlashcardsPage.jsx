@@ -51,7 +51,7 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
             <label className="text-muted-foreground text-xs block mb-1">Deck name *</label>
             <input
               autoFocus
-              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="e.g. Spanish Vocabulary"
@@ -61,7 +61,7 @@ function DeckList({ decks, onSelect, onDelete, onCreate }) {
           <div>
             <label className="text-muted-foreground text-xs block mb-1">Description</label>
             <input
-              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full"
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               placeholder="Optional description"
@@ -236,7 +236,7 @@ function CardManager({ deck, onUpdate, onBack }) {
         <button
           type="button"
           onClick={() => setShowAdd((s) => !s)}
-          className="bg-secondary hover:bg-[#3f3f46] text-foreground px-3 py-1.5 text-sm font-medium transition-colors"
+          className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-1.5 text-sm font-medium transition-colors"
         >
           + Add card
         </button>
@@ -247,7 +247,7 @@ function CardManager({ deck, onUpdate, onBack }) {
           <div>
             <label className="text-muted-foreground text-xs block mb-1">Front (question) *</label>
             <textarea
-              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full resize-none"
               rows={2}
               value={form.front}
               onChange={(e) => setForm((f) => ({ ...f, front: e.target.value }))}
@@ -258,7 +258,7 @@ function CardManager({ deck, onUpdate, onBack }) {
           <div>
             <label className="text-muted-foreground text-xs block mb-1">Back (answer) *</label>
             <textarea
-              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full resize-none"
               rows={2}
               value={form.back}
               onChange={(e) => setForm((f) => ({ ...f, back: e.target.value }))}
@@ -269,7 +269,7 @@ function CardManager({ deck, onUpdate, onBack }) {
           <div>
             <label className="text-muted-foreground text-xs block mb-1">Tags (comma-separated)</label>
             <input
-              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full"
               value={form.tags}
               onChange={(e) => setForm((f) => ({ ...f, tags: e.target.value }))}
               placeholder="e.g. vocab, verbs"
@@ -287,7 +287,7 @@ function CardManager({ deck, onUpdate, onBack }) {
         <div className="bg-background border border-border p-4 space-y-3">
           <p className="text-foreground text-xs font-medium">✨ Generate flashcards with AI</p>
           <textarea
-            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full resize-none"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full resize-none"
             rows={3}
             value={aiText}
             onChange={(e) => setAiText(e.target.value)}

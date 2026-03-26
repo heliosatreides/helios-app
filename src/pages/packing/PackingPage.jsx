@@ -120,7 +120,7 @@ export function PackingPage() {
   if (view === 'list') return (
     <div className="space-y-6">
       <PageHeader title="Packing Lists">
-        <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">+ New List</button>
+        <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-background font-semibold text-sm hover:bg-amber-400">+ New List</button>
       </PageHeader>
 
       {lists.length === 0 ? (
@@ -171,7 +171,7 @@ export function PackingPage() {
         <h2 className="text-sm font-semibold text-muted-foreground">Create from Scratch</h2>
         <div className="flex gap-2">
           <input value={newListName} onChange={e => setNewListName(e.target.value)} placeholder="List name" className="flex-1 bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
-          <button onClick={createBlank} disabled={!newListName.trim()} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">Create</button>
+          <button onClick={createBlank} disabled={!newListName.trim()} className="px-4 py-2 bg-amber-500 text-background font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">Create</button>
         </div>
       </div>
 
@@ -190,7 +190,7 @@ export function PackingPage() {
         {aiSuggestion && (
           <div className="space-y-2">
             <pre className="text-sm text-muted-foreground bg-secondary p-3 whitespace-pre-wrap max-h-60 overflow-auto">{aiSuggestion}</pre>
-            <button onClick={importAISuggestion} className="px-4 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400">Import as List</button>
+            <button onClick={importAISuggestion} className="px-4 py-2 bg-amber-500 text-background text-sm font-semibold hover:bg-amber-400">Import as List</button>
           </div>
         )}
       </div>
@@ -220,7 +220,7 @@ export function PackingPage() {
       {/* Category filter */}
       <div className="flex gap-2 flex-wrap">
         {['All', ...CATEGORIES].map(c => (
-          <button key={c} onClick={() => setFilterCat(c)} className={`px-3 py-1 text-xs ${filterCat === c ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>{c}</button>
+          <button key={c} onClick={() => setFilterCat(c)} className={`px-3 py-1 text-xs ${filterCat === c ? 'bg-amber-500 text-background font-semibold' : 'bg-secondary text-muted-foreground'}`}>{c}</button>
         ))}
       </div>
 
@@ -230,7 +230,7 @@ export function PackingPage() {
         <select value={newItemCat} onChange={e => setNewItemCat(e.target.value)} className="bg-secondary border border-border px-2 py-2 text-foreground text-sm outline-none focus:border-amber-500">
           {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
-        <button onClick={addItem} className="px-3 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400">+</button>
+        <button onClick={addItem} className="px-3 py-2 bg-amber-500 text-background text-sm font-semibold hover:bg-amber-400">+</button>
       </div>
 
       {/* Items grouped by category */}

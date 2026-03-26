@@ -87,7 +87,7 @@ function CurrencyConverter() {
     }
   };
 
-  const selectCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]';
+  const selectCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring';
 
   return (
     <div className="space-y-5">
@@ -103,7 +103,7 @@ function CurrencyConverter() {
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full"
               placeholder="100"
               min="0"
             />
@@ -166,7 +166,7 @@ function CurrencyConverter() {
               key={`${p.from}/${p.to}`}
               type="button"
               onClick={() => applyPair(p.from, p.to)}
-              className="bg-secondary hover:bg-[#3f3f46] text-muted-foreground hover:text-foreground text-xs px-3 py-1.5 transition-colors"
+              className="bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground text-xs px-3 py-1.5 transition-colors"
             >
               {p.from}/{p.to}
             </button>
@@ -235,7 +235,7 @@ function UnitConverter() {
     return unit;
   };
 
-  const selectCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full';
+  const selectCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full';
 
   return (
     <div className="space-y-4">
@@ -248,7 +248,7 @@ function UnitConverter() {
             onClick={() => setActiveCategory(cat)}
             className={`px-3 py-1.5 text-xs font-semibold transition-colors ${
               activeCategory === cat
-                ? 'bg-amber-500 text-black'
+                ? 'bg-amber-500 text-background'
                 : 'bg-secondary text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -265,7 +265,7 @@ function UnitConverter() {
               type="number"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] w-full"
+              className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring w-full"
             />
           </div>
           <div>
@@ -317,7 +317,7 @@ export function ConverterPage({ embedded } = {}) {
             onClick={() => setMode(id)}
             className={`px-4 py-2 text-sm font-semibold transition-colors ${
               mode === id
-                ? 'bg-amber-500 text-black'
+                ? 'bg-amber-500 text-background'
                 : 'bg-secondary text-muted-foreground hover:text-foreground'
             }`}
           >

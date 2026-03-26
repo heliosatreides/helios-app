@@ -73,14 +73,14 @@ function LoginModal({ onSuccess, onCancel }) {
           value={username}
           onChange={e => setUsername(e.target.value)}
           autoFocus
-          className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
+          className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-border transition-colors"
         />
         <input
           type="password"
           placeholder="Password"
           value={pw}
           onChange={e => setPw(e.target.value)}
-          className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 focus:outline-none focus:border-border transition-colors"
+          className="w-full bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-border transition-colors"
         />
         {error && <p className="text-red-400 text-xs">{error}</p>}
         <div className="flex gap-2 pt-1">
@@ -270,7 +270,7 @@ function ChatInput({ onSend }) {
         placeholder="Type a message…"
         rows={1}
         autoFocus
-        className="flex-1 bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-zinc-600 resize-none focus:outline-none focus:border-border transition-colors"
+        className="flex-1 bg-background border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:border-border transition-colors"
         style={{ minHeight: '44px', maxHeight: '120px' }}
       />
       <button

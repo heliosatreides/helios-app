@@ -106,7 +106,7 @@ export function ApiPlaygroundPage() {
         <PageHeader title="API Playground" />
         <div className="flex gap-2">
           {['request', 'history', 'favorites'].map(t => (
-            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>
+            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-background font-semibold' : 'bg-secondary text-muted-foreground'}`}>
               {t === 'request' ? '🔧 Request' : t === 'history' ? '🕐 History' : '⭐ Saved'}
             </button>
           ))}
@@ -121,7 +121,7 @@ export function ApiPlaygroundPage() {
               {METHODS.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
             <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendRequest()} placeholder="https://api.example.com/endpoint" className="flex-1 bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
-            <button onClick={sendRequest} disabled={sending || !url} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">
+            <button onClick={sendRequest} disabled={sending || !url} className="px-4 py-2 bg-amber-500 text-background font-semibold text-sm hover:bg-amber-400 disabled:opacity-50">
               {sending ? '⏳' : 'Send'}
             </button>
           </div>
@@ -157,11 +157,11 @@ export function ApiPlaygroundPage() {
 
           {/* Save as favorite */}
           <div className="flex gap-2">
-            <button onClick={() => setShowSaveFav(!showSaveFav)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">⭐ Save</button>
+            <button onClick={() => setShowSaveFav(!showSaveFav)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-secondary/80">⭐ Save</button>
             {showSaveFav && (
               <>
                 <input value={favName} onChange={e => setFavName(e.target.value)} placeholder="Request name" className="flex-1 bg-secondary border border-border px-3 py-1.5 text-foreground text-sm outline-none focus:border-amber-500" />
-                <button onClick={saveFavorite} className="px-3 py-1.5 bg-amber-500 text-black text-sm font-semibold">Save</button>
+                <button onClick={saveFavorite} className="px-3 py-1.5 bg-amber-500 text-background text-sm font-semibold">Save</button>
               </>
             )}
           </div>
@@ -200,7 +200,7 @@ export function ApiPlaygroundPage() {
             <div className="text-center py-16 text-muted-foreground/80">No requests yet. Send one to see history.</div>
           ) : (
             history.map(entry => (
-              <div key={entry.id} className="bg-background border border-border p-4 flex items-center gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => loadFromHistory(entry)}>
+              <div key={entry.id} className="bg-background border border-border p-4 flex items-center gap-4 cursor-pointer hover:border-border" onClick={() => loadFromHistory(entry)}>
                 <span className={`font-bold text-sm w-16 ${METHOD_COLORS[entry.method]}`}>{entry.method}</span>
                 <span className="text-sm text-foreground flex-1 truncate">{entry.url}</span>
                 <span className={`text-sm font-semibold ${entry.status < 300 ? 'text-green-400' : 'text-red-400'}`}>{entry.status}</span>
@@ -223,7 +223,7 @@ export function ApiPlaygroundPage() {
                   <div className="font-semibold text-foreground text-sm">{fav.name}</div>
                   <div className="text-xs text-muted-foreground truncate">{fav.url}</div>
                 </div>
-                <button onClick={() => loadFromHistory(fav)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">Load</button>
+                <button onClick={() => loadFromHistory(fav)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-secondary/80">Load</button>
                 <button onClick={() => setFavorites(f => f.filter(x => x.id !== fav.id))} className="text-muted-foreground/80 hover:text-red-400">✕</button>
               </div>
             ))

@@ -40,7 +40,7 @@ export function AddTransactionModal({ accounts, onSave, onClose, transaction }) 
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
         <div>
@@ -51,7 +51,7 @@ export function AddTransactionModal({ accounts, onSave, onClose, transaction }) 
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
         <div>
@@ -60,7 +60,7 @@ export function AddTransactionModal({ accounts, onSave, onClose, transaction }) 
             id="tx-category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -73,7 +73,7 @@ export function AddTransactionModal({ accounts, onSave, onClose, transaction }) 
             id="tx-account"
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
             {accounts.map((a) => (
               <option key={a.id} value={a.id}>{a.name}</option>
@@ -87,7 +87,7 @@ export function AddTransactionModal({ accounts, onSave, onClose, transaction }) 
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
         </div>
         <div>
@@ -96,7 +96,7 @@ export function AddTransactionModal({ accounts, onSave, onClose, transaction }) 
             id="tx-type"
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           >
             <option value="expense">Expense</option>
             <option value="income">Income</option>
@@ -112,7 +112,7 @@ export function AddTransactionModal({ accounts, onSave, onClose, transaction }) 
           </button>
           <button
             type="submit"
-            className="flex-1 px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all shadow-sm shadow-amber-500/10"
+            className="flex-1 px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all shadow-sm shadow-amber-500/10"
           >
             Save
           </button>

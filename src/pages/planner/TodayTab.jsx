@@ -165,13 +165,13 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
           <div className="flex gap-2">
             <button
               onClick={handleApplyAI}
-              className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-black font-semibold"
+              className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 text-background font-semibold"
             >
               Apply
             </button>
             <button
               onClick={() => { setShowConfirm(false); setAiSuggestion(null); }}
-              className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-foreground"
+              className="px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 text-foreground"
             >
               Dismiss
             </button>
@@ -230,7 +230,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     value={formData.title}
                     onChange={(e) => setFormData((p) => ({ ...p, title: e.target.value }))}
                     autoFocus
-                    className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                    className="w-full bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   />
                   <div className="flex gap-2 flex-wrap">
                     {/* Duration */}
@@ -258,7 +258,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button type="submit" className="px-3 py-1.5 text-xs bg-foreground hover:bg-[#d97706] text-black font-semibold">
+                    <button type="submit" className="px-3 py-1.5 text-xs bg-foreground hover:bg-foreground/90 text-background font-semibold">
                       {editMode === 'add' ? 'Add' : 'Save'}
                     </button>
                     {editMode === 'edit' && formData.editingId && (
@@ -273,7 +273,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
                     <button
                       type="button"
                       onClick={() => { setActiveSlot(null); setEditMode(null); }}
-                      className="px-3 py-1.5 text-xs bg-secondary hover:bg-[#3f3f46] text-muted-foreground"
+                      className="px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 text-muted-foreground"
                     >
                       Cancel
                     </button>

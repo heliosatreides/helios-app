@@ -115,11 +115,11 @@ function GitHubActivity() {
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
           placeholder="GitHub username"
-          className="flex-1 bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
         />
         <button
           type="submit"
-          className="bg-secondary hover:bg-[#3f3f46] text-foreground px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap"
+          className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap"
         >
           Load
         </button>
@@ -216,7 +216,7 @@ function SnippetManager() {
     }
   };
 
-  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring w-full';
 
   return (
     <div className="space-y-4">
@@ -227,13 +227,13 @@ function SnippetManager() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search snippets…"
-          className="flex-1 bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
         />
         {languages.length > 0 && (
           <select
             value={langFilter}
             onChange={(e) => setLangFilter(e.target.value)}
-            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
           >
             <option value="">All languages</option>
             {languages.map((l) => <option key={l} value={l}>{l}</option>)}
@@ -386,7 +386,7 @@ function DevLog() {
         onChange={(e) => handleChange(e.target.value)}
         placeholder="What did you ship today? What are you stuck on?"
         rows={5}
-        className="w-full bg-background border border-border px-4 py-3 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
+        className="w-full bg-background border border-border px-4 py-3 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
       />
       <div className="flex gap-2 flex-wrap">
         {hasKey && (

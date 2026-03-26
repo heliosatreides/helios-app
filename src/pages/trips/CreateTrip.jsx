@@ -49,10 +49,10 @@ export function CreateTrip({ onSubmit }) {
   };
 
   const inputClass = (field) =>
-    `w-full bg-secondary border px-4 py-2.5 text-foreground placeholder-[#52525b] focus:outline-none transition-colors ${
+    `w-full bg-secondary border px-4 py-2.5 text-foreground placeholder-muted-foreground focus:outline-none transition-colors ${
       errors[field]
         ? 'border-red-500 focus:border-red-400'
-        : 'border-border focus:border-[#f59e0b]'
+        : 'border-border focus:ring-1 focus:ring-ring'
     }`;
 
   return (
@@ -143,14 +143,14 @@ export function CreateTrip({ onSubmit }) {
         <div className="flex gap-3 pt-2">
           <button
             type="submit"
-            className="flex-1 bg-foreground hover:bg-[#d97706] text-black font-semibold py-2.5 transition-colors"
+            className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold py-2.5 transition-colors"
           >
             Create Trip
           </button>
           <button
             type="button"
             onClick={() => navigate('/trips')}
-            className="flex-1 bg-background border border-border hover:border-[#52525b] text-muted-foreground font-medium py-2.5 transition-colors"
+            className="flex-1 bg-background border border-border hover:border-muted-foreground text-muted-foreground font-medium py-2.5 transition-colors"
           >
             Cancel
           </button>

@@ -73,7 +73,7 @@ function AddContactModal({ onSave, onClose }) {
                 value={form[field]}
                 onChange={set(field)}
                 placeholder={placeholder}
-                className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+                className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                 data-testid={testId}
               />
             </div>
@@ -86,15 +86,15 @@ function AddContactModal({ onSave, onClose }) {
               onChange={set('followUpDays')}
               placeholder="14"
               min="0"
-              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
               data-testid="contact-followup-input"
             />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold py-2 text-sm transition-colors">
               Add Contact
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-secondary/80 transition-colors">
               Cancel
             </button>
           </div>
@@ -126,7 +126,7 @@ function LogInteractionModal({ contact, onSave, onClose }) {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div>
@@ -136,15 +136,15 @@ function LogInteractionModal({ contact, onSave, onClose }) {
               onChange={(e) => setNote(e.target.value)}
               placeholder="Had coffee, discussed job opportunity..."
               rows={3}
-              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b] resize-none"
+              className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring resize-none"
               data-testid="interaction-note-input"
             />
           </div>
           <div className="flex gap-3">
-            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-black font-semibold py-2 text-sm transition-colors">
+            <button type="submit" className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold py-2 text-sm transition-colors">
               Log
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-[#3f3f46] transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-secondary text-foreground font-semibold py-2 text-sm hover:bg-secondary/80 transition-colors">
               Cancel
             </button>
           </div>
@@ -306,7 +306,7 @@ function ContactCard({ contact, onDelete, onLogInteraction }) {
                     value={meetingContext}
                     onChange={(e) => setMeetingContext(e.target.value)}
                     placeholder="Meeting context (optional)"
-                    className="flex-1 min-w-0 bg-background border border-border px-3 py-1.5 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+                    className="flex-1 min-w-0 bg-background border border-border px-3 py-1.5 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                   />
                   <button
                     type="button"
@@ -414,7 +414,7 @@ export function NetworkingTab() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           data-testid="add-contact-btn"
         >
           + Add Contact
@@ -439,14 +439,14 @@ export function NetworkingTab() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search contacts…"
-          className="flex-1 min-w-0 bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+          className="flex-1 min-w-0 bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
           data-testid="contact-search"
         />
         {allTags.length > 0 && (
           <select
             value={filterTag}
             onChange={(e) => setFilterTag(e.target.value)}
-            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             data-testid="tag-filter"
           >
             <option value="">All tags</option>
@@ -464,7 +464,7 @@ export function NetworkingTab() {
           <button
             type="button"
             onClick={() => setShowAdd(true)}
-            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-black font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
+            className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
           >
             + Add Contact
           </button>

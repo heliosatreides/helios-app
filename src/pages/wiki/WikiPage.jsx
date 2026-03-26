@@ -128,7 +128,7 @@ export function WikiPage() {
           <button onClick={activePage ? updatePage : createPage} className="px-4 py-2 bg-foreground text-background font-semibold text-sm hover:bg-foreground/90">
             {activePage ? 'Update' : 'Create'}
           </button>
-          <button onClick={() => setView(activePage ? 'read' : 'list')} className="px-4 py-2 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">Cancel</button>
+          <button onClick={() => setView(activePage ? 'read' : 'list')} className="px-4 py-2 bg-secondary text-muted-foreground text-sm hover:bg-secondary/80">Cancel</button>
         </div>
       </div>
     </div>
@@ -141,7 +141,7 @@ export function WikiPage() {
         <span className="text-muted-foreground/80 text-sm">/</span>
         <span className="text-xs text-muted-foreground/80 bg-secondary px-2 py-0.5 rounded">{activePage.category}</span>
         <div className="ml-auto flex gap-2">
-          <button onClick={() => openEdit(activePage)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">Edit</button>
+          <button onClick={() => openEdit(activePage)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-secondary/80">Edit</button>
           <button onClick={() => deletePage(activePage.id)} className="px-3 py-1.5 text-red-400 hover:text-red-300 text-sm">Delete</button>
         </div>
       </div>
@@ -190,7 +190,7 @@ export function WikiPage() {
           <div key={cat} className="space-y-2">
             <h2 className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-widest">{cat}</h2>
             {catPages.map(page => (
-              <div key={page.id} className="bg-background border border-border p-4 flex items-start gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => { setActivePage(page); setAiSummary(''); setAiRelated(''); setView('read'); }}>
+              <div key={page.id} className="bg-background border border-border p-4 flex items-start gap-4 cursor-pointer hover:border-border" onClick={() => { setActivePage(page); setAiSummary(''); setAiRelated(''); setView('read'); }}>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-foreground">{page.title}</div>
                   <div className="text-sm text-muted-foreground truncate mt-0.5">{page.content.replace(/[#*`\[\]]/g, '').slice(0, 100)}...</div>

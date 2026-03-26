@@ -16,7 +16,7 @@ function ColorChip({ color, label }) {
   return (
     <div className="flex flex-col gap-1.5">
       {label && <div className="text-xs text-muted-foreground font-medium">{label}</div>}
-      <div className="w-full h-16 cursor-pointer border border-border hover:border-[#3f3f46]" style={{ backgroundColor: color.hex }} onClick={() => copy(color.hex)} title="Click to copy hex" />
+      <div className="w-full h-16 cursor-pointer border border-border hover:border-border" style={{ backgroundColor: color.hex }} onClick={() => copy(color.hex)} title="Click to copy hex" />
       <div className="space-y-1">
         {[
           { label: 'HEX', val: color.hex },
@@ -78,7 +78,7 @@ export function ColorsPage() {
         <PageHeader title="Color Palette Generator" />
         <div className="flex gap-2">
           {['generator', 'saved'].map(t => (
-            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>
+            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-background font-semibold' : 'bg-secondary text-muted-foreground'}`}>
               {t === 'generator' ? '🎨 Generator' : '💾 Saved'}
             </button>
           ))}
@@ -97,7 +97,7 @@ export function ColorsPage() {
                   <input value={hex} onChange={e => setHex(e.target.value)} placeholder="#3b82f6" className="w-32 bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500 font-mono" />
                 </div>
               </div>
-              <button onClick={generate_palette} className="mt-5 px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">Generate</button>
+              <button onClick={generate_palette} className="mt-5 px-4 py-2 bg-amber-500 text-background font-semibold text-sm hover:bg-amber-400">Generate</button>
             </div>
 
             {/* AI: palette from mood */}
@@ -148,7 +148,7 @@ export function ColorsPage() {
                 </div>
                 <div className="flex gap-2">
                   <input value={paletteName} onChange={e => setPaletteName(e.target.value)} placeholder={aiName || "Palette name..."} className="flex-1 bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
-                  <button onClick={savePalette} disabled={!paletteName.trim()} className="px-4 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400 disabled:opacity-50">Save</button>
+                  <button onClick={savePalette} disabled={!paletteName.trim()} className="px-4 py-2 bg-amber-500 text-background text-sm font-semibold hover:bg-amber-400 disabled:opacity-50">Save</button>
                 </div>
               </div>
             </div>

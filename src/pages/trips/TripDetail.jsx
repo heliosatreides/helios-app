@@ -265,16 +265,16 @@ export function TripDetail({ trips, onUpdate }) {
               placeholder="Description"
               value={newExpense.description}
               onChange={(e) => setNewExpense((p) => ({ ...p, description: e.target.value }))}
-              className="flex-1 min-w-[120px] bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+              className="flex-1 min-w-[120px] bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
             <input
               type="number"
               placeholder="Amount"
               value={newExpense.amount}
               onChange={(e) => setNewExpense((p) => ({ ...p, amount: e.target.value }))}
-              className="w-28 bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+              className="w-28 bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
-            <button type="submit" className="bg-foreground hover:bg-[#d97706] text-black text-sm font-semibold px-4 py-2">
+            <button type="submit" className="bg-foreground hover:bg-foreground/90 text-background text-sm font-semibold px-4 py-2">
               Add
             </button>
           </form>
@@ -369,7 +369,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.time}
                       onChange={(e) => handleActivityChange(date, 'time', e.target.value)}
                       aria-label="Activity time"
-                      className="w-28 bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none focus:border-[#f59e0b]"
+                      className="w-28 bg-background border border-border px-2 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                     />
                     <input
                       type="text"
@@ -377,7 +377,7 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.title}
                       onChange={(e) => handleActivityChange(date, 'title', e.target.value)}
                       aria-label="Activity title"
-                      className="flex-1 min-w-[120px] bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 min-w-[120px] bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                     />
                     <input
                       type="text"
@@ -385,11 +385,11 @@ export function TripDetail({ trips, onUpdate }) {
                       value={act.notes}
                       onChange={(e) => handleActivityChange(date, 'notes', e.target.value)}
                       aria-label="Activity notes"
-                      className="flex-1 min-w-[120px] bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+                      className="flex-1 min-w-[120px] bg-background border border-border px-3 py-1.5 text-xs text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                     />
                     <button
                       type="submit"
-                      className="bg-secondary hover:bg-[#3f3f46] text-foreground text-xs font-semibold px-3 py-1.5"
+                      className="bg-secondary hover:bg-secondary/80 text-foreground text-xs font-semibold px-3 py-1.5"
                     >
                       + Add
                     </button>
@@ -410,7 +410,7 @@ export function TripDetail({ trips, onUpdate }) {
           onBlur={handleNotesBlur}
           placeholder="Add any notes about this trip..."
           rows={5}
-          className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] resize-none"
+          className="w-full bg-background border border-border px-4 py-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
         />
       </div>
     </div>

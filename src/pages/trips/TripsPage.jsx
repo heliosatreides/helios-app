@@ -72,12 +72,12 @@ export function TripsPage() {
             <div className="flex flex-wrap gap-2 mb-4">
               <ImportButton
                 mode="json"
-                label="📥 Import Trips (JSON)"
+                label="Import Trips (JSON)"
                 onImport={handleImportJSON}
               />
               <ImportButton
                 mode="csv"
-                label="📥 Import Trips (CSV)"
+                label="Import Trips (CSV)"
                 onImport={handleImportCSV}
               />
             </div>

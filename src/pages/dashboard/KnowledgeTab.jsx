@@ -107,7 +107,7 @@ export function ReadingList() {
     }
   };
 
-  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring w-full';
 
   return (
     <div className="space-y-4">
@@ -130,7 +130,7 @@ export function ReadingList() {
       {/* Add button */}
       <button
         onClick={() => setShowForm((v) => !v)}
-        className="text-sm px-3 py-1.5 bg-secondary hover:bg-[#3f3f46] text-foreground transition-colors"
+        className="text-sm px-3 py-1.5 bg-secondary hover:bg-secondary/80 text-foreground transition-colors"
       >
         + Add Item
       </button>
@@ -151,7 +151,7 @@ export function ReadingList() {
           </div>
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-1.5 text-sm bg-foreground hover:bg-foreground/90 text-background font-medium">Add</button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">Cancel</button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 text-muted-foreground">Cancel</button>
           </div>
         </form>
       )}
@@ -285,7 +285,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
     }
   };
 
-  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring w-full';
 
   return (
     <div className="space-y-4">
@@ -313,7 +313,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
 
       <button
         onClick={() => setShowForm((v) => !v)}
-        className="text-sm px-3 py-1.5 bg-secondary hover:bg-[#3f3f46] text-foreground transition-colors"
+        className="text-sm px-3 py-1.5 bg-secondary hover:bg-secondary/80 text-foreground transition-colors"
       >
         + Add TIL
       </button>
@@ -322,7 +322,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
         <form onSubmit={handleAdd} className="bg-background border border-border p-4 space-y-3">
           <input className={inputCls} placeholder="What did you learn? *" value={form.title} onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))} autoFocus />
           <textarea
-            className="bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none w-full resize-none"
+            className="bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none w-full resize-none"
             placeholder="Brief note (optional)…"
             value={form.note}
             onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))}
@@ -331,7 +331,7 @@ Find a common theme or suggest how these ideas connect in 2-3 sentences.`;
           <input className={inputCls} placeholder="Tags (comma-separated)" value={form.tags} onChange={(e) => setForm((p) => ({ ...p, tags: e.target.value }))} />
           <div className="flex gap-2">
             <button type="submit" className="px-4 py-1.5 text-sm bg-foreground hover:bg-foreground/90 text-background font-medium">Add</button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-[#3f3f46] text-muted-foreground">Cancel</button>
+            <button type="button" onClick={() => setShowForm(false)} className="px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 text-muted-foreground">Cancel</button>
           </div>
         </form>
       )}

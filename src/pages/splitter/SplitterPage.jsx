@@ -89,7 +89,7 @@ export function SplitterPage() {
   if (view === 'list') return (
     <div className="space-y-6">
       <PageHeader title="Expense Splitter">
-        <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">+ New Bill</button>
+        <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-background font-semibold text-sm hover:bg-amber-400">+ New Bill</button>
       </PageHeader>
       {bills.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground/80">No bills yet. Create one to split expenses with friends!</div>
@@ -102,7 +102,7 @@ export function SplitterPage() {
                 <div className="text-sm text-muted-foreground">{bill.participants.join(', ')} · {fmt(bill.total)}</div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => { setActiveBill(bill); setSplitType('equal'); setSettleView(false); setAiSuggestion(''); setView('detail'); }} className="px-3 py-1.5 bg-secondary text-foreground text-sm hover:bg-[#3f3f46]">Open</button>
+                <button onClick={() => { setActiveBill(bill); setSplitType('equal'); setSettleView(false); setAiSuggestion(''); setView('detail'); }} className="px-3 py-1.5 bg-secondary text-foreground text-sm hover:bg-secondary/80">Open</button>
                 <button onClick={() => deleteBill(bill.id)} className="px-3 py-1.5 text-red-400 hover:text-red-300 text-sm">✕</button>
               </div>
             </div>
@@ -135,7 +135,7 @@ export function SplitterPage() {
           <label className="block text-sm text-muted-foreground mb-1">Paid By</label>
           <input value={paidBy} onChange={e => setPaidBy(e.target.value)} placeholder="Alice (leave blank for first participant)" className="w-full bg-secondary border border-border px-3 py-2 text-foreground text-sm outline-none focus:border-amber-500" />
         </div>
-        <button onClick={createBill} className="w-full py-2.5 bg-amber-500 text-black font-semibold hover:bg-amber-400">Create Bill</button>
+        <button onClick={createBill} className="w-full py-2.5 bg-amber-500 text-background font-semibold hover:bg-amber-400">Create Bill</button>
       </div>
     </div>
   );
@@ -164,7 +164,7 @@ export function SplitterPage() {
             {activeBill.participants.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
-        <button onClick={addItem} className="px-4 py-2 bg-amber-500 text-black text-sm font-semibold hover:bg-amber-400">Add</button>
+        <button onClick={addItem} className="px-4 py-2 bg-amber-500 text-background text-sm font-semibold hover:bg-amber-400">Add</button>
       </div>
 
       {/* Items list */}
@@ -187,8 +187,8 @@ export function SplitterPage() {
         <div className="flex items-center gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">Split Method</h2>
           <div className="flex gap-2 ml-auto">
-            <button onClick={() => setSplitType('equal')} className={`px-3 py-1 text-xs font-semibold ${splitType === 'equal' ? 'bg-amber-500 text-black' : 'bg-secondary text-muted-foreground'}`}>Equal</button>
-            <button onClick={() => setSplitType('itemized')} className={`px-3 py-1 text-xs font-semibold ${splitType === 'itemized' ? 'bg-amber-500 text-black' : 'bg-secondary text-muted-foreground'}`}>Itemized</button>
+            <button onClick={() => setSplitType('equal')} className={`px-3 py-1 text-xs font-semibold ${splitType === 'equal' ? 'bg-amber-500 text-background' : 'bg-secondary text-muted-foreground'}`}>Equal</button>
+            <button onClick={() => setSplitType('itemized')} className={`px-3 py-1 text-xs font-semibold ${splitType === 'itemized' ? 'bg-amber-500 text-background' : 'bg-secondary text-muted-foreground'}`}>Itemized</button>
           </div>
         </div>
         {activeBill.participants.map(p => (

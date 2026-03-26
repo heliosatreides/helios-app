@@ -292,7 +292,7 @@ export function FinancePage() {
           <div className="flex flex-wrap gap-2">
             <ImportButton
               mode="json"
-              label="📥 Import Accounts (JSON)"
+              label="Import Accounts (JSON)"
               onImport={handleImportAccountsJSON}
             />
             <button
@@ -316,7 +316,7 @@ export function FinancePage() {
           <div className="flex flex-wrap gap-2">
             <ImportButton
               mode="csv"
-              label="📥 Import Transactions (CSV)"
+              label="Import Transactions (CSV)"
               onImport={handleImportTransactionsCSV}
             />
             <button

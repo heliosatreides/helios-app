@@ -477,7 +477,7 @@ export function SettingsPage() {
             </div>
             <ImportButton
               mode="json"
-              label="📥 Import All Data (JSON)"
+              label="Import All Data (JSON)"
               onImport={handleImportAllJSON}
             />
             <p className="text-muted-foreground/80 text-xs">

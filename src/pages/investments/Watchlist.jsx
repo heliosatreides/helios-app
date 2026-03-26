@@ -14,7 +14,7 @@ function AddWatchForm({ onAdd, onCancel }) {
     setForm({ ticker: '', name: '', targetPrice: '', notes: '' });
   };
 
-  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b] w-full';
+  const inputCls = 'bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring w-full';
 
   return (
     <form onSubmit={handleSubmit} className="bg-background border border-border p-5 space-y-4">
@@ -38,7 +38,7 @@ function AddWatchForm({ onAdd, onCancel }) {
         </div>
       </div>
       <div className="flex gap-3 pt-1">
-        <button type="submit" className="bg-foreground hover:bg-amber-400 text-black font-semibold px-4 py-2 text-sm transition-colors">
+        <button type="submit" className="bg-foreground hover:bg-amber-400 text-background font-semibold px-4 py-2 text-sm transition-colors">
           Add to Watchlist
         </button>
         <button type="button" onClick={onCancel} className="border border-border text-muted-foreground hover:text-foreground px-4 py-2 text-sm transition-colors">
@@ -114,7 +114,7 @@ export function Watchlist() {
       ) : (
         <button
           onClick={() => setShowAdd(true)}
-          className="bg-foreground hover:bg-amber-400 text-black font-semibold px-4 py-2 text-sm transition-colors"
+          className="bg-foreground hover:bg-amber-400 text-background font-semibold px-4 py-2 text-sm transition-colors"
         >
           + Add to Watchlist
         </button>

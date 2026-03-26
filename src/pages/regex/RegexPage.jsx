@@ -67,7 +67,7 @@ export function RegexPage({ embedded } = {}) {
         {!embedded && <PageHeader title="Regex Tester" />}
         <div className="flex gap-2">
           {['tester', 'library', 'saved'].map(t => (
-            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>
+            <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-background font-semibold' : 'bg-secondary text-muted-foreground'}`}>
               {t === 'tester' ? '🔧 Tester' : t === 'library' ? '📚 Library' : '💾 Saved'}
             </button>
           ))}
@@ -140,11 +140,11 @@ export function RegexPage({ embedded } = {}) {
 
           {/* Save */}
           <div className="flex gap-2">
-            <button onClick={() => setShowSave(!showSave)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-[#3f3f46]">💾 Save</button>
+            <button onClick={() => setShowSave(!showSave)} className="px-3 py-1.5 bg-secondary text-muted-foreground text-sm hover:bg-secondary/80">💾 Save</button>
             {showSave && (
               <>
                 <input value={saveName} onChange={e => setSaveName(e.target.value)} placeholder="Pattern name" className="flex-1 bg-secondary border border-border px-3 py-1.5 text-foreground text-sm outline-none focus:border-amber-500" />
-                <button onClick={savePattern} className="px-3 py-1.5 bg-amber-500 text-black text-sm font-semibold">Save</button>
+                <button onClick={savePattern} className="px-3 py-1.5 bg-amber-500 text-background text-sm font-semibold">Save</button>
               </>
             )}
           </div>
@@ -170,7 +170,7 @@ export function RegexPage({ embedded } = {}) {
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">Click a pattern to load it in the tester.</p>
           {COMMON_PATTERNS.map(p => (
-            <div key={p.name} className="bg-background border border-border p-4 flex items-center gap-4 cursor-pointer hover:border-[#3f3f46]" onClick={() => loadPattern(p)}>
+            <div key={p.name} className="bg-background border border-border p-4 flex items-center gap-4 cursor-pointer hover:border-border" onClick={() => loadPattern(p)}>
               <div className="flex-1">
                 <div className="font-semibold text-foreground text-sm">{p.name}</div>
                 <div className="text-xs text-muted-foreground font-mono mt-1">/{p.pattern}/{p.flags}</div>

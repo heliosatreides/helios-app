@@ -68,7 +68,7 @@ function MeetingPlanner({ cities, now }) {
           type="datetime-local"
           value={localTime}
           onChange={(e) => setLocalTime(e.target.value)}
-          className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:border-[#f59e0b]"
+          className="bg-background border border-border px-3 py-2 text-foreground text-sm focus:outline-none focus:ring-1 focus:ring-ring"
         />
       </div>
       {meetingDate && (
@@ -155,7 +155,7 @@ export function WorldClockPage({ embedded } = {}) {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search cities…"
             autoFocus
-            className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-[#52525b] focus:outline-none focus:border-[#f59e0b]"
+            className="w-full bg-background border border-border px-3 py-2 text-foreground text-sm placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
           {filteredSearch.length > 0 && (
             <div className="max-h-40 overflow-y-auto space-y-0.5">

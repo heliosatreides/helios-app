@@ -36,7 +36,7 @@ function Field({ label, value, onChange, placeholder, type = 'text' }) {
         value={value || ''}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+        className="w-full bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
       />
     </div>
   );
@@ -69,7 +69,7 @@ function SkillTagInput({ label, skills, onAdd, onRemove }) {
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKey}
         placeholder="Type skill + Enter"
-        className="w-full bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+        className="w-full bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
       />
     </div>
   );
@@ -106,7 +106,7 @@ function BulletRow({ bullet, index, expId, jobContext, onUpdate, onRemove, hasKe
           value={bullet}
           onChange={(e) => onUpdate(index, e.target.value)}
           placeholder="Bullet point..."
-          className="flex-1 bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+          className="flex-1 bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
         />
         {hasKey && (
           <button
@@ -208,7 +208,7 @@ export function ResumeEdit({ resumeData, actions }) {
                 value={jobDesc}
                 onChange={(e) => setJobDesc(e.target.value)}
                 rows={4}
-                className="w-full bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+                className="w-full bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                 placeholder="Paste job description here..."
               />
               <div className="flex gap-2 mt-2">
@@ -253,7 +253,7 @@ export function ResumeEdit({ resumeData, actions }) {
             onChange={(e) => actions.updateSummary(e.target.value)}
             rows={4}
             placeholder="2-4 sentence professional summary..."
-            className="w-full bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+            className="w-full bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
           {hasKey && (
             <button
@@ -270,7 +270,7 @@ export function ResumeEdit({ resumeData, actions }) {
       {/* Experience */}
       <Section title="Experience">
         {resumeData.experience?.map((exp) => (
-          <div key={exp.id} className="border border-[#3f3f46] p-4 mb-3">
+          <div key={exp.id} className="border border-border p-4 mb-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
               <Field label="Company" value={exp.company} onChange={(v) => actions.updateExperience(exp.id, 'company', v)} placeholder="Tech Corp" />
               <Field label="Role" value={exp.role} onChange={(v) => actions.updateExperience(exp.id, 'role', v)} placeholder="Senior Engineer" />
@@ -284,7 +284,7 @@ export function ResumeEdit({ resumeData, actions }) {
                     onChange={(e) => actions.updateExperience(exp.id, 'endDate', e.target.value)}
                     disabled={exp.present}
                     placeholder="Dec 2023"
-                    className="flex-1 bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500 disabled:opacity-50"
+                    className="flex-1 bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50"
                   />
                   <label className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap cursor-pointer">
                     <input
@@ -332,7 +332,7 @@ export function ResumeEdit({ resumeData, actions }) {
         ))}
         <button
           onClick={actions.addExperience}
-          className="w-full border border-dashed border-[#3f3f46] hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
+          className="w-full border border-dashed border-border hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
         >
           + Add Experience
         </button>
@@ -341,7 +341,7 @@ export function ResumeEdit({ resumeData, actions }) {
       {/* Education */}
       <Section title="Education" defaultOpen={false}>
         {resumeData.education?.map((edu) => (
-          <div key={edu.id} className="border border-[#3f3f46] p-4 mb-3">
+          <div key={edu.id} className="border border-border p-4 mb-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Field label="Degree" value={edu.degree} onChange={(v) => actions.updateEducation(edu.id, 'degree', v)} placeholder="BS Computer Science" />
               <Field label="Institution" value={edu.institution} onChange={(v) => actions.updateEducation(edu.id, 'institution', v)} placeholder="State University" />
@@ -355,7 +355,7 @@ export function ResumeEdit({ resumeData, actions }) {
         ))}
         <button
           onClick={actions.addEducation}
-          className="w-full border border-dashed border-[#3f3f46] hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
+          className="w-full border border-dashed border-border hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
         >
           + Add Education
         </button>
@@ -388,7 +388,7 @@ export function ResumeEdit({ resumeData, actions }) {
       {/* Certifications */}
       <Section title="Certifications" defaultOpen={false}>
         {resumeData.certifications?.map((cert) => (
-          <div key={cert.id} className="border border-[#3f3f46] p-4 mb-3">
+          <div key={cert.id} className="border border-border p-4 mb-3">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Field label="Name" value={cert.name} onChange={(v) => actions.updateCertification(cert.id, 'name', v)} placeholder="AWS Solutions Architect" />
               <Field label="Issuer" value={cert.issuer} onChange={(v) => actions.updateCertification(cert.id, 'issuer', v)} placeholder="Amazon" />
@@ -401,7 +401,7 @@ export function ResumeEdit({ resumeData, actions }) {
         ))}
         <button
           onClick={actions.addCertification}
-          className="w-full border border-dashed border-[#3f3f46] hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
+          className="w-full border border-dashed border-border hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
         >
           + Add Certification
         </button>
@@ -410,7 +410,7 @@ export function ResumeEdit({ resumeData, actions }) {
       {/* Projects */}
       <Section title="Projects" defaultOpen={false}>
         {resumeData.projects?.map((proj) => (
-          <div key={proj.id} className="border border-[#3f3f46] p-4 mb-3">
+          <div key={proj.id} className="border border-border p-4 mb-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
               <Field label="Name" value={proj.name} onChange={(v) => actions.updateProject(proj.id, 'name', v)} placeholder="My Project" />
               <Field label="URL" value={proj.url} onChange={(v) => actions.updateProject(proj.id, 'url', v)} placeholder="https://github.com/..." />
@@ -422,7 +422,7 @@ export function ResumeEdit({ resumeData, actions }) {
                 onChange={(e) => actions.updateProject(proj.id, 'description', e.target.value)}
                 rows={2}
                 placeholder="Brief description..."
-                className="w-full bg-secondary border border-[#3f3f46] px-3 py-2 text-sm text-foreground placeholder-[#52525b] focus:outline-none focus:border-amber-500"
+                className="w-full bg-secondary border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
             <SkillTagInput
@@ -438,7 +438,7 @@ export function ResumeEdit({ resumeData, actions }) {
         ))}
         <button
           onClick={actions.addProject}
-          className="w-full border border-dashed border-[#3f3f46] hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
+          className="w-full border border-dashed border-border hover:border-amber-500/50 py-2.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors"
         >
           + Add Project
         </button>
