@@ -533,18 +533,7 @@ function QuickNotes({ onAddTasks }) {
 
 function KeyboardShortcutsHelp({ onDismiss }) {
   return (
-    <Modal open={true} onClose={onDismiss} className="max-w-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-foreground font-bold text-base">Keyboard Shortcuts</h2>
-        <button
-          type="button"
-          onClick={onDismiss}
-          className="text-muted-foreground hover:text-foreground text-lg leading-none min-w-[44px] min-h-[44px] flex items-center justify-center"
-          aria-label="Close"
-        >
-          ×
-        </button>
-      </div>
+    <Modal open={true} onClose={onDismiss} className="max-w-sm" title="Keyboard Shortcuts">
       <div className="space-y-2">
         {FOCUS_KEY_HELP.map(({ key, description }) => (
           <div key={key} className="flex items-center justify-between">

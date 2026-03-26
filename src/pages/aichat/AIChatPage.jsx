@@ -401,7 +401,7 @@ export function AIChatPage({ onOpenSidebar, onOpenSearch }) {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-          {!activeConvId && messages.length === 0 && (
+          {messages.length === 0 && (
             <div className="flex items-center justify-center h-full">
               <div className="border border-dashed border-border p-10 text-center max-w-md">
                 <h3 className="text-foreground font-medium mb-2">AI Chat</h3>

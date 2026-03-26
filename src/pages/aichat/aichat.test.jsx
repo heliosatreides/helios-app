@@ -180,9 +180,9 @@ describe('AIChatPage suggested action chips', () => {
     expect(chip.style.minHeight).toBe('44px');
   });
 
-  test('does not show suggested actions when conversations exist', () => {
+  test('shows suggested actions when active conversation has no messages', () => {
     renderPage(mockConversations);
-    expect(screen.queryByTestId('suggested-actions')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('suggested-actions')).toBeInTheDocument();
   });
 });
 
