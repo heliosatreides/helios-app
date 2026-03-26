@@ -38,7 +38,7 @@ export function Badge({ children, variant = 'default', className = '' }) {
     default: 'bg-secondary text-muted-foreground',
     green: 'bg-green-950 text-green-400',
     red: 'bg-red-950 text-red-400',
-    amber: 'bg-secondary text-foreground',
+    amber: 'bg-amber-950 text-amber-400',
   };
   return <span className={`text-xs px-2 py-0.5 font-medium ${v[variant] || v.default} ${className}`}>{children}</span>;
 }

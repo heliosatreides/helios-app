@@ -7,6 +7,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { isOverdue } from '../dashboard/NetworkingTab';
 import { ProductivityStreak } from '../../components/ProductivityStreak';
 import { WeeklyDigest } from '../../components/WeeklyDigest';
+import { ProactiveAlerts } from '../../components/ProactiveAlerts';
 
 function StatCard({ label, value, color = 'text-foreground', sub, linkTo }) {
   const content = (
@@ -220,6 +221,8 @@ export function Dashboard({ trips = [], accounts = [], transactions = [], budget
       <AiNudge hasKey={hasKey} isEmpty={isEmpty} />
 
       <BackupNudge isEmpty={isEmpty} />
+
+      <ProactiveAlerts transactions={transactions} budgets={budgets} />
 
       {!dismissed && (briefText || briefLoading) && (
         <div className="border border-border p-4" data-testid="morning-brief">
