@@ -110,7 +110,7 @@ function ConversationDrawer({ open, onClose, conversations, activeConvId, onSele
   );
 }
 
-export function AIChatPage() {
+export function AIChatPage({ onOpenSidebar, onOpenSearch }) {
   const { generate, loading: geminiLoading, hasKey, error: geminiError } = useGemini();
   const [conversations, setConversations] = useIDB('helios-ai-conversations', []);
   const [activeConvId, setActiveConvId] = useState(null);
@@ -319,8 +319,19 @@ export function AIChatPage() {
 
       {/* Chat area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile header */}
-        <div className="md:hidden flex items-center justify-between px-4 py-2 border-b border-border">
+        {/* Mobile header — replaces global header on /ai to avoid double-header */}
+        <div className="md:hidden flex items-center gap-1 px-2 py-2 border-b border-border">
+          {onOpenSidebar && (
+            <button
+              onClick={onOpenSidebar}
+              className="text-muted-foreground hover:text-foreground p-2 min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
+              aria-label="Open menu"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          )}
           <button
             onClick={() => setDrawerOpen(true)}
             className="shrink-0 px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground"
@@ -328,7 +339,7 @@ export function AIChatPage() {
           >
             Chats
           </button>
-          <span className="flex-1 text-sm text-foreground truncate mx-3">
+          <span className="flex-1 text-sm text-foreground truncate mx-1">
             {activeConv?.title || 'AI Chat'}
           </span>
           <button
@@ -338,6 +349,17 @@ export function AIChatPage() {
           >
             New
           </button>
+          {onOpenSearch && (
+            <button
+              onClick={onOpenSearch}
+              className="text-muted-foreground hover:text-foreground p-2 min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
+              aria-label="Search"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+          )}
         </div>
         <ConversationDrawer
           open={drawerOpen}

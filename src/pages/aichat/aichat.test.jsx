@@ -51,9 +51,9 @@ vi.mock('../../components/Modal', () => ({
   },
 }));
 
-function renderPage(convState) {
+function renderPage(convState, props = {}) {
   mockConvState = convState;
-  return render(<MemoryRouter><AIChatPage /></MemoryRouter>);
+  return render(<MemoryRouter><AIChatPage {...props} /></MemoryRouter>);
 }
 
 describe('AIChatPage mobile conversation drawer', () => {
@@ -206,6 +206,37 @@ describe('AIChatPage action confirmation messages', () => {
 // Note: The no-key state (Link to Settings) is tested via source inspection.
 // The import of Link from react-router-dom (replacing <a href>) prevents hard
 // reloads in PWA shell mode (UX Critical #1).
+
+describe('AIChatPage mobile header integration', () => {
+  beforeEach(() => {
+    mockConvState = undefined;
+    mockSetConversations = undefined;
+  });
+
+  test('renders hamburger menu when onOpenSidebar is provided', () => {
+    const onOpenSidebar = vi.fn();
+    renderPage(mockConversations, { onOpenSidebar });
+    const menuBtn = screen.getByLabelText('Open menu');
+    expect(menuBtn).toBeInTheDocument();
+    fireEvent.click(menuBtn);
+    expect(onOpenSidebar).toHaveBeenCalledTimes(1);
+  });
+
+  test('renders search button when onOpenSearch is provided', () => {
+    const onOpenSearch = vi.fn();
+    renderPage(mockConversations, { onOpenSearch });
+    const searchBtn = screen.getByLabelText('Search');
+    expect(searchBtn).toBeInTheDocument();
+    fireEvent.click(searchBtn);
+    expect(onOpenSearch).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not render hamburger or search when props are not provided', () => {
+    renderPage(mockConversations);
+    expect(screen.queryByLabelText('Open menu')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Search')).not.toBeInTheDocument();
+  });
+});
 
 describe('AIChatPage desktop sidebar delete button', () => {
   beforeEach(() => {

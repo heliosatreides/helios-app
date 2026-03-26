@@ -130,6 +130,8 @@ function AppShell() {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">
+        {/* AI Chat has its own mobile header — skip the global one to avoid double-header */}
+        {location.pathname !== '/ai' && (
         <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-background">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -152,12 +154,13 @@ function AppShell() {
             </svg>
           </button>
         </header>
+        )}
 
         {/* AI Chat renders full-bleed (no padding/max-width) to avoid layout hacks */}
         {location.pathname === '/ai' ? (
           <div className="flex-1 overflow-hidden">
             <ErrorBoundary>
-              <ProtectedRoute><AIChatPage /></ProtectedRoute>
+              <ProtectedRoute><AIChatPage onOpenSidebar={() => setSidebarOpen(true)} onOpenSearch={openCommandPalette} /></ProtectedRoute>
             </ErrorBoundary>
           </div>
         ) : (
@@ -195,7 +198,7 @@ function AppShell() {
               <Route path="/wiki" element={<ProtectedRoute><WikiPage /></ProtectedRoute>} />
               <Route path="/music" element={<ProtectedRoute><MusicPage /></ProtectedRoute>} />
               <Route path="/packing" element={<ProtectedRoute><PackingPage /></ProtectedRoute>} />
-              <Route path="/ai" element={<ProtectedRoute><AIChatPage /></ProtectedRoute>} />
+              {/* /ai is handled full-bleed above, not in the padded Routes block */}
               <Route path="/lists" element={<ProtectedRoute><ListsPage /></ProtectedRoute>} />
             </Routes>
           </div>

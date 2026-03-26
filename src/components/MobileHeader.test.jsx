@@ -132,4 +132,11 @@ describe('Mobile header shows current page name', () => {
     expect(searchBtn.className).toContain('min-w-[44px]');
     expect(searchBtn.className).toContain('min-h-[44px]');
   });
+
+  it('does not render global mobile header on /ai route (AI Chat has its own)', () => {
+    renderAppAtRoute('/ai');
+    expect(screen.queryByTestId('mobile-header-title')).not.toBeInTheDocument();
+    // AI Chat page renders its own mobile header with Chats/New buttons
+    expect(screen.getByText('AI Chat Page')).toBeInTheDocument();
+  });
 });
