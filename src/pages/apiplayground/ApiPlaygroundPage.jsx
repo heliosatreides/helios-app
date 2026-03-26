@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { PageHeader } from '../../components/ui';
 
 const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 const METHOD_COLORS = { GET: 'text-green-400', POST: 'text-blue-400', PUT: 'text-yellow-400', DELETE: 'text-red-400', PATCH: 'text-orange-400' };
@@ -102,7 +103,7 @@ export function ApiPlaygroundPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-foreground">API Playground</h1>
+        <PageHeader title="API Playground" />
         <div className="flex gap-2">
           {['request', 'history', 'favorites'].map(t => (
             <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>

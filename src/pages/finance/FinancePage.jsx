@@ -3,7 +3,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
-import { ActionButton } from '../../components/ui';
+import { ActionButton, TabBar, PageHeader } from '../../components/ui';
 import { AccountList } from './AccountList';
 import { AddAccountModal } from './AddAccountModal';
 import { TransactionList } from './TransactionList';
@@ -227,10 +227,7 @@ export function FinancePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">Finance</h1>
-        <p className="text-muted-foreground text-sm mt-1">Track your accounts, transactions, and budgets</p>
-      </div>
+      <PageHeader title="Finance" subtitle="Track your accounts, transactions, and budgets" />
 
       {/* Net Worth Banner */}
       {accounts.length > 0 && (
@@ -286,21 +283,7 @@ export function FinancePage() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 border border-border p-1 w-fit">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm font-medium transition-all ${
-              activeTab === tab
-                ? 'bg-foreground text-background'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
       {/* Import flash */}
       {importMsg && (

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
-import { EmptyState } from '../../components/ui';
+import { EmptyState, PageHeader } from '../../components/ui';
 import {
   createDeck,
   createCard,
@@ -473,10 +473,7 @@ export function FlashcardsPage() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">Flashcards</h1>
-        <p className="text-muted-foreground text-sm mt-0.5">Spaced repetition for better learning</p>
-      </div>
+      <PageHeader title="Flashcards" subtitle="Spaced repetition for better learning" />
 
       {selectedDeck ? (
         <CardManager

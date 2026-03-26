@@ -1,9 +1,10 @@
 import { NetworkingTab } from '../dashboard/NetworkingTab';
+import { PageHeader } from '../../components/ui';
 
 export function NetworkingPage() {
   return (
     <div className="space-y-6">
-      <h1 className="text-lg font-semibold text-foreground">Networking</h1>
+      <PageHeader title="Networking" />
       <NetworkingTab />
     </div>
   );

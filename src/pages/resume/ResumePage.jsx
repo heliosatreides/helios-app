@@ -4,7 +4,7 @@ import { useResumeVersions } from './useResumeVersions';
 import { ResumeEdit } from './ResumeEdit';
 import { ResumePreview } from './ResumePreview';
 import { ResumeVersions } from './ResumeVersions';
-import { TabBar } from '../../components/ui';
+import { TabBar, PageHeader } from '../../components/ui';
 
 const TABS = ['Edit', 'Preview', 'Versions'];
 
@@ -86,10 +86,7 @@ export function ResumePage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-lg font-semibold text-foreground">Resume Builder</h1>
-        <p className="text-muted-foreground text-sm mt-1">Build, preview, and manage your resume versions</p>
-      </div>
+      <PageHeader title="Resume Builder" subtitle="Build, preview, and manage your resume versions" />
 
       {/* Tabs */}
       <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />

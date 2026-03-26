@@ -3,6 +3,7 @@ import { ScoresTab } from './ScoresTab';
 import { StandingsTab } from './StandingsTab';
 import { FavoritesTab } from './FavoritesTab';
 import { useSportsScores } from '../../hooks/useSportsScores';
+import { PageHeader, TabBar } from '../../components/ui';
 
 const TABS = [
   { id: 'scores', label: 'Scores' },
@@ -26,21 +27,9 @@ export function SportsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">Sports Hub</h1>
-        <p className="text-muted-foreground text-sm">Live scores, standings, and your favorites</p>
-      </div>
+      <PageHeader title="Sports Hub" subtitle="Live scores, standings, and your favorites" />
 
-      <div className="flex gap-1 border border-border p-1 w-fit">
-        {TABS.map((tab) => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-              activeTab === tab.id ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
-            }`}>
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
       {activeTab === 'scores' && <ScoresTab activeSport={activeSport} onSportChange={setActiveSport} />}
       {activeTab === 'standings' && <StandingsTab sport={activeSport} />}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useGemini } from '../../hooks/useGemini';
+import { PageHeader } from '../../components/ui';
 import {
   convertCurrency,
   UNIT_CATEGORIES,
@@ -302,10 +303,7 @@ export function ConverterPage() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">Converter</h1>
-        <p className="text-muted-foreground text-sm mt-0.5">Currency and unit conversion</p>
-      </div>
+      <PageHeader title="Converter" subtitle="Currency and unit conversion" />
 
       {/* Mode toggle */}
       <div className="flex gap-2">

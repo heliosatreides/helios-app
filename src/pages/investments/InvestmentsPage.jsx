@@ -3,7 +3,7 @@ import { Portfolio } from './Portfolio';
 import { Watchlist } from './Watchlist';
 import { StrategyNotes } from './StrategyNotes';
 import { useGemini } from '../../hooks/useGemini';
-import { ActionButton } from '../../components/ui';
+import { ActionButton, PageHeader, TabBar } from '../../components/ui';
 import { useIDB } from '../../hooks/useIDB';
 import { AiSuggestion } from '../../components/AiSuggestion';
 import { calculateAssetAllocation } from './investments.utils';
@@ -42,27 +42,9 @@ export function InvestmentsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">Investments</h1>
-        <p className="text-muted-foreground text-sm mt-1">Track your portfolio, watchlist, and strategy</p>
-      </div>
+      <PageHeader title="Investments" subtitle="Track your portfolio, watchlist, and strategy" />
 
-      {/* Tabs */}
-      <div className="flex gap-1 border border-border p-1 w-fit">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium transition-all ${
-              activeTab === tab.id
-                ? 'bg-foreground text-background'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
       {/* AI Analyze Portfolio — shown in portfolio tab when key is set */}
       {activeTab === 'portfolio' && hasKey && (

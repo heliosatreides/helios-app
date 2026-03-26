@@ -1,9 +1,10 @@
 import { FocusTab } from '../dashboard/FocusTab';
+import { PageHeader } from '../../components/ui';
 
 export function FocusPage() {
   return (
     <div className="space-y-6">
-      <h1 className="text-lg font-semibold text-foreground">Focus</h1>
+      <PageHeader title="Focus" />
       <FocusTab />
     </div>
   );

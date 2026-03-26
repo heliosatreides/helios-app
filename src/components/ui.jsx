@@ -18,13 +18,13 @@ export function Card({ children, className = '', ...props }) {
 
 export function TabBar({ tabs, active, onChange }) {
   return (
-    <div className="flex gap-1 border border-border p-1 w-fit mb-6">
+    <div className="flex gap-1 border border-border p-1 w-fit mb-6 overflow-x-auto">
       {tabs.map((tab) => {
         const label = typeof tab === 'string' ? tab : tab.label;
         const id = typeof tab === 'string' ? tab : tab.id;
         return (
           <button key={id} onClick={() => onChange(id)}
-            className={`px-4 py-2 text-sm font-medium transition-all ${
+            className={`px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${
               active === id ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
             }`}>{label}</button>
         );
@@ -54,7 +54,7 @@ export function CollapsibleCard({ title, children, defaultOpen = true }) {
         data-testid="collapsible-toggle"
       >
         <span className="text-foreground font-semibold">{title}</span>
-        <span className="text-muted-foreground text-xs">{open ? '▲' : '▼'}</span>
+        <svg className={`w-4 h-4 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
       </button>
       {open && <div className="px-5 pb-5">{children}</div>}
     </div>

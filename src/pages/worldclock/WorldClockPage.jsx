@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useIDB } from '../../hooks/useIDB';
+import { PageHeader } from '../../components/ui';
 import {
   DEFAULT_CITIES,
   ALL_CITIES,
@@ -123,11 +124,7 @@ export function WorldClockPage() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">World Clock</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Live time across time zones</p>
-        </div>
+      <PageHeader title="World Clock" subtitle="Live time across time zones">
         <button
           type="button"
           onClick={() => setShowSearch((s) => !s)}
@@ -135,7 +132,7 @@ export function WorldClockPage() {
         >
           + Add city
         </button>
-      </div>
+      </PageHeader>
 
       {/* City search */}
       {showSearch && (

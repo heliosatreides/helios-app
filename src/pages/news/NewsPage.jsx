@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGemini } from '../../hooks/useGemini';
 import { fetchFeed, formatRelativeTime, FEED_TOPICS } from './newsUtils';
-import { EmptyState } from '../../components/ui';
+import { EmptyState, PageHeader } from '../../components/ui';
 
 const PAGE_SIZE = 10;
 const REFRESH_INTERVAL_MS = 10 * 60 * 1000;
@@ -157,10 +157,7 @@ export function NewsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">News</h1>
-          <p className="text-muted-foreground/80 text-sm mt-0.5">Latest stories across topics</p>
-        </div>
+        <PageHeader title="News" subtitle="Latest stories across topics" />
         {!loading && articles.length > 0 && (
           <button
             type="button"

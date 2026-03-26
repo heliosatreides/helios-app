@@ -4,6 +4,7 @@ import { TodayTab } from './TodayTab';
 import { TasksTab } from './TasksTab';
 import { CalendarTab } from './CalendarTab';
 import { getTodayStr } from '../../hooks/useTasks';
+import { PageHeader, TabBar } from '../../components/ui';
 
 const TABS = ['Today', 'Tasks', 'Calendar'];
 
@@ -25,21 +26,9 @@ export function PlannerPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-lg font-semibold text-foreground">Daily Planner</h1>
-        <p className="text-muted-foreground text-sm">{today}</p>
-      </div>
+      <PageHeader title="Daily Planner" subtitle={today} />
 
-      <div className="flex gap-1 border border-border p-1 w-fit">
-        {TABS.map((tab) => (
-          <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-              activeTab === tab ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
-            }`}>
-            {tab}
-          </button>
-        ))}
-      </div>
+      <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
       <div className="border-0 md:border md:border-border p-3 md:p-5">
         {activeTab === 'Today' && <TodayTab dateStr={today} tripActivities={todayTripActivities} />}

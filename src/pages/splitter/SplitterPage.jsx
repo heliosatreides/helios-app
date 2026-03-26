@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { calcEqualSplit, calcItemizedSplit, calcSettleUp } from './splitterUtils';
+import { PageHeader } from '../../components/ui';
 
 function fmt(n) { return `$${Number(n).toFixed(2)}`; }
 
@@ -87,10 +88,9 @@ export function SplitterPage() {
 
   if (view === 'list') return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-foreground">Expense Splitter</h1>
+      <PageHeader title="Expense Splitter">
         <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">+ New Bill</button>
-      </div>
+      </PageHeader>
       {bills.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground/80">No bills yet. Create one to split expenses with friends!</div>
       ) : (

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { generatePalette, generateCssVars, hexToRgb, rgbToHsl } from './colorUtils';
+import { PageHeader } from '../../components/ui';
 
 function ColorChip({ color, label }) {
   const [copied, setCopied] = useState('');
@@ -74,7 +75,7 @@ export function ColorsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-foreground">Color Palette Generator</h1>
+        <PageHeader title="Color Palette Generator" />
         <div className="flex gap-2">
           {['generator', 'saved'].map(t => (
             <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>

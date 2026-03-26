@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { PageHeader } from '../../components/ui';
 import {
   calcMonthlyPayment, calcAmortization, calcCompoundInterest,
   calcRetirement, calcSavingsGoal, calcFederalTax
@@ -93,7 +94,7 @@ export function CalculatorPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-lg font-semibold text-foreground">Financial Calculator</h1>
+      <PageHeader title="Financial Calculator" />
 
       {/* Tab bar */}
       <div className="flex gap-1 flex-wrap">

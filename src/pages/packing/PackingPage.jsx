@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { TEMPLATES } from './packingTemplates';
+import { PageHeader } from '../../components/ui';
 
 const CATEGORIES = ['Clothing', 'Toiletries', 'Electronics', 'Documents', 'Misc'];
 const TEMPLATE_NAMES = Object.keys(TEMPLATES);
@@ -118,10 +119,9 @@ export function PackingPage() {
 
   if (view === 'list') return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-foreground">Packing Lists</h1>
+      <PageHeader title="Packing Lists">
         <button onClick={() => setView('new')} className="px-4 py-2 bg-amber-500 text-black font-semibold text-sm hover:bg-amber-400">+ New List</button>
-      </div>
+      </PageHeader>
 
       {lists.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground/80">No packing lists yet. Create one or use a template!</div>

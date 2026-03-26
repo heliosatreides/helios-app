@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { PageHeader } from '../../components/ui';
 import { extractMatches, getHighlightSegments, COMMON_PATTERNS } from './regexUtils';
 
 const ALL_FLAGS = ['g', 'i', 'm', 's'];
@@ -63,7 +64,7 @@ export function RegexPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-foreground">Regex Tester</h1>
+        <PageHeader title="Regex Tester" />
         <div className="flex gap-2">
           {['tester', 'library', 'saved'].map(t => (
             <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 text-sm ${tab === t ? 'bg-amber-500 text-black font-semibold' : 'bg-secondary text-muted-foreground'}`}>

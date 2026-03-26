@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { PageHeader } from '../../components/ui';
 import { Modal } from '../../components/Modal';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -93,10 +94,9 @@ export function MealsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-foreground">Meal Planner</h1>
+      <PageHeader title="Meal Planner">
         <div className="text-sm text-muted-foreground">~{totalCalories.toLocaleString()} cal/week</div>
-      </div>
+      </PageHeader>
 
       <div className="flex gap-2">
         {['planner', 'grocery', 'ai'].map(t => (

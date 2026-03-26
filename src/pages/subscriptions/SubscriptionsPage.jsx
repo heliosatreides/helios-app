@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
+import { PageHeader } from '../../components/ui';
 
 const CATEGORIES = ['streaming', 'software', 'fitness', 'food', 'other'];
 const CATEGORY_ICONS = { streaming: '📺', software: '💻', fitness: '🏋️', food: '🍔', other: '📦' };
@@ -66,12 +67,11 @@ export function SubscriptionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-foreground">Subscription Tracker</h1>
+      <PageHeader title="Subscription Tracker">
         <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 bg-foreground text-background font-medium text-sm hover:bg-foreground/90 transition-colors">
           {showForm ? 'Cancel' : '+ Add'}
         </button>
-      </div>
+      </PageHeader>
 
       {/* Summary */}
       <div className="grid grid-cols-2 gap-4">
