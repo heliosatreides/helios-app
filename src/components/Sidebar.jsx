@@ -176,7 +176,7 @@ export function Sidebar({ onNavClick }) {
                       to={to}
                       onClick={onNavClick}
                       className={({ isActive }) =>
-                        `block px-3 py-2 md:py-1.5 rounded-md text-[13px] transition-colors ${
+                        `block px-3 py-3 md:py-1.5 min-h-[44px] md:min-h-0 flex items-center rounded-md text-[13px] transition-colors ${
                           isActive
                             ? 'bg-secondary text-foreground font-medium'
                             : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -213,22 +213,20 @@ export function Sidebar({ onNavClick }) {
       )}
 
       {user && (
-        <div className="px-3 py-3 border-t border-border shrink-0">
-          <div className="flex items-center justify-between px-3 py-2 md:py-1.5">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="w-6 h-6 rounded-full bg-secondary text-foreground flex items-center justify-center text-[11px] font-medium shrink-0">
-                {user.username[0].toUpperCase()}
-              </span>
-              <span className="text-muted-foreground text-xs truncate">{user.username}</span>
-            </div>
-            <button
-              onClick={logout}
-              className="text-muted-foreground hover:text-foreground text-xs transition-colors"
-              title="Sign out"
-            >
-              Log out
-            </button>
+        <div className="px-3 py-3 border-t border-border shrink-0 space-y-2">
+          <div className="flex items-center gap-2 px-3 min-w-0">
+            <span className="w-6 h-6 rounded-full bg-secondary text-foreground flex items-center justify-center text-[11px] font-medium shrink-0">
+              {user.username[0].toUpperCase()}
+            </span>
+            <span className="text-muted-foreground text-xs truncate">{user.username}</span>
           </div>
+          <button
+            onClick={logout}
+            className="w-full min-h-[44px] md:min-h-[36px] flex items-center justify-center px-3 py-2 border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/50 text-xs font-medium transition-colors"
+            title="Sign out"
+          >
+            Log out
+          </button>
         </div>
       )}
     </aside>
