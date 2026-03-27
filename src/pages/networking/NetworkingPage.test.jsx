@@ -8,10 +8,9 @@ vi.mock('../dashboard/NetworkingTab', () => ({
 import { NetworkingPage } from './NetworkingPage';
 
 describe('NetworkingPage', () => {
-  it('renders page header', () => {
+  it('renders NetworkingTab (header is owned by NetworkingTab)', () => {
     render(<NetworkingPage />);
-    expect(screen.getByText('Networking')).toBeInTheDocument();
-    expect(screen.getByText('Networking').tagName).toBe('H1');
+    expect(screen.getByTestId('networking-tab')).toBeInTheDocument();
   });
 
   it('renders NetworkingTab content', () => {

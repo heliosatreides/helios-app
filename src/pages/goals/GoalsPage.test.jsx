@@ -8,10 +8,9 @@ vi.mock('../dashboard/GoalsTab', () => ({
 import { GoalsPage } from './GoalsPage';
 
 describe('GoalsPage', () => {
-  it('renders page header', () => {
+  it('renders GoalsTab (header is owned by GoalsTab)', () => {
     render(<GoalsPage />);
-    expect(screen.getByText('Goals & OKRs')).toBeInTheDocument();
-    expect(screen.getByText('Goals & OKRs').tagName).toBe('H1');
+    expect(screen.getByTestId('goals-tab')).toBeInTheDocument();
   });
 
   it('renders GoalsTab content', () => {

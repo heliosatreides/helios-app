@@ -17,7 +17,7 @@ function renderWithRouter(initialPath = '/dashboard') {
 describe('BottomNav', () => {
   it('renders all four navigation items plus More button', () => {
     renderWithRouter();
-    expect(screen.getByLabelText('Home')).toBeInTheDocument();
+    expect(screen.getByLabelText('Dashboard')).toBeInTheDocument();
     expect(screen.getByLabelText('Planner')).toBeInTheDocument();
     expect(screen.getByLabelText('Finance')).toBeInTheDocument();
     expect(screen.getByLabelText('AI Chat')).toBeInTheDocument();
@@ -31,7 +31,7 @@ describe('BottomNav', () => {
 
   it('highlights the active route (Dashboard)', () => {
     renderWithRouter('/dashboard');
-    const homeLink = screen.getByLabelText('Home');
+    const homeLink = screen.getByLabelText('Dashboard');
     expect(homeLink.className).toContain('text-foreground');
   });
 
@@ -55,7 +55,7 @@ describe('BottomNav', () => {
 
   it('links to correct routes', () => {
     renderWithRouter();
-    expect(screen.getByLabelText('Home').closest('a')).toHaveAttribute('href', '/dashboard');
+    expect(screen.getByLabelText('Dashboard').closest('a')).toHaveAttribute('href', '/dashboard');
     expect(screen.getByLabelText('Planner').closest('a')).toHaveAttribute('href', '/planner');
     expect(screen.getByLabelText('Finance').closest('a')).toHaveAttribute('href', '/finance');
     expect(screen.getByLabelText('AI Chat').closest('a')).toHaveAttribute('href', '/ai');
@@ -103,7 +103,7 @@ describe('BottomNav', () => {
 
   it('shows active indicator bar on active nav item', () => {
     renderWithRouter('/dashboard');
-    const homeLink = screen.getByLabelText('Home');
+    const homeLink = screen.getByLabelText('Dashboard');
     const indicator = homeLink.querySelector('.bg-foreground');
     expect(indicator).toBeInTheDocument();
     expect(indicator.className).toContain('h-0.5');

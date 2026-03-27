@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
-import { EmptyState, ActionButton } from '../../components/ui';
+import { EmptyState, ActionButton, PageHeader } from '../../components/ui';
 import { Modal } from '../../components/Modal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 
@@ -407,20 +407,11 @@ export function NetworkingTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">Networking</h1>
-          <p className="text-muted-foreground text-sm mt-1">Your personal contact CRM</p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowAdd(true)}
-          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
-          data-testid="add-contact-btn"
-        >
+      <PageHeader title="Networking" subtitle="Contacts and relationship tracking">
+        <ActionButton variant="primary" onClick={() => setShowAdd(true)} data-testid="add-contact-btn">
           + Add Contact
-        </button>
-      </div>
+        </ActionButton>
+      </PageHeader>
 
       {/* Overdue banner */}
       {overdueContacts.length > 0 && (

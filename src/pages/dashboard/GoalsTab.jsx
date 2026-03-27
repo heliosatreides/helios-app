@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useIDB } from '../../hooks/useIDB';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
-import { EmptyState, ActionButton } from '../../components/ui';
+import { EmptyState, ActionButton, PageHeader } from '../../components/ui';
 import { Modal } from '../../components/Modal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { filterObjectivesByTimeframe, getObjectiveStats, getActiveTimeframes } from './goals.utils';
@@ -567,20 +567,11 @@ export function GoalsTab({ trips = [], budgets = [], tasks = [] }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">Goals & OKRs</h1>
-          <p className="text-muted-foreground text-sm mt-1">Track your objectives and key results</p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowAddObjective(true)}
-          className="px-4 py-2 bg-foreground hover:bg-foreground/90 text-background font-semibold transition-all text-sm shadow-sm shadow-amber-500/10"
-          data-testid="add-objective-btn"
-        >
+      <PageHeader title="Goals & OKRs" subtitle="Track your objectives and key results">
+        <ActionButton variant="primary" onClick={() => setShowAddObjective(true)} data-testid="add-objective-btn">
           + New Objective
-        </button>
-      </div>
+        </ActionButton>
+      </PageHeader>
 
       {/* AI Rate Progress */}
       {hasKey && (
