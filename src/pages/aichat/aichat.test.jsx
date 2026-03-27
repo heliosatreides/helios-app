@@ -62,9 +62,9 @@ describe('AIChatPage mobile conversation drawer', () => {
     mockSetConversations = undefined;
   });
 
-  test('renders mobile header with Chats button', () => {
+  test('renders mobile header with Chat history button', () => {
     renderPage(mockConversations);
-    expect(screen.getByRole('button', { name: 'Chats' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Chat history' })).toBeInTheDocument();
   });
 
   test('drawer is off-screen by default', () => {
@@ -75,7 +75,7 @@ describe('AIChatPage mobile conversation drawer', () => {
 
   test('opening drawer shows conversation list', () => {
     renderPage(mockConversations);
-    fireEvent.click(screen.getByRole('button', { name: 'Chats' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Chat history' }));
     const drawer = screen.getByTestId('conversation-drawer');
     expect(drawer.className).toContain('translate-x-0');
     expect(within(drawer).getByText('First chat')).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe('AIChatPage mobile conversation drawer', () => {
 
   test('tapping a conversation selects it and closes drawer', () => {
     renderPage(mockConversations);
-    fireEvent.click(screen.getByRole('button', { name: 'Chats' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Chat history' }));
     const drawer = screen.getByTestId('conversation-drawer');
     fireEvent.click(within(drawer).getByText('First chat'));
     // Drawer should slide back off-screen
@@ -93,7 +93,7 @@ describe('AIChatPage mobile conversation drawer', () => {
 
   test('delete button is always visible (not hover-only) in drawer', () => {
     renderPage(mockConversations);
-    fireEvent.click(screen.getByRole('button', { name: 'Chats' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Chat history' }));
     const deleteButtons = screen.getAllByLabelText(/^Delete /);
     expect(deleteButtons.length).toBe(2);
     // Verify none have hidden/group-hover classes
@@ -105,7 +105,7 @@ describe('AIChatPage mobile conversation drawer', () => {
 
   test('new conversation button works in drawer', () => {
     renderPage([]);
-    fireEvent.click(screen.getByRole('button', { name: 'Chats' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Chat history' }));
     fireEvent.click(screen.getByText('+ New conversation'));
     // Drawer should slide back off-screen after creating
     const drawer = screen.getByTestId('conversation-drawer');

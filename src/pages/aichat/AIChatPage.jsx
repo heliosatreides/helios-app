@@ -362,20 +362,24 @@ export function AIChatPage({ onOpenSidebar, onOpenSearch }) {
           )}
           <button
             onClick={() => setDrawerOpen(true)}
-            className="shrink-0 px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground"
-            style={{ minHeight: '44px' }}
+            className="shrink-0 p-2 text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Chat history"
           >
-            Chats
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="17" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="14" y2="18" />
+            </svg>
           </button>
           <span className="flex-1 text-sm text-foreground truncate mx-1">
             {activeConv?.title || 'AI Chat'}
           </span>
           <button
             onClick={createConversation}
-            className="shrink-0 px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground"
-            style={{ minHeight: '44px' }}
+            className="shrink-0 p-2 text-muted-foreground hover:text-foreground min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="New conversation"
           >
-            New
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
           </button>
           {onOpenSearch && (
             <button
