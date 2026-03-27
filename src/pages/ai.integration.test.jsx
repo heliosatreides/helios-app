@@ -290,6 +290,8 @@ describe('Dashboard - Morning Brief', () => {
   beforeEach(() => {
     mockGenerate.mockReset();
     delete _mockIdbStore['daily-brief'];
+    // Clear the 4-hour TTL timestamp so tests always start fresh
+    try { localStorage.removeItem('helios-morning-brief-ts'); } catch { /* ignore */ }
   });
 
   it('auto-generates morning brief on mount when hasKey and data exists', async () => {

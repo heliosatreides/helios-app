@@ -219,6 +219,8 @@ export function Dashboard({ sportsGameCount = null }) {
       const text = await generate(prompt);
       setBriefText(text);
       await setBriefCache({ date: today, text });
+      // Stamp localStorage TTL — prevents re-generation for 4 hours
+      try { localStorage.setItem('helios-morning-brief-ts', String(Date.now())); } catch { /* ignore */ }
     } catch (err) {
       setBriefError(err.message);
     } finally {
@@ -226,24 +228,47 @@ export function Dashboard({ sportsGameCount = null }) {
     }
   }, [generate, budgets, monthlySpend, portfolioCost, portfolioValue, upcomingTrips, today, tasksDueToday, contacts, setBriefCache]);
 
-  // Auto-generate brief on mount — use IDB cache as primary guard instead of ref
-  // to prevent re-firing when user navigates away and back on the same day (PM Fix Now #3).
-  // The ref alone was insufficient because it resets on every remount.
+  // Auto-generate brief on mount.
+  // Guards (in priority order):
+  //   1. localStorage timestamp `helios-morning-brief-ts`: only regenerate if >4h have passed.
+  //      This prevents repeat Gemini calls every time the user navigates to Dashboard.
+  //   2. IDB date cache: show cached text if the stored brief is from today.
+  //   3. briefTriggered ref: prevent concurrent generation in the same mount.
+  const BRIEF_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
   const briefGenerating = useRef(false);
   useEffect(() => {
     if (!briefReady || briefTriggered.current) return;
     if (!hasKey || isEmpty) return;
+
+    // Check localStorage 4-hour gate first
+    try {
+      const lastTs = localStorage.getItem('helios-morning-brief-ts');
+      if (lastTs) {
+        const elapsed = Date.now() - Number(lastTs);
+        if (elapsed < BRIEF_TTL_MS) {
+          // Still within TTL window — show cached IDB text if available
+          if (briefCache && briefCache.date === today) {
+            setBriefText(briefCache.text);
+          }
+          briefTriggered.current = true;
+          return;
+        }
+      }
+    } catch { /* ignore localStorage errors */ }
+
+    // Also short-circuit if IDB already has today's brief (fresh session same day)
     if (briefCache && briefCache.date === today) {
       setBriefText(briefCache.text);
       briefTriggered.current = true;
       return;
     }
+
     // Prevent concurrent generation calls
     if (briefGenerating.current) return;
     briefTriggered.current = true;
     briefGenerating.current = true;
     generateBrief().finally(() => { briefGenerating.current = false; });
-  }, [briefReady, hasKey, isEmpty, briefCache, today, generateBrief]);
+  }, [briefReady, hasKey, isEmpty, briefCache, today, generateBrief, BRIEF_TTL_MS]);
 
   // Show skeleton while IDB stores are loading — all hooks called above
   if (!idbReady) return <DashboardSkeleton />;

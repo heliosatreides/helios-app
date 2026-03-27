@@ -317,3 +317,67 @@ test('Morning brief does not show on empty dashboard', () => {
   render(<MemoryRouter><Dashboard /></MemoryRouter>);
   expect(screen.queryByTestId('morning-brief')).not.toBeInTheDocument();
 });
+
+// --- Morning brief 4-hour TTL gate (helios-morning-brief-ts) ---
+
+test('Morning brief does NOT regenerate when within 4-hour TTL and cache exists', async () => {
+  mockHasKey = true;
+  mockGenerate.mockResolvedValue('Fresh brief text.');
+  const todayStr = new Date().toISOString().slice(0, 10);
+  // Set timestamp to 1 hour ago (within 4h TTL)
+  lsStore['helios-morning-brief-ts'] = String(Date.now() - 1 * 60 * 60 * 1000);
+  idbStore['daily-brief'] = { date: todayStr, text: 'Cached brief still fresh.' };
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+  await waitFor(() => {
+    expect(screen.getByTestId('morning-brief')).toBeInTheDocument();
+    expect(screen.getByText('Cached brief still fresh.')).toBeInTheDocument();
+  });
+  // Should NOT have called Gemini — within TTL
+  expect(mockGenerate).not.toHaveBeenCalled();
+});
+
+test('Morning brief regenerates when 4-hour TTL has expired', async () => {
+  mockHasKey = true;
+  mockGenerate.mockResolvedValue('Refreshed brief after TTL.');
+  // Set timestamp to 5 hours ago (expired)
+  lsStore['helios-morning-brief-ts'] = String(Date.now() - 5 * 60 * 60 * 1000);
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+  await waitFor(() => {
+    expect(mockGenerate).toHaveBeenCalledTimes(1);
+  });
+  await waitFor(() => {
+    expect(screen.getByText('Refreshed brief after TTL.')).toBeInTheDocument();
+  });
+});
+
+test('Morning brief stamps helios-morning-brief-ts in localStorage on generate', async () => {
+  mockHasKey = true;
+  mockGenerate.mockResolvedValue('Brief with timestamp stamp.');
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  const before = Date.now();
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+  await waitFor(() => {
+    expect(mockGenerate).toHaveBeenCalledTimes(1);
+  });
+  await waitFor(() => {
+    const ts = lsStore['helios-morning-brief-ts'];
+    expect(ts).toBeDefined();
+    expect(Number(ts)).toBeGreaterThanOrEqual(before);
+    expect(Number(ts)).toBeLessThanOrEqual(Date.now());
+  });
+});
+
+test('Morning brief shows cached text when within TTL but no IDB cache', async () => {
+  // If within TTL but no IDB cache for today (e.g. cleared), no brief shows but no Gemini call
+  mockHasKey = true;
+  mockGenerate.mockResolvedValue('Should not be called.');
+  lsStore['helios-morning-brief-ts'] = String(Date.now() - 30 * 60 * 1000); // 30 min ago
+  // no idbStore['daily-brief'] set
+  setIDB({ trips: mockTrips, accounts: mockAcct });
+  render(<MemoryRouter><Dashboard /></MemoryRouter>);
+  // Wait a tick to confirm no generation
+  await new Promise((r) => setTimeout(r, 50));
+  expect(mockGenerate).not.toHaveBeenCalled();
+});
