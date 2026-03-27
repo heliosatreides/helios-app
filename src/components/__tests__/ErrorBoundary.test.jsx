@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ErrorBoundary } from '../ErrorBoundary';
 
@@ -20,32 +20,88 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('All good')).toBeInTheDocument();
   });
 
-  it('shows error UI when a child component throws', () => {
+  it('shows generic error UI when a child component throws', () => {
     render(
       <ErrorBoundary>
         <ThrowingChild />
       </ErrorBoundary>
     );
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
   });
 
-  it('has a Reload button', () => {
+  it('shows page-specific error message when pageName is provided', () => {
+    render(
+      <ErrorBoundary pageName="Finance">
+        <ThrowingChild />
+      </ErrorBoundary>
+    );
+    expect(screen.getByText('Finance failed to load')).toBeInTheDocument();
+    expect(screen.getByText(/An unexpected error occurred in Finance/)).toBeInTheDocument();
+  });
+
+  it('has Retry, Reload, and Dashboard buttons', () => {
     render(
       <ErrorBoundary>
         <ThrowingChild />
       </ErrorBoundary>
     );
+    expect(screen.getByTestId('error-retry-btn')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reload' })).toBeInTheDocument();
+    const link = screen.getByText('Dashboard');
+    expect(link.closest('a')).toHaveAttribute('href', '/dashboard');
   });
 
-  it('has a Go to Dashboard link', () => {
+  it('retries rendering children when Retry is clicked', () => {
+    let shouldThrow = true;
+    function MaybeThrow() {
+      if (shouldThrow) throw new Error('Boom');
+      return <p>Recovered</p>;
+    }
+
+    render(
+      <ErrorBoundary pageName="Planner">
+        <MaybeThrow />
+      </ErrorBoundary>
+    );
+    expect(screen.getByText('Planner failed to load')).toBeInTheDocument();
+
+    // Fix the component before retry
+    shouldThrow = false;
+    fireEvent.click(screen.getByTestId('error-retry-btn'));
+
+    expect(screen.getByText('Recovered')).toBeInTheDocument();
+    expect(screen.queryByText('Planner failed to load')).not.toBeInTheDocument();
+  });
+
+  it('shows error message in dev mode', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
     render(
       <ErrorBoundary>
         <ThrowingChild />
       </ErrorBoundary>
     );
-    const link = screen.getByText('Go to Dashboard');
-    expect(link).toBeInTheDocument();
-    expect(link.closest('a')).toHaveAttribute('href', '/dashboard');
+    expect(screen.getByText('Test explosion')).toBeInTheDocument();
+
+    process.env.NODE_ENV = originalEnv;
+  });
+
+  it('uses different page names for different boundaries', () => {
+    const { unmount } = render(
+      <ErrorBoundary pageName="Trips">
+        <ThrowingChild />
+      </ErrorBoundary>
+    );
+    expect(screen.getByText('Trips failed to load')).toBeInTheDocument();
+    unmount();
+
+    render(
+      <ErrorBoundary pageName="Health">
+        <ThrowingChild />
+      </ErrorBoundary>
+    );
+    expect(screen.getByText('Health failed to load')).toBeInTheDocument();
   });
 });

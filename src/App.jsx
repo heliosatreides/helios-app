@@ -157,50 +157,48 @@ function AppShell() {
         {/* AI Chat renders full-bleed (no padding/max-width) to avoid layout hacks */}
         {location.pathname === '/ai' ? (
           <div className="flex-1 overflow-hidden pb-14 md:pb-0">
-            <ErrorBoundary>
+            <ErrorBoundary pageName="AI Chat">
               <ProtectedRoute><AIChatPage onOpenSidebar={() => setSidebarOpen(true)} onOpenSearch={openCommandPalette} /></ProtectedRoute>
             </ErrorBoundary>
           </div>
         ) : (
         <main className="flex-1 overflow-y-auto p-6 pb-20 md:pb-6">
-          <ErrorBoundary>
           <div className="max-w-5xl mx-auto">
             <Routes>
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/trips/*" element={<ProtectedRoute><TripsPage /></ProtectedRoute>} />
-              <Route path="/finance" element={<ProtectedRoute><FinancePage /></ProtectedRoute>} />
-              <Route path="/investments" element={<ProtectedRoute><InvestmentsPage /></ProtectedRoute>} />
-              <Route path="/sports" element={<ProtectedRoute><SportsPage /></ProtectedRoute>} />
-              <Route path="/resume" element={<ProtectedRoute><ResumePage /></ProtectedRoute>} />
-              <Route path="/planner" element={<ProtectedRoute><PlannerPage /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-              <Route path="/goals" element={<ProtectedRoute><GoalsPage /></ProtectedRoute>} />
-              <Route path="/networking" element={<ProtectedRoute><NetworkingPage /></ProtectedRoute>} />
-              <Route path="/health" element={<ProtectedRoute><HealthPage /></ProtectedRoute>} />
-              <Route path="/knowledge" element={<ProtectedRoute><KnowledgePage /></ProtectedRoute>} />
-              <Route path="/devtools" element={<ProtectedRoute><DevToolsPage /></ProtectedRoute>} />
-              <Route path="/focus" element={<ProtectedRoute><FocusPage /></ProtectedRoute>} />
-              <Route path="/news" element={<ProtectedRoute><NewsPage /></ProtectedRoute>} />
-              <Route path="/utilities" element={<ProtectedRoute><UtilitiesPage /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ErrorBoundary pageName="Dashboard"><ProtectedRoute><Dashboard /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/trips/*" element={<ErrorBoundary pageName="Trips"><ProtectedRoute><TripsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/finance" element={<ErrorBoundary pageName="Finance"><ProtectedRoute><FinancePage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/investments" element={<ErrorBoundary pageName="Investments"><ProtectedRoute><InvestmentsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/sports" element={<ErrorBoundary pageName="Sports"><ProtectedRoute><SportsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/resume" element={<ErrorBoundary pageName="Resume"><ProtectedRoute><ResumePage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/planner" element={<ErrorBoundary pageName="Planner"><ProtectedRoute><PlannerPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/settings" element={<ErrorBoundary pageName="Settings"><ProtectedRoute><SettingsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/goals" element={<ErrorBoundary pageName="Goals"><ProtectedRoute><GoalsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/networking" element={<ErrorBoundary pageName="Networking"><ProtectedRoute><NetworkingPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/health" element={<ErrorBoundary pageName="Health"><ProtectedRoute><HealthPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/knowledge" element={<ErrorBoundary pageName="Knowledge"><ProtectedRoute><KnowledgePage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/devtools" element={<ErrorBoundary pageName="Dev Tools"><ProtectedRoute><DevToolsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/focus" element={<ErrorBoundary pageName="Focus"><ProtectedRoute><FocusPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/news" element={<ErrorBoundary pageName="News"><ProtectedRoute><NewsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/utilities" element={<ErrorBoundary pageName="Utilities"><ProtectedRoute><UtilitiesPage /></ProtectedRoute></ErrorBoundary>} />
               <Route path="/converter" element={<Navigate to="/utilities?tab=converter" replace />} />
               <Route path="/worldclock" element={<Navigate to="/utilities?tab=worldclock" replace />} />
               <Route path="/regex" element={<Navigate to="/utilities?tab=regex" replace />} />
               <Route path="/calculator" element={<Navigate to="/utilities?tab=calculator" replace />} />
               <Route path="/password" element={<Navigate to="/utilities?tab=passwords" replace />} />
-              <Route path="/flashcards" element={<ProtectedRoute><FlashcardsPage /></ProtectedRoute>} />
-              <Route path="/splitter" element={<ProtectedRoute><SplitterPage /></ProtectedRoute>} />
-              <Route path="/meals" element={<ProtectedRoute><MealsPage /></ProtectedRoute>} />
-              <Route path="/subscriptions" element={<ProtectedRoute><SubscriptionsPage /></ProtectedRoute>} />
-              <Route path="/apiplayground" element={<ProtectedRoute><ApiPlaygroundPage /></ProtectedRoute>} />
-              <Route path="/colors" element={<ProtectedRoute><ColorsPage /></ProtectedRoute>} />
-              <Route path="/wiki" element={<ProtectedRoute><WikiPage /></ProtectedRoute>} />
-              <Route path="/music" element={<ProtectedRoute><MusicPage /></ProtectedRoute>} />
-              <Route path="/packing" element={<ProtectedRoute><PackingPage /></ProtectedRoute>} />
+              <Route path="/flashcards" element={<ErrorBoundary pageName="Flashcards"><ProtectedRoute><FlashcardsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/splitter" element={<ErrorBoundary pageName="Splitter"><ProtectedRoute><SplitterPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/meals" element={<ErrorBoundary pageName="Meals"><ProtectedRoute><MealsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/subscriptions" element={<ErrorBoundary pageName="Subscriptions"><ProtectedRoute><SubscriptionsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/apiplayground" element={<ErrorBoundary pageName="API Playground"><ProtectedRoute><ApiPlaygroundPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/colors" element={<ErrorBoundary pageName="Colors"><ProtectedRoute><ColorsPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/wiki" element={<ErrorBoundary pageName="Wiki"><ProtectedRoute><WikiPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/music" element={<ErrorBoundary pageName="Music"><ProtectedRoute><MusicPage /></ProtectedRoute></ErrorBoundary>} />
+              <Route path="/packing" element={<ErrorBoundary pageName="Packing"><ProtectedRoute><PackingPage /></ProtectedRoute></ErrorBoundary>} />
               {/* /ai is handled full-bleed above, not in the padded Routes block */}
-              <Route path="/lists" element={<ProtectedRoute><ListsPage /></ProtectedRoute>} />
+              <Route path="/lists" element={<ErrorBoundary pageName="Lists"><ProtectedRoute><ListsPage /></ProtectedRoute></ErrorBoundary>} />
             </Routes>
           </div>
-          </ErrorBoundary>
         </main>
         )}
       </div>
