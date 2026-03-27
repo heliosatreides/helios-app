@@ -24,7 +24,7 @@ function ClockCard({ city, now, onRemove }) {
         <div>
           <div className="flex items-center gap-2">
             <span
-              className={`w-2 h-2 rounded-full shrink-0 ${business ? 'bg-green-500' : 'bg-[#3f3f46]'}`}
+              className={`w-2 h-2 rounded-full shrink-0 ${business ? 'bg-green-500' : 'bg-zinc-600'}`}
               title={business ? 'Business hours' : 'Outside business hours'}
             />
             <h3 className="text-foreground font-semibold text-sm">{city.name}</h3>
@@ -200,7 +200,7 @@ export function WorldClockPage({ embedded } = {}) {
           Business hours (9am–5pm)
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-[#3f3f46]" />
+          <span className="w-2 h-2 rounded-full bg-zinc-600" />
           Outside business hours
         </div>
       </div>

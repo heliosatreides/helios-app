@@ -23,7 +23,7 @@ function TaskItem({ task, onToggle, onDelete, onUpdate, onBreakDown, hasKey, obj
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className={`border px-3 py-2.5 ${task.completed ? 'bg-background border-[#1a1a1c]' : 'bg-secondary border-border'}`}>
+    <div className={`border px-3 py-2.5 ${task.completed ? 'bg-background border-border/60' : 'bg-secondary border-border'}`}>
       <div className="flex items-start gap-3">
         {/* Checkbox */}
         <button

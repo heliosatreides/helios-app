@@ -27,7 +27,7 @@ function DayPanel({ dateStr, onClose }) {
           <div className="space-y-1">
             {dayTasks.map((t) => (
               <div key={t.id} className="flex items-center gap-2 text-xs">
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.completed ? 'bg-[#3f3f46]' : t.priority === 'High' ? 'bg-red-400' : t.priority === 'Medium' ? 'bg-amber-400' : 'bg-zinc-400'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.completed ? 'bg-zinc-600' : t.priority === 'High' ? 'bg-red-400' : t.priority === 'Medium' ? 'bg-amber-400' : 'bg-zinc-400'}`} />
                 <span className={t.completed ? 'line-through text-muted-foreground/80' : 'text-muted-foreground'}>{t.title}</span>
               </div>
             ))}

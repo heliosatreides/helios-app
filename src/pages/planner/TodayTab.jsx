@@ -188,7 +188,7 @@ export function TodayTab({ dateStr, tasks = [], tripActivities = [] }) {
           return (
             <div key={time}>
               <div
-                className={`flex gap-3 group min-h-[36px] ${isHour ? 'bg-[#0d0d0f]' : 'bg-background'} px-3 py-1 hover:bg-secondary cursor-pointer transition-colors`}
+                className={`flex gap-3 group min-h-[36px] ${isHour ? 'bg-secondary/20' : 'bg-background'} px-3 py-1 hover:bg-secondary cursor-pointer transition-colors`}
                 onClick={() => events.length === 0 && handleSlotClick(time, null)}
               >
                 {/* Time label */}

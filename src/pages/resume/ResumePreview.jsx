@@ -207,7 +207,7 @@ export function ResumePreview({ resumeData }) {
 
       {/* Score panel */}
       {scoreResult && (
-        <div className="w-64 shrink-0 bg-[#1c1c1f] border border-border p-4 h-fit">
+        <div className="w-64 shrink-0 bg-secondary border border-border p-4 h-fit">
           <h3 className="text-foreground font-semibold mb-3">Resume Score</h3>
           <div className="text-4xl font-bold text-amber-400 mb-1">
             {scoreResult.score}<span className="text-lg text-muted-foreground">/10</span>

@@ -10,10 +10,10 @@ const INTERESTS_KEY = 'helios-news-interests';
 function SkeletonCard() {
   return (
     <div className="bg-background border border-border p-5 animate-pulse">
-      <div className="h-4 bg-[#1c1c20] w-3/4 mb-2.5" />
-      <div className="h-3 bg-[#1c1c20] w-1/4 mb-3" />
-      <div className="h-3 bg-[#1c1c20] w-full mb-1.5" />
-      <div className="h-3 bg-[#1c1c20] w-5/6" />
+      <div className="h-4 bg-secondary w-3/4 mb-2.5" />
+      <div className="h-3 bg-secondary w-1/4 mb-3" />
+      <div className="h-3 bg-secondary w-full mb-1.5" />
+      <div className="h-3 bg-secondary w-5/6" />
     </div>
   );
 }

@@ -82,14 +82,14 @@ export function ProductivityStreak() {
                     : 'bg-secondary ring-1 ring-amber-500/40'
                   : productive
                   ? 'bg-amber-500/70'
-                  : 'bg-[#27272a]'
+                  : 'bg-secondary'
               }`}
             />
           ))}
         </div>
         <div className="flex items-center justify-end gap-2 mt-2">
           <span className="text-muted-foreground/60 text-xs">Less</span>
-          <div className="w-3 h-3 rounded-sm bg-[#27272a]" />
+          <div className="w-3 h-3 rounded-sm bg-secondary" />
           <div className="w-3 h-3 rounded-sm bg-amber-500/40" />
           <div className="w-3 h-3 rounded-sm bg-amber-500/70" />
           <div className="w-3 h-3 rounded-sm bg-amber-400" />

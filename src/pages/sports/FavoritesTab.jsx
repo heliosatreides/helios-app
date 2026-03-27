@@ -81,7 +81,7 @@ export function FavoritesTab({ allGames }) {
         <button
           aria-label="Add favorite"
           onClick={() => setShowPicker((v) => !v)}
-          className="text-xs px-3 py-1.5 rounded-full border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-[#71717a] transition-colors"
+          className="text-xs px-3 py-1.5 rounded-full border border-dashed border-border text-muted-foreground hover:text-foreground hover:border-zinc-500 transition-colors"
         >
           + Add favorite
         </button>
