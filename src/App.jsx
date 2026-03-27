@@ -156,13 +156,13 @@ function AppShell() {
 
         {/* AI Chat renders full-bleed (no padding/max-width) to avoid layout hacks */}
         {location.pathname === '/ai' ? (
-          <div className="flex-1 overflow-hidden pb-14 md:pb-0">
+          <div className="flex-1 overflow-hidden pb-24 md:pb-0">
             <ErrorBoundary pageName="AI Chat">
               <ProtectedRoute><AIChatPage onOpenSidebar={() => setSidebarOpen(true)} onOpenSearch={openCommandPalette} /></ProtectedRoute>
             </ErrorBoundary>
           </div>
         ) : (
-        <main className="flex-1 overflow-y-auto p-6 pb-20 md:pb-6">
+        <main className="flex-1 overflow-y-auto p-6 pb-24 md:pb-6">
           <div className="max-w-5xl mx-auto">
             <Routes>
               <Route path="/dashboard" element={<ErrorBoundary pageName="Dashboard"><ProtectedRoute><Dashboard /></ProtectedRoute></ErrorBoundary>} />
