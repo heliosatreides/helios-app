@@ -380,7 +380,7 @@ export function FinancePage() {
                 <button
                   key={b.category}
                   onClick={() => handleDeleteBudget(b.category)}
-                  className="text-xs text-muted-foreground hover:text-red-400 bg-background border border-border rounded px-2 py-1 transition-colors"
+                  className="text-xs text-muted-foreground hover:text-red-400 bg-background border border-border px-2 py-1 transition-colors"
                 >
                   Remove {b.category}
                 </button>

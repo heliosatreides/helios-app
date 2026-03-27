@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { generateDays } from './tripUtils';
 import { useGemini } from '../../hooks/useGemini';
 import { AiSuggestion } from '../../components/AiSuggestion';
+import { ActionButton } from '../../components/ui';
 
 const STATUS_OPTIONS = ['Planning', 'Upcoming', 'Ongoing', 'Completed'];
 
@@ -274,9 +275,9 @@ export function TripDetail({ trips, onUpdate }) {
               onChange={(e) => setNewExpense((p) => ({ ...p, amount: e.target.value }))}
               className="w-28 bg-background border border-border px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
-            <button type="submit" className="bg-foreground hover:bg-foreground/90 text-background text-sm font-semibold px-4 py-2">
+            <ActionButton type="submit" variant="primary">
               Add
-            </button>
+            </ActionButton>
           </form>
 
           {/* Expense list */}

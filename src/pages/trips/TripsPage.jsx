@@ -6,6 +6,7 @@ import { useIDB } from '../../hooks/useIDB';
 import { ImportButton } from '../../components/ImportButton';
 import { mergeById, csvRowToTrip } from '../../utils/importData';
 import { useToast } from '../../components/Toast';
+import { ActionButton, PageHeader } from '../../components/ui';
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -57,16 +58,12 @@ export function TripsPage() {
       <Route
         path="/"
         element={
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-foreground">Trips</h2>
-              <Link
-                to="/trips/new"
-                className="bg-foreground hover:bg-foreground/90 text-background font-semibold px-4 py-2 transition-colors"
-              >
+          <div className="space-y-6">
+            <PageHeader title="Trips" subtitle="Plan and track your adventures">
+              <ActionButton variant="primary" onClick={() => navigate('/trips/new')}>
                 + New Trip
-              </Link>
-            </div>
+              </ActionButton>
+            </PageHeader>
 
             {/* Import buttons */}
             <div className="flex flex-wrap gap-2 mb-4">

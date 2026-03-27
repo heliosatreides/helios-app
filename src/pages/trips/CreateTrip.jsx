@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ActionButton } from '../../components/ui';
 
 export function CreateTrip({ onSubmit }) {
   const navigate = useNavigate();
@@ -141,12 +142,13 @@ export function CreateTrip({ onSubmit }) {
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button
+          <ActionButton
             type="submit"
-            className="flex-1 bg-foreground hover:bg-foreground/90 text-background font-semibold py-2.5 transition-colors"
+            variant="primary"
+            className="flex-1"
           >
             Create Trip
-          </button>
+          </ActionButton>
           <button
             type="button"
             onClick={() => navigate('/trips')}
